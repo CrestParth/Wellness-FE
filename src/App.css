@@ -1,0 +1,24 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+:root {
+    --Blue: #B57EDC;
+    --orange: #F97316;
+    --secondary-color: #6c757d;
+    --light-gray: #E5E7EB;
+    --icon-gray: rgb(175, 179, 189);
+    --font-gray: #4B5563;
+    --heading-font: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f7f9fb;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+* {
+    /* color: black; */
+    font-family: "Montserrat", sans-serif;
+    font-style: normal;
+}
