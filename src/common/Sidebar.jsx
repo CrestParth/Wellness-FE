@@ -9,20 +9,16 @@ import {
     Toolbar,
     Typography,
     useMediaQuery,
-    Collapse,
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import { superadmin_menulist } from "./MenuList";
-// import logo4 from "../assets/images/logo.svg";
+import { menulist } from "./MenuList";
+import logo4 from "../assets/images/logo.svg";
 import { useTheme } from "@mui/material/styles";
-import ExpandLess from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 
 const drawerWidth = 260;
 
 const Sidebar = ({ isActive, setActive, sidebarRef }) => {
     const [currentMenu, setCurrentMenu] = useState("home");
-    const [openMenus, setOpenMenus] = useState({});
     const location = useLocation();
     const nav = useNavigate();
     const theme = useTheme();
@@ -40,28 +36,24 @@ const Sidebar = ({ isActive, setActive, sidebarRef }) => {
         localStorage.clear();
         nav("/");
     };
-    const toggleMenu = (menuId) => {
-        setOpenMenus((prev) => ({
-            ...prev,
-            [menuId]: !prev[menuId],
-        }));
-    };
 
 
     const drawerContent = (
         <Box sx={{
             height: '100%',
+            backgroundColor: '#121212'
         }}>
             {/* --- Logo --- */}
             <Toolbar sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
-                {/* <Box component="img" src={logo4} alt="logo" sx={{ width: "70%" }} /> */}
+                <Box component="img" src={logo4} alt="logo" sx={{ width: "40%" }} />
+                {/* <Typography sx={{ fontWeight: '600', fontSize: '1.2rem', color: 'white' }}>Wellness</Typography> */}
             </Toolbar>
             {/* --- Menu List --- */}
             <List sx={{
                 height: '88vh', overflowY: 'auto', scrollbarWidth: "none",
-                "&::-webkit-scrollbar": { display: "none" },
+                "&::-webkit-scrollbar": { display: "none" }, pt: 4
             }}>
-                {superadmin_menulist.map((menu) => {
+                {menulist.map((menu) => {
                     return (
                         <ListItemButton
                             key={menu.id}
@@ -72,22 +64,22 @@ const Sidebar = ({ isActive, setActive, sidebarRef }) => {
                                 mx: 1,
                                 mb: 1,
                                 "&.Mui-selected": {
-                                    bgcolor: "#3EC2CD",
-                                    boxShadow: "0px 8px 10px #3EC2CD4D",
+                                    bgcolor: "var(--Blue)",
+                                    boxShadow: `0px 6px 12px rgba(138, 43, 226, 0.35),0px 2px 6px rgba(138, 43, 226, 0.25)`,
                                     '&:hover': {
-                                        bgcolor: "#3EC2CD"
+                                        bgcolor: "var(--Blue)"
                                     },
                                     "& .MuiTypography-root": { fontWeight: 600, color: "white" }
                                 }
                             }}
                         >
                             <ListItemIcon>
-                                <Box sx={{ boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", backgroundColor: 'white', borderRadius: '8px', p: 0.5, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <Box component="img" src={menu.icon} sx={{ width: 22, height: 22 }} />
+                                <Box sx={{ boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", backgroundColor: '#404040', borderRadius: '8px', p: 0.5, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <menu.icon style={{ fontSize: 22, color: "white" }} />
                                 </Box>
                             </ListItemIcon>
 
-                            <ListItemText primary={<Typography sx={{ fontSize: '14px', fontWeight: 550 }}> {menu.name} </Typography>} />
+                            <ListItemText primary={<Typography sx={{ fontSize: '14px', fontWeight: 550, color: 'white' }}> {menu.name} </Typography>} />
                         </ListItemButton>
                     );
                 })}

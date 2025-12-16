@@ -9,8 +9,6 @@ import { useGetProfile, useUpdateProfile } from "../Api/Api";
 import { toast } from "react-toastify";
 import GrayPlus from '../assets/images/GrayPlus.svg'
 import CustomInput from "../common/custom/CustomInput";
-import AddIcon from '@mui/icons-material/Add';
-
 const Profile = () => {
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
@@ -129,13 +127,11 @@ const Profile = () => {
                                             minHeight: 180,
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            backgroundColor: "#404040",
-                                            border: '1px dashed white',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             cursor: edit ? 'pointer' : 'not-allowed',
                                             position: 'relative',
-                                            // background: '#fafbfc'
+                                            background: '#fafbfc'
                                         }}
                                         component="label"
                                     >
@@ -159,8 +155,7 @@ const Profile = () => {
                                                 alt="Selfie"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
-                                        ) : (<>
-                                            <AddIcon sx={{ color: 'white' }} />
+                                        ) : (<><img src={GrayPlus} alt="gray plus" />
                                             <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                         )}
                                     </Box>

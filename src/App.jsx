@@ -8,6 +8,8 @@ import { AuthGuard, LogGuard } from "./common/Gaurd";
 const Layout = lazy(() => import("./common/Layout"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const Home = lazy(() => import("./pages/Home"));
+const UserInformation = lazy(() => import('./pages/user/UserInformation'))
+const ListOfUser = lazy(() => import('./pages/user/ListOfUser'))
 
 const Profile = lazy(() => import("./pages/Profile"));
 
@@ -26,21 +28,19 @@ function App() {
     {
       path: "/home",
       element: (
-        <AuthGuard>
-          <Layout />
-        </AuthGuard>
+        // <AuthGuard>
+        <Layout />
+        // </AuthGuard>
       ),
       children: [
         { path: "", element: <Home /> },
-        // {
-        //   path: "users",
-        //   children: [
-        //     { path: "", element: <ListOfUser /> },
-        //     { path: "user-information", element: <GoogleMaps isMapLoaded={isLoaded} /> },
-        //     { path: "user-view/:id", element: <UserInformation /> },
-        //     { path: 'add-vaf', element: <AddVafUser /> }
-        //   ],
-        // },
+        {
+          path: "users",
+          children: [
+            { path: "", element: <ListOfUser /> },
+            { path: "user-view/:id", element: <UserInformation /> },
+          ],
+        },
         { path: "profile", element: <Profile /> },
       ],
     },
