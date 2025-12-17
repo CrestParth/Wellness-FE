@@ -155,7 +155,7 @@ const ListOfUser = () => {
                                         const statusStyle = statusColorMap[user.status];
                                         return (
                                             <TableRow key={user.id}>
-                                                <TableCell sx={{ color: '#878787', paddingLeft: '30px' }}>
+                                                <TableCell sx={{ color: 'white', paddingLeft: '30px' }}>
                                                     <Stack direction="row" alignItems="center" gap={1}>
 
                                                         <Avatar src={user?.profile_img || undefined} alt="User" >

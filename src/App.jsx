@@ -10,6 +10,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const Home = lazy(() => import("./pages/Home"));
 const UserInformation = lazy(() => import('./pages/user/UserInformation'))
 const ListOfUser = lazy(() => import('./pages/user/ListOfUser'))
+const ListOfVendor = lazy(() => import('./pages/vendor/ListOfVendor'))
 
 const Profile = lazy(() => import("./pages/Profile"));
 
@@ -39,6 +40,12 @@ function App() {
           children: [
             { path: "", element: <ListOfUser /> },
             { path: "user-view/:id", element: <UserInformation /> },
+          ],
+        },
+        {
+          path: "vendors",
+          children: [
+            { path: "", element: <ListOfVendor /> },
           ],
         },
         { path: "profile", element: <Profile /> },

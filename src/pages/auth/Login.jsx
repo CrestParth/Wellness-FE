@@ -81,12 +81,12 @@ const Login = () => {
                     {/* Email */}
                     <FormControl variant="standard" fullWidth sx={{ mb: 2 }}>
                         <InputLabel shrink htmlFor="email" sx={{ fontSize: '1.3rem', fontWeight: 500, color: 'rgba(0, 0, 0, 0.8)', '&.Mui-focused': { color: 'black' } }}>
-                            Email or Username
+                            Email
                         </InputLabel>
                         <BootstrapInput
                             id="email"
                             name="email"
-                            placeholder="Enter your email or username"
+                            placeholder="Enter your email"
                             value={loginForm.values.email}
                             onChange={loginForm.handleChange}
                         />
@@ -123,18 +123,6 @@ const Login = () => {
                         </IconButton>
                         {loginForm.touched.password && <FormHelperText error>{loginForm.errors.password}</FormHelperText>}
                     </FormControl>
-
-
-                    {/* Forgot Password */}
-                    <Box sx={{ textAlign: "right", mb: 3 }}>
-                        <Typography
-                            component="a"
-                            href="#"
-                            sx={{ fontSize: "0.9rem", color: "var(--Blue)", textDecoration: "none" }}
-                        >
-                            Forgot Password?
-                        </Typography>
-                    </Box>
 
                     {/* Submit Button */}
                     <Button
