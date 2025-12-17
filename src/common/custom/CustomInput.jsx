@@ -13,8 +13,8 @@ const CustomInput = ({ label, placeholder, name, formik, readOnly = false, type 
                     sx={{
                         fontSize: "1.3rem",
                         fontWeight: 450,
-                        color: "white",
-                        '&.Mui-focused': { color: 'white' }
+                        color: "rgba(0,0,0,0.8)",
+                        '&.Mui-focused': { color: 'black' }
                     }}
                 >
                     {label}
@@ -25,7 +25,6 @@ const CustomInput = ({ label, placeholder, name, formik, readOnly = false, type 
                 id={name}
                 name={name}
                 type={type}
-                sx={{ color: 'white' }}
                 placeholder={placeholder}
                 value={formik.values[name]}
                 onChange={formik.handleChange}

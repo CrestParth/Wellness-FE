@@ -41,7 +41,7 @@ const StatCard = ({ title, value, bg }) => (
             py: 3,
         }}
     >
-        <Typography variant="body2" color="#D4D4D4">
+        <Typography variant="body2" color="#878787">
             {title}
         </Typography>
         <Typography variant="h4" fontWeight={600} mt={1}>
@@ -60,7 +60,7 @@ const Home = () => {
                         <StatCard
                             title="Total Instructors"
                             value={dashboardData.stats.totalInstructors}
-                            bg="#2E86AB33"
+                            bg="rgba(27, 120, 170, 0.2)"
                         />
                     </Grid>
 
@@ -84,21 +84,21 @@ const Home = () => {
                         <StatCard
                             title="New Instructor Signups"
                             value={dashboardData.stats.newInstructorSignups}
-                            bg="#D7263D33"
+                            bg="rgba(27, 170, 144, 0.2)"
                         />
                     </Grid>
                 </Grid>
             </Box>
             <Box
                 sx={{
-                    backgroundColor: "#1D1D1D",
+                    backgroundColor: "#FFFFFF",
                     borderRadius: "16px",
                     p: 3,
                     my: 5,
                     boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                 }}
             >
-                <Typography variant="h6" fontWeight={600} mb={2} >
+                <Typography variant="h6" fontWeight={600} mb={2}>
                     Recent Activities
                 </Typography>
 
@@ -113,15 +113,16 @@ const Home = () => {
                         }}
                     >
                         <Typography>{activity.message}</Typography>
-                        <Typography variant="body2" >
+                        <Typography variant="body2" color="text.secondary">
                             {activity.time}
                         </Typography>
                     </Box>
                 ))}
             </Box>
+
             <Box
                 sx={{
-                    backgroundColor: "#1D1D1D",
+                    backgroundColor: "#FFFFFF",
                     borderRadius: "16px",
                     p: 3,
                     boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
@@ -139,34 +140,36 @@ const Home = () => {
                                 borderRadius: "12px",
                                 border: "1px solid #E5E7EB",
                                 cursor: "pointer",
+                                "&:hover": { backgroundColor: "#F9FAFB" },
                             }}
                         >
                             <Typography fontWeight={500}>Approve Instructors</Typography>
-                            <Typography variant="body2">
+                            <Typography variant="body2" color="text.secondary">
                                 Review pending instructor requests
                             </Typography>
                         </Box>
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: "pointer", }}>
+                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB" }}>
                             <Typography fontWeight={500}>Manage Reviews</Typography>
-                            <Typography variant="body2" >
+                            <Typography variant="body2" color="text.secondary">
                                 Moderate user reviews
                             </Typography>
                         </Box>
                     </Grid>
 
                     <Grid size={{ xs: 12, md: 4 }}>
-                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: "pointer", }}>
+                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB" }}>
                             <Typography fontWeight={500}>View Reports</Typography>
-                            <Typography variant="body2" >
+                            <Typography variant="body2" color="text.secondary">
                                 Check flagged content
                             </Typography>
                         </Box>
                     </Grid>
                 </Grid>
             </Box>
+
 
         </>
     )

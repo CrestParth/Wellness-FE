@@ -11,8 +11,7 @@
 }
 
 body {
-    background-color: #262626;
-    color:white;
+background-color: #f7f9fb;
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -24,5 +23,5 @@ body {
     font-style: normal;
 }
 .bg{
-    color:#aa971b33
+    color:rgba(27, 170, 144, 0.2)
 }

@@ -124,8 +124,8 @@ const ListOfUser = () => {
 
     return (
         <>
-            <Box sx={{ backgroundColor: "#1D1D1D", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
-                <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 2 } }}>
+            <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
+                <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
                     <Typography variant="h6" fontWeight={590}>
                         List Of Users
                     </Typography>
@@ -137,11 +137,11 @@ const ListOfUser = () => {
                     <>
 
                         <TableContainer >
-                            <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px', borderBottom: '1px solid #2D2D2E' } }}>
+                            <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
                                 <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow >
                                         <TableCell sx={{
-                                            backgroundColor: '#1F1F20',
+                                            backgroundColor: '#F9FAFB',
                                             color: '#878787', paddingLeft: '30px'
                                         }}>Name</TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Email</TableCell>
@@ -155,7 +155,7 @@ const ListOfUser = () => {
                                         const statusStyle = statusColorMap[user.status];
                                         return (
                                             <TableRow key={user.id}>
-                                                <TableCell sx={{ color: 'white', paddingLeft: '30px' }}>
+                                                <TableCell sx={{ paddingLeft: '30px' }}>
                                                     <Stack direction="row" alignItems="center" gap={1}>
 
                                                         <Avatar src={user?.profile_img || undefined} alt="User" >
@@ -165,14 +165,14 @@ const ListOfUser = () => {
                                                         {user?.firstName || user?.lastName ? `${user?.firstName || ""} ${user?.lastName || ""}`.trim() : "-"}
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell sx={{ fontWeight: 500, color: 'white' }}>
+                                                <TableCell sx={{ fontWeight: 500 }}>
                                                     {user.email || "-"}
                                                 </TableCell>
                                                 <TableCell sx={{ color: '#4B5563' }}>
                                                     <Chip
                                                         label={user.status}
                                                         sx={{
-                                                            backgroundColor: statusStyle.bg,
+                                                            backgroundColor: 'white',
                                                             color: statusStyle.color,
                                                             border: `1px solid ${statusStyle.border}`,
                                                             '& .MuiChip-label': {
@@ -184,7 +184,7 @@ const ListOfUser = () => {
                                                 </TableCell>
                                                 <TableCell>
                                                     <Stack direction="row" alignItems="center" gap={1}>
-                                                        <Typography fontWeight={500} sx={{ color: 'white' }}>
+                                                        <Typography fontWeight={500} >
                                                             {user.reviews?.length || 0}
                                                         </Typography>
 
@@ -192,7 +192,7 @@ const ListOfUser = () => {
                                                             size="small"
                                                             onClick={() => handleOpenReviews(user)}
                                                         >
-                                                            <VisibilityIcon sx={{ color: 'white' }} fontSize="small" />
+                                                            <VisibilityIcon fontSize="small" />
                                                         </IconButton>
                                                     </Stack>
                                                 </TableCell>
@@ -223,7 +223,7 @@ const ListOfUser = () => {
                                 backgroundColor: '#262626',
                                 height: '100%'
                             }}>
-                                <Typography variant="h6" fontWeight={600} color='white'>
+                                <Typography variant="h6" fontWeight={600} >
                                     Reviews by {selectedUser?.firstName}
                                 </Typography>
 
@@ -238,21 +238,21 @@ const ListOfUser = () => {
                                                     p: 2
                                                 }}
                                             >
-                                                <Typography fontWeight={500} color='white'>
+                                                <Typography fontWeight={500} >
                                                     {review.instructorName}
                                                 </Typography>
 
-                                                <Typography variant="body2" color='white'>
+                                                <Typography variant="body2" >
                                                     Rating: {review.rating}/5
                                                 </Typography>
 
-                                                <Typography mt={1} color='white'>
+                                                <Typography mt={1} >
                                                     {review.comment}
                                                 </Typography>
                                             </Box>
                                         ))
                                     ) : (
-                                        <Typography color='white'>
+                                        <Typography>
                                             No reviews given by this user
                                         </Typography>
                                     )}
@@ -275,6 +275,6 @@ const ListOfUser = () => {
 export default ListOfUser
 
 const tableHeaderCellSx = {
-    backgroundColor: '#1F1F20',
+    backgroundColor: '#F9FAFB',
     color: '#878787'
 };

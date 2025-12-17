@@ -17,10 +17,6 @@ const CustomPagination = ({ rowsPerPage, totalPages, currentPage, setRowsPerPage
                             sx={{
                                 border: 'none',
                                 boxShadow: 'none',
-                                color: 'white',
-                                '& .MuiSelect-icon': {
-                                    color: 'white', // 👈 dropdown arrow color
-                                },
                                 outline: 'none',
                                 '& .MuiOutlinedInput-notchedOutline': {
                                     border: 'none',
@@ -59,13 +55,13 @@ const CustomPagination = ({ rowsPerPage, totalPages, currentPage, setRowsPerPage
                             disabled={currentPage === 1}
                             onClick={() => setCurrentPage((prev) => prev - 1)}
                         >
-                            <NavigateBeforeIcon fontSize="small" sx={{ color: 'white' }} />
+                            <NavigateBeforeIcon fontSize="small" />
                         </IconButton>
                         <IconButton
                             disabled={currentPage === totalPages}
                             onClick={() => setCurrentPage((prev) => prev + 1)}
                         >
-                            <NavigateNextIcon fontSize="small" sx={{ color: 'white' }} />
+                            <NavigateNextIcon fontSize="small" />
                         </IconButton>
                     </Box>
                 </Grid>

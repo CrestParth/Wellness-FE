@@ -111,13 +111,13 @@ const Navbar = ({ setActive, isActive }) => {
                     width: `calc(100% - ${260}px)`,
                     ml: `${260}px`,
                 }),
-                bgcolor: "#262626",
+                bgcolor: "#f7f9fb",
                 color: "#000",
                 boxShadow: "none",
             }}>
             <Toolbar sx={{ justifyContent: "space-between" }}>
                 {isSubMenu ? (
-                    <IconButton onClick={() => nav(-1)} sx={{ mr: 2, color: 'white' }}>
+                    <IconButton onClick={() => nav(-1)} sx={{ mr: 2 }}>
                         <IoArrowBack size={24} />
                     </IconButton>
                 ) : (
@@ -131,7 +131,7 @@ const Navbar = ({ setActive, isActive }) => {
                     variant="h5"
                     fontWeight={600}
                     // className="mb-0"
-                    sx={{ flexGrow: 1, fontSize: { xs: '18px', sm: "24px" }, color: 'white' }}
+                    sx={{ flexGrow: 1, fontSize: { xs: '18px', sm: "24px" } }}
                 >
                     {pageTitle}
                 </Typography>

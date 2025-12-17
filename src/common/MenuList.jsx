@@ -33,6 +33,7 @@ export const menulist = [
         id: "vendors",
         name: "Vendor Management",
         path: "/home/vendors",
+        view: "Vendor Management",
         icon: icons.ShopOutlined,
     },
 

@@ -41,7 +41,6 @@ const Sidebar = ({ isActive, setActive, sidebarRef }) => {
     const drawerContent = (
         <Box sx={{
             height: '100%',
-            backgroundColor: '#121212'
         }}>
             {/* --- Logo --- */}
             <Toolbar sx={{ display: "flex", justifyContent: "center", pt: 1 }}>
@@ -74,12 +73,12 @@ const Sidebar = ({ isActive, setActive, sidebarRef }) => {
                             }}
                         >
                             <ListItemIcon>
-                                <Box sx={{ boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", backgroundColor: '#404040', borderRadius: '8px', p: 0.5, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                    <menu.icon style={{ fontSize: 22, color: "white" }} />
+                                <Box sx={{ boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", backgroundColor: 'white', borderRadius: '8px', p: 0.5, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                    <menu.icon style={{ fontSize: 22, color: "black" }} />
                                 </Box>
                             </ListItemIcon>
 
-                            <ListItemText primary={<Typography sx={{ fontSize: '14px', fontWeight: 550, color: 'white' }}> {menu.name} </Typography>} />
+                            <ListItemText primary={<Typography sx={{ fontSize: '14px', fontWeight: 550 }}> {menu.name} </Typography>} />
                         </ListItemButton>
                     );
                 })}

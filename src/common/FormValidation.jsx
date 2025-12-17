@@ -46,3 +46,14 @@ export const profileValidation_s = yup.object({
     postal_code: Number,
     country: String
 });
+
+export const vendorValidationSchema = yup.object({
+    vendorName: yup.string()
+        .required("Vendor Name is required"),
+    Category: yup.string()
+        .required("Vendor Name is required"),
+    email: Email,
+    phone: MobileNumber,
+    address: String,
+    status: String
+})

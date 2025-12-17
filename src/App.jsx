@@ -3,6 +3,7 @@ import { Suspense, lazy } from "react";
 
 import "./App.css";
 import { AuthGuard, LogGuard } from "./common/Gaurd";
+import VendorInformation from "./pages/vendor/VendorInformation";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -46,6 +47,8 @@ function App() {
           path: "vendors",
           children: [
             { path: "", element: <ListOfVendor /> },
+            { path: "vendor-view/:id", element: <VendorInformation /> },
+
           ],
         },
         { path: "profile", element: <Profile /> },
