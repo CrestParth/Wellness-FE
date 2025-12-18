@@ -41,6 +41,8 @@ export const menulist = [
         id: "instructors",
         name: "Instructor Management",
         path: "/home/instructors",
+        add: "Add Instructor",
+        view: 'Instructor Information',
         icon: icons.TeamOutlined,
     },
 

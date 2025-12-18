@@ -4,6 +4,10 @@ import { Suspense, lazy } from "react";
 import "./App.css";
 import { AuthGuard, LogGuard } from "./common/Gaurd";
 import VendorInformation from "./pages/vendor/VendorInformation";
+import Review from "./pages/review/Review";
+import AddInstructor from "./pages/instructor/AddInstructor";
+import InstructorInfo from './pages/instructor/InstructorInfo'
+import ListOfCategory from "./pages/category/ListOfCategory";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -12,6 +16,7 @@ const Home = lazy(() => import("./pages/Home"));
 const UserInformation = lazy(() => import('./pages/user/UserInformation'))
 const ListOfUser = lazy(() => import('./pages/user/ListOfUser'))
 const ListOfVendor = lazy(() => import('./pages/vendor/ListOfVendor'))
+const ListOfInstructor = lazy(() => import('./pages/instructor/ListOfInstructor'))
 
 const Profile = lazy(() => import("./pages/Profile"));
 
@@ -48,9 +53,19 @@ function App() {
           children: [
             { path: "", element: <ListOfVendor /> },
             { path: "vendor-view/:id", element: <VendorInformation /> },
+          ],
+        },
+        {
+          path: "instructors",
+          children: [
+            { path: "", element: <ListOfInstructor /> },
+            { path: "instructor-view/:id", element: <InstructorInfo /> },
+            { path: "add-instructor", element: <AddInstructor /> },
 
           ],
         },
+        { path: "reviews", element: <Review /> },
+        { path: "categories", element: <ListOfCategory /> },
         { path: "profile", element: <Profile /> },
       ],
     },

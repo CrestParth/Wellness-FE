@@ -71,7 +71,7 @@ const Profile = () => {
     );
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
-            <Box sx={{ backgroundColor: "#404040", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
+            <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
                 <form>
                     <Grid container spacing={edit ? 3 : 1}>
                         <Grid size={12} sx={{
@@ -80,7 +80,7 @@ const Profile = () => {
                             paddingBottom: "4px",
                             marginBottom: "10px"
                         }}>
-                            <Typography variant="h6" sx={{ color: 'white' }} gutterBottom fontWeight={600}>
+                            <Typography variant="h6" gutterBottom fontWeight={600}>
                                 Profile Information
                             </Typography>
                         </Grid>
