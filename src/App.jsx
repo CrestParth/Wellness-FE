@@ -8,6 +8,7 @@ import Review from "./pages/review/Review";
 import AddInstructor from "./pages/instructor/AddInstructor";
 import InstructorInfo from './pages/instructor/InstructorInfo'
 import ListOfCategory from "./pages/category/ListOfCategory";
+import ListOfSubscription from "./pages/subscription/ListOfSubscription";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -65,6 +66,7 @@ function App() {
           ],
         },
         { path: "reviews", element: <Review /> },
+        { path: "subscriptions", element: <ListOfSubscription /> },
         { path: "categories", element: <ListOfCategory /> },
         { path: "profile", element: <Profile /> },
       ],

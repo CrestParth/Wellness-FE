@@ -74,12 +74,12 @@ export const menulist = [
         icon: icons.AppstoreOutlined,
     },
 
-    {
-        id: "content",
-        name: "Content Management",
-        path: "/home/content",
-        icon: icons.FileTextOutlined,
-    },
+    // {
+    //     id: "content",
+    //     name: "Content Management",
+    //     path: "/home/content",
+    //     icon: icons.FileTextOutlined,
+    // },
 
     {
         id: "logout",

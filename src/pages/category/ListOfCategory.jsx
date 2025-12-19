@@ -84,12 +84,12 @@ const ListOfCategory = () => {
         active: {
             color: '#7BC8A9',
             border: '#10B981',
-            // bg: '#ECFDF5'
+            bg: '#ECFDF5'
         },
         suspended: {
             color: '#FF927C',
             border: '#EF4444',
-            // bg: '#FEF2F2'
+            bg: '#FEF2F2'
         }
     };
 
@@ -136,7 +136,7 @@ const ListOfCategory = () => {
                                             label={cat.status}
 
                                             sx={{
-                                                backgroundColor: 'white',
+                                                backgroundColor: statusStyle.bg,
                                                 color: statusStyle.color,
                                                 border: `1px solid ${statusStyle.border}`,
                                                 '& .MuiChip-label': {

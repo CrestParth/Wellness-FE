@@ -112,12 +112,12 @@ const ListOfUser = () => {
         active: {
             color: '#7BC8A9',
             border: '#10B981',
-            // bg: '#ECFDF5'
+            bg: '#ECFDF5'
         },
         suspended: {
             color: '#FF927C',
             border: '#EF4444',
-            // bg: '#FEF2F2'
+            bg: '#FEF2F2'
         }
     };
 
@@ -172,7 +172,7 @@ const ListOfUser = () => {
                                                     <Chip
                                                         label={user.status}
                                                         sx={{
-                                                            backgroundColor: 'white',
+                                                            backgroundColor: statusStyle.bg,
                                                             color: statusStyle.color,
                                                             border: `1px solid ${statusStyle.border}`,
                                                             '& .MuiChip-label': {
@@ -220,7 +220,7 @@ const ListOfUser = () => {
                         >
                             <Box sx={{
                                 width: 420, p: 3,
-                                backgroundColor: '#262626',
+                                // backgroundColor: '#262626',
                                 height: '100%'
                             }}>
                                 <Typography variant="h6" fontWeight={600} >
