@@ -49,7 +49,7 @@ const Login = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                bgcolor: "#262626",
+                bgcolor: "var(--Blue)",
                 backgroundPosition: "center",
                 backgroundSize: "contain",
                 backgroundRepeat: "no-repeat",

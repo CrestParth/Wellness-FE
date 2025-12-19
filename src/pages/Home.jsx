@@ -133,39 +133,31 @@ const Home = () => {
                 </Typography>
 
                 <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <Box
-                            sx={{
-                                p: 2,
-                                borderRadius: "12px",
-                                border: "1px solid #E5E7EB",
-                                cursor: "pointer",
-                                "&:hover": { backgroundColor: "#F9FAFB" },
-                            }}
-                        >
-                            <Typography fontWeight={500}>Approve Instructors</Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Review pending instructor requests
-                            </Typography>
-                        </Box>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
+
+                        <Typography fontWeight={500}>Approve Instructors</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Review pending instructor requests
+                        </Typography>
+
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB" }}>
-                            <Typography fontWeight={500}>Manage Reviews</Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Moderate user reviews
-                            </Typography>
-                        </Box>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
+
+                        <Typography fontWeight={500}>Manage Reviews</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Moderate user reviews
+                        </Typography>
+
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }}>
-                        <Box sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB" }}>
-                            <Typography fontWeight={500}>View Reports</Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                Check flagged content
-                            </Typography>
-                        </Box>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
+
+                        <Typography fontWeight={500}>View Reports</Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Check flagged content
+                        </Typography>
+
                     </Grid>
                 </Grid>
             </Box>
