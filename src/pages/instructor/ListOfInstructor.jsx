@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
-import DeleteConfirm from '../../assets/images/DeleteIcon.svg'
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
