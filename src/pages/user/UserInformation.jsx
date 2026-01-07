@@ -2,13 +2,13 @@ import {
     Box, Typography, Button, Grid, FormHelperText
 } from "@mui/material";
 import { useFormik } from "formik";
-import { profileValidation_s } from "../common/FormValidation";
+// import { profileValidation_s } from "../common/FormValidation";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useGetProfile, useUpdateProfile } from "../Api/Api";
+import { useGetProfile, useUpdateProfile } from "../../Api/Api";
 import { toast } from "react-toastify";
-import GrayPlus from '../assets/images/GrayPlus.svg'
-import CustomInput from "../common/custom/CustomInput";
+import GrayPlus from '../../assets/images/GrayPlus.svg'
+import CustomInput from "../../common/custom/CustomInput";
 const Profile = () => {
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
@@ -26,7 +26,7 @@ const Profile = () => {
 
     const profileForm = useFormik({
         initialValues: super_admin,
-        validationSchema: profileValidation_s,
+        // validationSchema: profileValidation_s,
         onSubmit: (values) => {
             setedit(false);
             const formData = new FormData();
