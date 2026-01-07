@@ -3,7 +3,7 @@ import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody
 import DeleteIcon from "@mui/icons-material/Delete";
 import Search from '@mui/icons-material/Search'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
-import DeleteConfirm from '../../assets/images/DeleteIcon.svg'
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 
 
 const reviewData = [
