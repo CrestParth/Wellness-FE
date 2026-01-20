@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, MenuItem, Stack, InputAdornment } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Search from '@mui/icons-material/Search'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-
+import { useNavigate } from "react-router-dom";
 
 const reviewData = [
     {
@@ -38,9 +39,8 @@ const reviewData = [
 const Review = () => {
     const [reviews, setReviews] = useState(reviewData);
     const [openPopup, setOpenPopup] = useState(null);
-    const [ratingFilter, setRatingFilter] = useState("");
     const [instructorFilter, setInstructorFilter] = useState("");
-
+    const nav = useNavigate()
     const handleOpen = (type) => setOpenPopup(type);
     const handleClose = () => setOpenPopup(null);
 
@@ -53,9 +53,6 @@ const Review = () => {
     }
 
     const filteredReviews = reviews.filter((review) => {
-        const ratingMatch = ratingFilter
-            ? review.rating === Number(ratingFilter)
-            : true;
 
         const instructorMatch = instructorFilter
             ? review.instructorName
@@ -63,18 +60,18 @@ const Review = () => {
                 .includes(instructorFilter.toLowerCase())
             : true;
 
-        return ratingMatch && instructorMatch;
+        return instructorMatch;
     });
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, lg: 5 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, sm: 5 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
-                        List Of Reviews & Ratings
+                        List Of Vibe Checks
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, lg: 7 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                <Grid size={{ xs: 12, sm: 7 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
 
                     <TextField
                         variant="outlined"
@@ -103,23 +100,6 @@ const Review = () => {
                             ),
                         }}
                     />
-
-                    <TextField
-                        select
-                        label="Filter by Rating"
-                        fullWidth
-                        value={ratingFilter}
-                        size="small"
-
-                        onChange={(e) => setRatingFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {[5, 4, 3, 2, 1].map((r) => (
-                            <MenuItem key={r} value={r}>
-                                {r} Star
-                            </MenuItem>
-                        ))}
-                    </TextField>
                 </Grid>
             </Grid>
 
@@ -131,10 +111,9 @@ const Review = () => {
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
 
                         <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>User</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Instructor</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Rating</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Review</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>User</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>Note</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Date</TableCell>
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
@@ -144,24 +123,15 @@ const Review = () => {
                         {filteredReviews.length > 0 ? (
                             filteredReviews.map((review) => (
                                 <TableRow key={review.id}>
-                                    <TableCell>{review.userName}</TableCell>
                                     <TableCell>{review.instructorName}</TableCell>
-                                    <TableCell>
-                                        <Chip
-                                            label={`${review.rating} ★`}
-                                            color={
-                                                review.rating >= 4
-                                                    ? "success"
-                                                    : review.rating >= 3
-                                                        ? "warning"
-                                                        : "error"
-                                            }
-                                        />
-                                    </TableCell>
+                                    <TableCell>{review.userName}</TableCell>
                                     <TableCell>{review.comment}</TableCell>
                                     <TableCell>{review.date}</TableCell>
                                     <TableCell align="center">
                                         <Stack direction="row" justifyContent="center" spacing={1}>
+                                            <IconButton onClick={() => nav(`/home/vibe/vibe-view/${review.id}`)}>
+                                                <VisibilityIcon />
+                                            </IconButton>
                                             <IconButton
                                                 color="error"
                                                 onClick={() => {

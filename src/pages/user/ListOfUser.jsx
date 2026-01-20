@@ -14,20 +14,17 @@ const User = {
             lastName: "Doe",
             email: "johndoe@yopmail.com",
             status: "active",
-            reviews: [
+            vibeChecks: [
                 {
-                    id: 101,
-                    instructorName: "Alex Trainer",
-                    rating: 4,
-                    comment: "Very professional",
+                    id: 201,
+                    classType: "Yoga",
+                    energy: 4,
+                    pace: 2,
+                    focus: 5,
+                    music: 3,
+                    tags: ["Calming", "Good energy", "Beginner"],
+                    note: "Loved the slow flow, very relaxing",
                     date: "2024-06-01"
-                },
-                {
-                    id: 102,
-                    instructorName: "Fit Studio",
-                    rating: 5,
-                    comment: "Great experience",
-                    date: "2024-06-10"
                 }
             ]
         },
@@ -36,7 +33,8 @@ const User = {
             firstName: "Jane",
             lastName: "Smith",
             email: "janesmith@yopmail.com",
-            status: "active"
+            status: "active",
+            vibeChecks: []
         },
 
         // 🔹 New examples
@@ -46,13 +44,17 @@ const User = {
             lastName: "Brown",
             email: "michaelbrown@yopmail.com",
             status: "active",
-            reviews: [
+            vibeChecks: [
                 {
-                    id: 103,
-                    instructorName: "Core Fitness",
-                    rating: 3,
-                    comment: "Good sessions but crowded gym",
-                    date: "2024-05-18"
+                    id: 202,
+                    classType: "Pilates",
+                    energy: 3,
+                    pace: 2,
+                    focus: 5,
+                    music: 3,
+                    tags: ["Calming", "Good energy", "Beginner"],
+                    note: "Loved the slow flow, very relaxing",
+                    date: "2024-06-01"
                 }
             ]
         },
@@ -62,7 +64,7 @@ const User = {
             lastName: "Clark",
             email: "emilyclark@yopmail.com",
             status: "active",
-            reviews: []
+            vibeChecks: []
         },
         {
             id: 5,
@@ -70,22 +72,7 @@ const User = {
             lastName: "Wilson",
             email: "davidwilson@yopmail.com",
             status: "suspended",
-            reviews: [
-                {
-                    id: 104,
-                    instructorName: "Power House Gym",
-                    rating: 2,
-                    comment: "Not satisfied with personal training",
-                    date: "2024-04-12"
-                },
-                {
-                    id: 105,
-                    instructorName: "Elite Fitness",
-                    rating: 4,
-                    comment: "Improved experience in later sessions",
-                    date: "2024-06-02"
-                }
-            ]
+            vibeChecks: []
         },
     ],
     pagination: {
@@ -102,10 +89,11 @@ const ListOfUser = () => {
     const [selectedUser, setSelectedUser] = useState(null);
     const [openReviews, setOpenReviews] = useState(false);
 
-    const handleOpenReviews = (user) => {
+    const handleOpenVibes = (user) => {
         setSelectedUser(user);
         setOpenReviews(true);
     };
+
     const totalUsers = User?.pagination?.totalCount;
     const totalPages = Math.ceil(totalUsers / rowsPerPage);
     const statusColorMap = {
@@ -145,8 +133,8 @@ const ListOfUser = () => {
                                             color: '#878787', paddingLeft: '30px'
                                         }}>Name</TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Email</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}>Status</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}>Reviews</TableCell>
+                                        {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
+                                        <TableCell sx={tableHeaderCellSx}>Vibe Checks</TableCell>
                                         <TableCell sx={tableHeaderCellSx}></TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -168,7 +156,7 @@ const ListOfUser = () => {
                                                 <TableCell sx={{ fontWeight: 500 }}>
                                                     {user.email || "-"}
                                                 </TableCell>
-                                                <TableCell sx={{ color: '#4B5563' }}>
+                                                {/* <TableCell sx={{ color: '#4B5563' }}>
                                                     <Chip
                                                         label={user.status}
                                                         sx={{
@@ -181,16 +169,16 @@ const ListOfUser = () => {
                                                             }
                                                         }}
                                                     />
-                                                </TableCell>
+                                                </TableCell> */}
                                                 <TableCell>
                                                     <Stack direction="row" alignItems="center" gap={1}>
                                                         <Typography fontWeight={500} >
-                                                            {user.reviews?.length || 0}
+                                                            {user.vibeChecks?.length || 0}
                                                         </Typography>
 
                                                         <IconButton
                                                             size="small"
-                                                            onClick={() => handleOpenReviews(user)}
+                                                            onClick={() => handleOpenVibes(user)}
                                                         >
                                                             <VisibilityIcon fontSize="small" />
                                                         </IconButton>
@@ -224,37 +212,52 @@ const ListOfUser = () => {
                                 height: '100%'
                             }}>
                                 <Typography variant="h6" fontWeight={600} >
-                                    Reviews by {selectedUser?.firstName}
+                                    Vibe Checks by {selectedUser?.firstName}
                                 </Typography>
 
                                 <Stack mt={2} gap={2}>
-                                    {selectedUser?.reviews?.length > 0 ? (
-                                        selectedUser.reviews.map((review) => (
+                                    {selectedUser?.vibeChecks?.length > 0 ? (
+                                        selectedUser.vibeChecks.map((vibe) => (
                                             <Box
-                                                key={review.id}
+                                                key={vibe.id}
                                                 sx={{
                                                     border: '1px solid #E5E7EB',
                                                     borderRadius: 2,
                                                     p: 2
                                                 }}
                                             >
-                                                <Typography fontWeight={500} >
-                                                    {review.instructorName}
+                                                <Typography fontWeight={600}>
+                                                    {vibe.classType}
                                                 </Typography>
 
-                                                <Typography variant="body2" >
-                                                    Rating: {review.rating}/5
+                                                <Typography variant="body2">
+                                                    Energy: {vibe.energy}/5 | Pace: {vibe.pace}/5
                                                 </Typography>
 
-                                                <Typography mt={1} >
-                                                    {review.comment}
+                                                <Typography variant="body2">
+                                                    Focus: {vibe.focus}/5 | Music: {vibe.music}/5
+                                                </Typography>
+
+                                                <Stack direction="row" gap={1} flexWrap="wrap" mt={1}>
+                                                    {vibe.tags.map((tag, i) => (
+                                                        <Chip key={i} size="small" label={tag} />
+                                                    ))}
+                                                </Stack>
+
+                                                {vibe.note && (
+                                                    <Typography mt={1} fontSize={14} color="text.secondary">
+                                                        {vibe.note}
+                                                    </Typography>
+                                                )}
+
+                                                <Typography mt={1} fontSize={12} color="gray">
+                                                    {vibe.date}
                                                 </Typography>
                                             </Box>
+
                                         ))
                                     ) : (
-                                        <Typography>
-                                            No reviews given by this user
-                                        </Typography>
+                                        <Typography>No vibe checks submitted by this user</Typography>
                                     )}
                                 </Stack>
                             </Box>

@@ -54,9 +54,10 @@ export const menulist = [
     },
 
     {
-        id: "reviews",
-        name: "Reviews & Ratings",
-        path: "/home/reviews",
+        id: "vibe",
+        name: "Vibe Checks",
+        path: "/home/vibe",
+        view: "Vibe Checks",
         icon: icons.StarOutlined,
     },
 

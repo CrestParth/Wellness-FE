@@ -19,7 +19,7 @@ const instructorData = [
         services: ["Strength Training", "CrossFit"],
         location: "Los Angeles, California, USA",
         time: "5 AM – 9 AM",
-        status: "approved",
+        verified: true,
         email: "michael.johnson@yopmail.com",
         phone: "+1 310 555 7821",
     },
@@ -30,7 +30,7 @@ const instructorData = [
         services: ["Pilates", "Mobility Training"],
         location: "Austin, Texas, USA",
         time: "8 AM – 12 PM",
-        status: "pending",
+        verified: false,
         email: "emily.carter@yopmail.com",
         phone: "+1 512 555 4390",
     },
@@ -41,7 +41,7 @@ const instructorData = [
         services: ["HIIT", "Weight Loss Coaching"],
         location: "New York City, USA",
         time: "6 PM – 9 PM",
-        status: "suspended",
+        verified: true,
         email: "david.wilson@yopmail.com",
         phone: "+1 917 555 2684",
     },
@@ -52,7 +52,7 @@ const instructorData = [
         services: ["Hatha Yoga", "Vinyasa Flow"],
         location: "San Diego, California, USA",
         time: "6 AM – 8 AM",
-        status: "approved",
+        verified: true,
         email: "jessica.martinez@yopmail.com",
         phone: "+1 619 555 9043",
     },
@@ -63,7 +63,7 @@ const instructorData = [
         services: ["Personal Training", "Functional Training"],
         location: "Chicago, Illinois, USA",
         time: "4 PM – 8 PM",
-        status: "pending",
+        verified: false,
         email: "ryan.thompson@yopmail.com",
         phone: "+1 312 555 7718",
     },
@@ -117,16 +117,28 @@ const ListOfInstructor = () => {
             i.name.toLowerCase().includes(filter.toLowerCase()) ||
             i.studio.toLowerCase().includes(filter.toLowerCase())
     );
+    const statusColorMap = {
+        Verified: {
+            color: '#7BC8A9',
+            border: '#10B981',
+            bg: '#ECFDF5'
+        },
+        Pending: {
+            color: '#FF927C',
+            border: '#EF4444',
+            bg: '#FEF2F2'
+        }
+    };
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
                         List of Instructors
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                     <TextField
                         variant="outlined"
                         placeholder="Search"
@@ -164,7 +176,7 @@ const ListOfInstructor = () => {
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
                         <MenuItem value="">All</MenuItem>
-                        {["pending", "suspended", "approved"].map((r) => (
+                        {["pending", "verified"].map((r) => (
                             <MenuItem key={r} value={r}>
                                 {r}
                             </MenuItem>
@@ -194,36 +206,37 @@ const ListOfInstructor = () => {
                     </TableHead>
 
                     <TableBody>
-                        {filtered.map((i) => (
-                            <TableRow key={i.id}>
-                                <TableCell sx={{ fontWeight: 500 }}>{i.name}</TableCell>
-                                <TableCell>{i.studio}</TableCell>
-                                <TableCell sx={{ color: '#4B5563' }}>{i.services.join(", ")}</TableCell>
-                                <TableCell>{i.location}</TableCell>
-                                <TableCell>
-                                    <Switch
-                                        checked={i.status === "approved"}
-                                        onChange={() => handleStatusToggle(i.id)}
-                                        sx={{
-                                            '& .MuiSwitch-switchBase.Mui-checked': {
-                                                color: '#B57EDC',
-                                            },
-                                            '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-                                                backgroundColor: '#B57EDC',
-                                            },
-                                            '& .MuiSwitch-track': {
-                                                backgroundColor: 'black',
-                                            },
-                                        }}
-                                    />
-                                </TableCell>
+                        {filtered.map((i) => {
+                            const statusLabel = i.verified ? "Verified" : "Pending";
+                            const statusStyle = statusColorMap[statusLabel];
 
-                                <TableCell >
-                                    <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
-                                        {i.status === 'pending' && (
+                            return (
+                                <TableRow key={i.id}>
+                                    <TableCell sx={{ fontWeight: 500 }}>{i.name}</TableCell>
+                                    <TableCell>{i.studio}</TableCell>
+                                    <TableCell sx={{ color: '#4B5563' }}>{i.services.join(", ")}</TableCell>
+                                    <TableCell>{i.location}</TableCell>
+                                    <TableCell>
+                                        <Chip
+                                            label={statusLabel}
+                                            sx={{
+                                                backgroundColor: statusStyle.bg,
+                                                color: statusStyle.color,
+                                                border: `1px solid ${statusStyle.border}`,
+                                                '& .MuiChip-label': {
+                                                    textTransform: 'capitalize',
+                                                    fontWeight: 500,
+                                                }
+                                            }}
+                                        />
+                                    </TableCell>
+
+                                    <TableCell >
+                                        <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
+                                            {/* {i.status === 'pending' && (
                                             <Tooltip title="Approve Instructor">
                                                 <IconButton
-                                                    sx={{ color: '#16A34A' }} // green
+                                                    sx={{ color: '#16A34A' }}
                                                     onClick={() => {
                                                         setSelectedId(i.id);
                                                         handleOpen('approve');
@@ -232,23 +245,24 @@ const ListOfInstructor = () => {
                                                     <CheckIcon />
                                                 </IconButton>
                                             </Tooltip>
-                                        )}
-                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
-                                            <VisibilityIcon />
-                                        </IconButton>
-                                        <Tooltip title="Delete Instructor">
-
-                                            <IconButton color="error" onClick={() => {
-                                                handleOpen('delete')
-                                                setSelectedId(i.id)
-                                            }}>
-                                                <DeleteIcon />
+                                        )} */}
+                                            <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
+                                                <VisibilityIcon />
                                             </IconButton>
-                                        </Tooltip>
-                                    </Stack>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                                            <Tooltip title="Delete Instructor">
+
+                                                <IconButton color="error" onClick={() => {
+                                                    handleOpen('delete')
+                                                    setSelectedId(i.id)
+                                                }}>
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Stack>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
                     </TableBody>
                 </Table>
             </TableContainer>

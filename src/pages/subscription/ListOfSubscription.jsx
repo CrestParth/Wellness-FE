@@ -87,25 +87,12 @@ const ListOfSubscription = () => {
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, sm: 6 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
                         Subscriptions & Revenue
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
-                    <TextField
-                        select
-                        label="Platform"
-                        fullWidth
-                        size="small"
-
-                        value={platformFilter}
-                        onChange={(e) => setPlatformFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        <MenuItem value="Apple">Apple</MenuItem>
-                        <MenuItem value="Google">Google</MenuItem>
-                    </TextField>
+                <Grid size={{ xs: 12, sm: 4 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                     <TextField
                         select
                         label="Status"
@@ -138,9 +125,6 @@ const ListOfSubscription = () => {
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
                             <TableCell sx={tableHeaderCellSx}>Instructor</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Plan</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Platform</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Type</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Status</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Amount</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Purchase Date</TableCell>
@@ -155,23 +139,6 @@ const ListOfSubscription = () => {
                                     <TableRow key={sub.id}>
                                         <TableCell fontWeight={500}>
                                             {sub.instructorName}
-                                        </TableCell>
-                                        <TableCell>{sub.planName}</TableCell>
-                                        <TableCell>{sub.platform}</TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={sub.recurring ? "Recurring" : "One-time"}
-                                                sx={{
-                                                    backgroundColor: sub.recurring ? "#F5F3FF" : "#F3F4F6",
-                                                    color: sub.recurring ? "#5B21B6" : "#374151",
-                                                    border: `1px solid ${sub.recurring ? "#E9D5FF" : "#D1D5DB"}`,
-                                                    '& .MuiChip-label': {
-                                                        textTransform: 'capitalize',
-                                                        fontWeight: 500,
-                                                    },
-                                                }}
-                                            />
-
                                         </TableCell>
                                         <TableCell>
                                             <Chip

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
     Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Button, Dialog, DialogTitle,
-    DialogContent, DialogActions, TextField, Stack, Chip, Tooltip, Grid
+    DialogContent, DialogActions, TextField, Stack, Tooltip, Grid
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -96,12 +96,12 @@ const ListOfCategory = () => {
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, sm: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
                         Vendor Categories
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                     <Button
                         variant="contained"
                         sx={{ color: 'white', borderRadius: '8px', backgroundColor: 'var(--Blue)', height: '40px' }}
@@ -119,7 +119,7 @@ const ListOfCategory = () => {
                         <TableRow>
                             <TableCell sx={tableHeaderCellSx}>Category Name</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Description</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Status</TableCell>
+                            {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -131,7 +131,7 @@ const ListOfCategory = () => {
                                 <TableRow key={cat.id}>
                                     <TableCell fontWeight={500}>{cat.name}</TableCell>
                                     <TableCell>{cat.description}</TableCell>
-                                    <TableCell>
+                                    {/* <TableCell>
                                         <Chip
                                             label={cat.status}
 
@@ -145,7 +145,7 @@ const ListOfCategory = () => {
                                                 }
                                             }}
                                         />
-                                    </TableCell>
+                                    </TableCell> */}
                                     <TableCell align="center">
                                         <Tooltip title="Edit Category">
                                             <IconButton onClick={() => handleOpenEdit(cat)}>
