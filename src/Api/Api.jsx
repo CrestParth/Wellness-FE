@@ -1,32 +1,18 @@
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
-// import { useEffect, useState } from "react";
-// import { useNavigate } from "react-router-dom";
 import apiClient from "./ApiClient";
 
-// get list of advance user
-export const useGetUser = (page = 1, limit = 2, searchKey = '', userType = '', primaryPlatform = '', startDate = '', endDate = '', country, province) => {
+// get list of user
+export const useGetUser = (page = 1, limit = 2) => {
     return useQuery({
-        queryKey: ['users', page, limit, searchKey, userType, primaryPlatform, startDate, endDate, country, province],
+        queryKey: ['users', page, limit],
         queryFn: async () => {
-            const response = await apiClient.get('/super-admin/users/', {
-                params: { page, limit, searchKey, user_type: userType, primary_platform: primaryPlatform, from_date: startDate, to_date: endDate, country_id: country, province_id: province },
+            const response = await apiClient.get('/admin/users', {
+                params: { page, limit },
             });
             return response.data;
         },
         staleTime: 15 * 60 * 1000,
         placeholderData: keepPreviousData,
-    });
-};
-//  Get user by ID
-export const useUserById = (userId) => {
-    return useQuery({
-        queryKey: ['user', userId],
-        queryFn: async () => {
-            const { data } = await apiClient.get(`/super-admin/users/${userId}`);
-            return data;
-        },
-        staleTime: Infinity,
-        enabled: !!userId,
     });
 };
 // update user status
@@ -44,24 +30,14 @@ export const useUpdateStatus = (onSuccess, onError) => {
 export const useDeleteUser = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async (userId) => {
-            const { data } = await apiClient.delete(`/auth/deleteUser/${userId}`);
+            const { data } = await apiClient.delete(`/admin/users/${userId}`);
             return data;
         },
         onSuccess,
         onError,
     });
 };
-//  Update user by ID
-export const useUpdateUser = (onSuccess, onError) => {
-    return useMutation({
-        mutationFn: async ({ data }) => {
-            const response = await apiClient.patch(`/super-admin/users`, data);
-            return response.data;
-        },
-        onSuccess,
-        onError,
-    });
-};
+
 
 
 // get profile details
@@ -199,6 +175,65 @@ export const useUpdateInstructor = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async ({ id, data }) => {
             const response = await apiClient.patch(`/admin/instructors/${id}`, data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+
+
+// Create Studio
+export const useCreateStudio = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (data) => {
+            const response = await apiClient.post('/admin/studios', data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+// get all Studios
+export const useGetStudio = (page, limit) => {
+    return useQuery({
+        queryKey: ['studios', page, limit],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/studios`, { params: { page, limit } });
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+// get Studio by id 
+export const useGetStudioById = (id) => {
+    return useQuery({
+        queryKey: ['studio', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/studios/${id}`);
+            return data;
+        },
+        staleTime: Infinity,
+        enabled: !!id,
+    });
+};
+//  Delete Studio by ID
+export const useDeleteStudio = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (id) => {
+            const { data } = await apiClient.delete(`/admin/studios/${id}`);
+            return data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+//  Update Studio by ID
+export const useUpdateStudio = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async ({ id, data }) => {
+            const response = await apiClient.patch(`/admin/studios/${id}`, data);
             return response.data;
         },
         onSuccess,
