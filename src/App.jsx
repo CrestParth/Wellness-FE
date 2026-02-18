@@ -10,6 +10,7 @@ import InstructorInfo from './pages/instructor/InstructorInfo'
 import ListOfCategory from "./pages/category/ListOfCategory";
 import ListOfSubscription from "./pages/subscription/ListOfSubscription";
 import VibeInfo from "./pages/review/VibeInfo";
+import AddStudio from "./pages/vendor/AddStudio";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -54,6 +55,7 @@ function App() {
           path: "vendors",
           children: [
             { path: "", element: <ListOfVendor /> },
+            { path: "add-studio", element: <AddStudio /> },
             { path: "vendor-view/:id", element: <VendorInformation /> },
           ],
         },

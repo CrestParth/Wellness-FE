@@ -56,7 +56,7 @@ const Home = () => {
         <>
             <Box sx={{ p: { xs: 0, sm: 2 } }}>
                 <Grid container spacing={3} mb={5}>
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Total Instructors"
                             value={dashboardData.stats.totalInstructors}
@@ -64,7 +64,7 @@ const Home = () => {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Active Instructors"
                             value={dashboardData.stats.activeInstructors}
@@ -72,15 +72,15 @@ const Home = () => {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    {/* <Grid size={{ xs: 12, md: 3 }}>
                         <StatCard
                             title="Pending Approvals"
                             value={dashboardData.stats.pendingInstructors}
                             bg="#aa971b33"
                         />
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="New Instructor Signups"
                             value={dashboardData.stats.newInstructorSignups}

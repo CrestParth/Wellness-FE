@@ -1,5 +1,5 @@
 import {
-    Box, Typography, Button, Grid, FormHelperText, FormControl
+    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl
 } from "@mui/material";
 import { useFormik } from "formik";
 import { vendorValidationSchema } from "../../common/FormValidation";
@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import GrayPlus from '../../assets/images/GrayPlus.svg'
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-
+import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import CustomSelect from '../../common/custom/CustomSelect'
 import CustomInput from "../../common/custom/CustomInput";
 
@@ -24,6 +24,13 @@ const VendorInformation = () => {
     // const onError = (error) => {
     //     toast.error(error.response.data.message || "Something went Wrong");
     // };
+
+    const categoryOptions = [
+        { label: "Strength", value: "Strength" },
+        { label: "Yoga", value: "Yoga" },
+        { label: "Fitness", value: "Fitness" },
+    ];
+
 
 
     const vendorForm = useFormik({
@@ -76,28 +83,18 @@ const VendorInformation = () => {
                             marginBottom: "10px"
                         }}>
                             <Typography variant="h6" gutterBottom fontWeight={600}>
-                                Vendor Information
+                                Studio Information
                             </Typography>
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
                                 <CustomInput
-                                    label="Vendor / Studio Name"
+                                    label="Studio Name"
                                     name="vendorName"
-                                    placeholder="Enter vendor name"
+                                    placeholder="Enter studio name"
                                     formik={vendorForm}
                                 />
-                            ) : displayField("Vendor Name", vendorForm.values.vendorName)}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Category"
-                                    name="category"
-                                    placeholder="Gym / Yoga / Wellness"
-                                    formik={vendorForm}
-                                />
-                            ) : displayField("Category", vendorForm.values.category)}
+                            ) : displayField("Studio Name", vendorForm.values.vendorName)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
@@ -109,7 +106,7 @@ const VendorInformation = () => {
                                 />
                             ) : displayField("Email", vendorForm.values.email)}
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        {/* <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
                                 <FormControl variant="standard" fullWidth>
                                     <label style={{ marginBottom: 10 }}>Phone Number</label>
@@ -158,18 +155,18 @@ const VendorInformation = () => {
                                     )}
                                 </FormControl>
                             ) : displayField("Phone Number", `${vendorForm.values.countryCode ?? ''}${vendorForm.values.phone ?? ''}`)}
-                        </Grid>
+                        </Grid> */}
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
                                 <CustomInput
-                                    label="Address"
-                                    name="address"
+                                    label="Location"
+                                    name="location"
                                     placeholder="City, State"
                                     formik={vendorForm}
                                     multiline
                                     rows={3}
                                 />
-                            ) : displayField("Address", vendorForm.values.address)}
+                            ) : displayField("Location", vendorForm.values.location)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
 
@@ -186,7 +183,180 @@ const VendorInformation = () => {
                             ) : displayField("Status", vendorForm.values.status)}
                         </Grid>
 
+                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                            {edit ? (
+                                <CustomSelect
+                                    label="Class Style"
+                                    name="category"
+                                    value={vendorForm.values.category}
+                                    onChange={vendorForm.handleChange}
+                                    options={categoryOptions}
+                                    multiple
+                                />
+                            ) : (
+                                <Box mb={3}>
+                                    <Typography
+                                        sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}
+                                    >
+                                        Class Style
+                                    </Typography>
 
+                                    <Box display="flex" gap={1} flexWrap="wrap">
+                                        {vendorForm.values.category?.length ? (
+                                            vendorForm.values.category.map((cat) => (
+                                                <Box
+                                                    key={cat}
+                                                    sx={{
+                                                        px: 2.5,
+                                                        py: 0.8,
+                                                        borderRadius: "999px",
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        fontWeight: 600,
+                                                        fontSize: "14px",
+                                                        backgroundColor: "transparent",
+                                                    }}
+                                                >
+                                                    {cat}
+                                                </Box>
+                                            ))
+                                        ) : (
+                                            <Typography color="text.secondary">-</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                            )}
+                        </Grid>
+
+                        <Grid size={{ xs: edit ? 12 : 6 }}>
+                            {edit ? (
+                                <FormControl variant="standard" fullWidth>
+
+                                    <InputLabel
+                                        shrink
+                                        htmlFor={'description'}
+                                        sx={{
+                                            fontSize: "1.3rem",
+                                            fontWeight: 450,
+                                            color: "rgba(0,0,0,0.8)",
+                                            '&.Mui-focused': { color: 'black' }
+                                        }}
+                                    >
+                                        Description
+                                    </InputLabel>
+
+
+                                    <BootstrapInput
+                                        id={'description'}
+                                        name={'description'}
+                                        type={'text'}
+                                        placeholder={"Enter descripton"}
+                                        multiline
+                                        rows={3}
+                                        value={vendorForm.values.description}
+                                        onChange={vendorForm.handleChange}
+                                        onBlur={vendorForm.handleBlur}
+                                    />
+                                </FormControl>
+                            ) : displayField("Description", vendorForm.values.description)}
+                        </Grid>
+
+                        <Grid size={12}>
+                            <Grid container gap={4} sx={{ mt: 1 }}>
+                                <Grid size={{ xs: 12, sm: 4 }}>
+                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image</label>
+                                    <Box
+                                        sx={{
+                                            border: '2px dashed #E0E3E7',
+                                            borderRadius: '12px',
+                                            minHeight: 180,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: edit ? 'pointer' : 'not-allowed',
+                                            position: 'relative',
+                                            background: '#fafbfc'
+                                        }}
+                                        component="label"
+                                    >
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            hidden
+                                            name="hero_img"
+                                            disabled={!edit}
+                                            onChange={e => vendorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                        />
+                                        {vendorForm.values.hero_img instanceof File ? (
+                                            <img
+                                                src={URL.createObjectURL(vendorForm.values.hero_img)}
+                                                alt="Selfie Preview"
+                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                            />
+                                        ) : vendorForm.values.hero_img ? (
+                                            <img
+                                                src={vendorForm.values.hero_img}
+                                                alt="Selfie"
+                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                            />
+                                        ) : (<><img src={GrayPlus} alt="gray plus" />
+                                            <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                        )}
+                                    </Box>
+                                    {vendorForm.touched.hero_img && vendorForm.errors.hero_img && (
+                                        <FormHelperText error>{vendorForm.errors.hero_img}</FormHelperText>
+                                    )}
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 4 }}>
+                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
+                                    <Box
+                                        sx={{
+                                            border: '2px dashed #E0E3E7',
+                                            borderRadius: '12px',
+                                            minHeight: 180,
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            cursor: edit ? 'pointer' : 'not-allowed',
+                                            position: 'relative',
+                                            background: '#fafbfc'
+                                        }}
+                                        component="label"
+                                    >
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            hidden
+                                            name="profile_img"
+                                            disabled={!edit}
+                                            onChange={e => vendorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                        />
+                                        {vendorForm.values.profile_img instanceof File ? (
+                                            <img
+                                                src={URL.createObjectURL(vendorForm.values.profile_img)}
+                                                alt="Selfie Preview"
+                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                            />
+                                        ) : vendorForm.values.profile_img ? (
+                                            <img
+                                                src={vendorForm.values.profile_img}
+                                                alt="Selfie"
+                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                            />
+                                        ) : (<><img src={GrayPlus} alt="gray plus" />
+                                            <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                        )}
+                                    </Box>
+                                    {vendorForm.touched.profile_img && vendorForm.errors.profile_img && (
+                                        <FormHelperText error>{vendorForm.errors.profile_img}</FormHelperText>
+                                    )}
+                                </Grid>
+                            </Grid>
+
+
+                        </Grid>
                         {/* save /edit button */}
                         <Grid size={12}>
                             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
@@ -220,7 +390,14 @@ const VendorInformation = () => {
                                     >
                                         Edit
                                     </Button>
+
                                 )}
+                                <Button
+                                    variant="contained"
+                                    sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: 'red' }}
+                                // onClick={() => setedit(true)}
+                                >Delete
+                                </Button>
                             </Box>
                         </Grid>
 
@@ -235,10 +412,10 @@ export default VendorInformation;
 
 const vendorInitialValues = {
     vendorName: "test",
-    category: "GYM",
+    category: ["Strength", "Yoga", "Fitness"], // ✅ array
     email: "test@yopmail.com",
-    countryCode: '',
-    phone: "123456789",
-    address: "test",
+    location: "test",
     status: "active",
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore'
 };
+

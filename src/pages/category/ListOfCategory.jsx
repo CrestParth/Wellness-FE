@@ -98,7 +98,7 @@ const ListOfCategory = () => {
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
                 <Grid size={{ xs: 12, sm: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
-                        Vendor Categories
+                        Class Style Listing
                     </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
@@ -108,7 +108,7 @@ const ListOfCategory = () => {
                         startIcon={<AddIcon sx={{ color: 'white' }} />}
                         onClick={handleOpenAdd}
                     >
-                        Add Category
+                        Add Class Style
                     </Button>
                 </Grid>
             </Grid>
@@ -117,8 +117,8 @@ const ListOfCategory = () => {
                 <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>Category Name</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Description</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>Class Style Name</TableCell>
+                            {/* <TableCell sx={tableHeaderCellSx}>Description</TableCell> */}
                             {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
@@ -130,7 +130,7 @@ const ListOfCategory = () => {
                             return (
                                 <TableRow key={cat.id}>
                                     <TableCell fontWeight={500}>{cat.name}</TableCell>
-                                    <TableCell>{cat.description}</TableCell>
+                                    {/* <TableCell>{cat.description}</TableCell> */}
                                     {/* <TableCell>
                                         <Chip
                                             label={cat.status}

@@ -19,6 +19,7 @@ const instructorData = [
         services: ["Strength Training", "CrossFit"],
         location: "Los Angeles, California, USA",
         time: "5 AM – 9 AM",
+        vibeChecks: 5,
         verified: true,
         email: "michael.johnson@yopmail.com",
         phone: "+1 310 555 7821",
@@ -30,6 +31,7 @@ const instructorData = [
         services: ["Pilates", "Mobility Training"],
         location: "Austin, Texas, USA",
         time: "8 AM – 12 PM",
+        vibeChecks: 2,
         verified: false,
         email: "emily.carter@yopmail.com",
         phone: "+1 512 555 4390",
@@ -42,6 +44,8 @@ const instructorData = [
         location: "New York City, USA",
         time: "6 PM – 9 PM",
         verified: true,
+        vibeChecks: 3,
+
         email: "david.wilson@yopmail.com",
         phone: "+1 917 555 2684",
     },
@@ -53,6 +57,8 @@ const instructorData = [
         location: "San Diego, California, USA",
         time: "6 AM – 8 AM",
         verified: true,
+        vibeChecks: 4,
+
         email: "jessica.martinez@yopmail.com",
         phone: "+1 619 555 9043",
     },
@@ -63,6 +69,8 @@ const instructorData = [
         services: ["Personal Training", "Functional Training"],
         location: "Chicago, Illinois, USA",
         time: "4 PM – 8 PM",
+        vibeChecks: 1,
+
         verified: false,
         email: "ryan.thompson@yopmail.com",
         phone: "+1 312 555 7718",
@@ -197,10 +205,13 @@ const ListOfInstructor = () => {
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
                             <TableCell sx={tableHeaderCellSx}>Name</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Studio</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Services</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Location</TableCell>
+                            <TableCell sx={{
+                                backgroundColor: '#F9FAFB',
+                                color: '#878787', textAlign: 'center'
+                            }}>Vibe Checks</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Status</TableCell>
+
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -213,9 +224,13 @@ const ListOfInstructor = () => {
                             return (
                                 <TableRow key={i.id}>
                                     <TableCell sx={{ fontWeight: 500 }}>{i.name}</TableCell>
-                                    <TableCell>{i.studio}</TableCell>
-                                    <TableCell sx={{ color: '#4B5563' }}>{i.services.join(", ")}</TableCell>
                                     <TableCell>{i.location}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" justifyContent={"center"} spacing={1}>
+                                            <Typography fontWeight={500} >
+                                                {i.vibeChecks || 0}
+                                            </Typography>
+                                        </Stack></TableCell>
                                     <TableCell>
                                         <Chip
                                             label={statusLabel}
@@ -232,7 +247,7 @@ const ListOfInstructor = () => {
                                     </TableCell>
 
                                     <TableCell >
-                                        <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
+                                        <Stack direction="row" justifyContent={"center"} spacing={1}>
                                             {/* {i.status === 'pending' && (
                                             <Tooltip title="Approve Instructor">
                                                 <IconButton
@@ -249,15 +264,6 @@ const ListOfInstructor = () => {
                                             <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
                                                 <VisibilityIcon />
                                             </IconButton>
-                                            <Tooltip title="Delete Instructor">
-
-                                                <IconButton color="error" onClick={() => {
-                                                    handleOpen('delete')
-                                                    setSelectedId(i.id)
-                                                }}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
                                         </Stack>
                                     </TableCell>
                                 </TableRow>
