@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useGetInstructorById, useUpdateInstructor } from "../../Api/Api";
 
 const InstructorInfo = () => {
     const [edit, setEdit] = useState(false)

@@ -8,7 +8,7 @@ import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import CheckIcon from '@mui/icons-material/Check';
+import { useGetInstructors, useDeleteInstructor } from "../../Api/Api";
 
 
 const instructorData = [
@@ -129,6 +129,9 @@ const ListOfInstructor = () => {
             bg: '#FEF2F2'
         }
     };
+
+    const { data } = useGetInstructors()
+    console.log(data?.data?.instructors)
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>

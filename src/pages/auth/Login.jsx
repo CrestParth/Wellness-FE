@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { BootstrapInput } from '../../common/custom/BootstrapInput'
 import { useLogin } from "../../Api/Api";
+import { CircularProgress } from "@mui/material";
 
 import { Box, Card, Typography, TextField, Button, IconButton, InputAdornment, FormControl, InputLabel, FormHelperText } from "@mui/material";
 
@@ -19,7 +20,7 @@ const Login = () => {
         initialValues: {
             email: "",
             password: "",
-            fcm_token: "fcm_token",
+            // fcm_token: "fcm_token",
         },
         validationSchema: loginValidation,
         onSubmit: (values) => loginfn.mutate(values),
@@ -127,9 +128,8 @@ const Login = () => {
                     {/* Submit Button */}
                     <Button
                         fullWidth
-                        // variant="contained"
                         type="submit"
-                        // disabled={loginfn.isPending}
+                        disabled={loginfn.isPending}
                         sx={{
                             bgcolor: "var(--Blue)",
                             fontWeight: 700,
@@ -137,11 +137,16 @@ const Login = () => {
                             py: 1.5,
                             color: "white",
                             "&:hover": { bgcolor: "var(--Blue)" },
+                            opacity: loginfn.isPending ? 0.8 : 1,
                         }}
                     >
-                        {/* {loginfn.isPending ? <Loader color="white" /> : "Log In"} */}
-                        Log In
+                        {loginfn.isPending ? (
+                            <CircularProgress size={22} sx={{ color: "white" }} />
+                        ) : (
+                            "Log In"
+                        )}
                     </Button>
+
                 </form>
             </Card>
         </Box>

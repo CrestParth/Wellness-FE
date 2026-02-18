@@ -89,6 +89,124 @@ export const useUpdateProfile = (onSuccess, onError) => {
 };
 
 
+// Create Category
+export const useCreateCategory = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (data) => {
+            const response = await apiClient.post('/admin/categories', data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+// get all categories
+export const useGetCategories = (page, limit) => {
+    return useQuery({
+        queryKey: ['categories', page, limit],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/categories`, { params: { page, limit } });
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+// get category by id 
+export const useGetCategoryById = (id) => {
+    return useQuery({
+        queryKey: ['category', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/categories/${id}`);
+            return data;
+        },
+        staleTime: Infinity,
+        enabled: !!id,
+    });
+};
+//  Delete categories by ID
+export const useDeleteCategory = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (userId) => {
+            const { data } = await apiClient.delete(`/admin/categories/${userId}`);
+            return data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+//  Update user by ID
+export const useUpdateCategory = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async ({ id, data }) => {
+            const response = await apiClient.patch(`/admin/categories/${id}`, data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+
+
+// Create Instructor
+export const useCreateInstructor = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (data) => {
+            const response = await apiClient.post('/admin/instructors', data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+// get all Instructor
+export const useGetInstructors = (page, limit) => {
+    return useQuery({
+        queryKey: ['instructors', page, limit],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/instructors`, { params: { page, limit } });
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+// get Instructor by id 
+export const useGetInstructorById = (id) => {
+    return useQuery({
+        queryKey: ['instructor', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/instructors/${id}`);
+            return data;
+        },
+        staleTime: Infinity,
+        enabled: !!id,
+    });
+};
+//  Delete Instructor by ID
+export const useDeleteInstructor = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (userId) => {
+            const { data } = await apiClient.delete(`/admin/instructors/${userId}`);
+            return data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+//  Update Instructor by ID
+export const useUpdateInstructor = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async ({ id, data }) => {
+            const response = await apiClient.patch(`/admin/instructors/${id}`, data);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+
+
 
 
 // reset password 
@@ -106,7 +224,7 @@ export const useResetLink = (onSuccess, onError) => {
 export const useLogin = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async (credentials) => {
-            const response = await apiClient.post('/v1/auth/login', credentials);
+            const response = await apiClient.post('/auth/login', credentials);
             return response.data;
         },
         onSuccess: (data) => {
