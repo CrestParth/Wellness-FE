@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, Drawer, TextField, InputAdornment, Switch, Button } from "@mui/material";
+import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, Drawer, TextField, InputAdornment, Switch, Button, TableSortLabel } from "@mui/material";
 // import AddIcon from "@mui/icons-material/Add";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPagination from '../../common/custom/CustomPagination'
@@ -8,6 +8,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import { useNavigate } from 'react-router-dom';
 import AddIcon from '@mui/icons-material/Add'
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
 const VendorData = {
     data: [
         {
@@ -69,6 +72,8 @@ const ListOfStudio = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('')
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
     const isVendorActive = (status) => status === 'active';
     const nav = useNavigate()
 
@@ -93,6 +98,17 @@ const ListOfStudio = () => {
         v.name.toLowerCase().includes(filter.toLowerCase()) ||
         v.email.toLowerCase().includes(filter.toLowerCase())
     );
+
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
 
 
 
@@ -160,8 +176,28 @@ const ListOfStudio = () => {
                             <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
                                 <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow >
-                                        <TableCell sx={tableHeaderCellSx}>Studio</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}>Location</TableCell>
+                                        <TableCell sx={tableHeaderCellSx}>
+                                            <TableSortLabel
+                                                id="firstName"
+                                                active={sortBy === 'firstName'}
+                                                direction={sortOrder}
+                                                onClick={changeSortOrder}
+                                                IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            >
+                                                Studio
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell sx={tableHeaderCellSx}>
+                                            <TableSortLabel
+                                                id="location"
+                                                active={sortBy === 'location'}
+                                                direction={sortOrder}
+                                                onClick={changeSortOrder}
+                                                IconComponent={() => <img src={sortBy === 'location' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            >
+                                                Location
+                                            </TableSortLabel>
+                                        </TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Status</TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Actions</TableCell>
                                     </TableRow>

@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment } from "@mui/material";
+import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment, TableSortLabel } from "@mui/material";
 import CustomPagination from '../../common/custom/CustomPagination'
 import Search from '@mui/icons-material/Search'
 import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from 'react-router-dom';
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
 
 const User = {
     data: [
@@ -87,6 +90,8 @@ const ListOfUser = () => {
     const [filter, setFilter] = useState('')
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
     const navigate = useNavigate()
 
     const totalUsers = User?.pagination?.totalCount;
@@ -103,6 +108,16 @@ const ListOfUser = () => {
             bg: '#FEF2F2'
         }
     };
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
 
 
     return (
@@ -159,9 +174,39 @@ const ListOfUser = () => {
                                         <TableCell sx={{
                                             backgroundColor: '#F9FAFB',
                                             color: '#878787', paddingLeft: '30px'
-                                        }}>Name</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}>Email</TableCell>
-                                        <TableCell align="center" sx={tableHeaderCellSx}>Vibe Checks</TableCell>
+                                        }}>
+                                            <TableSortLabel
+                                                id="firstName"
+                                                active={sortBy === 'firstName'}
+                                                direction={sortOrder}
+                                                onClick={changeSortOrder}
+                                                IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            >
+                                                Name
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell sx={tableHeaderCellSx}>
+                                            <TableSortLabel
+                                                id="email"
+                                                active={sortBy === 'email'}
+                                                direction={sortOrder}
+                                                onClick={changeSortOrder}
+                                                IconComponent={() => <img src={sortBy === 'email' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            >
+                                                Email
+                                            </TableSortLabel>
+                                        </TableCell>
+                                        <TableCell align="center" sx={tableHeaderCellSx}>
+                                            <TableSortLabel
+                                                id="vibeChecks"
+                                                active={sortBy === 'vibeChecks'}
+                                                direction={sortOrder}
+                                                onClick={changeSortOrder}
+                                                IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            >
+                                                Vibe Checks
+                                            </TableSortLabel>
+                                        </TableCell>
                                         <TableCell align="center" sx={tableHeaderCellSx}>Action</TableCell>
                                     </TableRow>
                                 </TableHead>

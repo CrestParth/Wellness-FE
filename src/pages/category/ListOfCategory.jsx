@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
     Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Button, Dialog, DialogTitle,
-    DialogContent, DialogActions, TextField, Stack, Tooltip, Grid
+    DialogContent, DialogActions, TextField, Stack, Tooltip, Grid, TableSortLabel
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -9,6 +9,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
 
 const initialCategories = [
     {
@@ -42,6 +45,8 @@ const ListOfCategory = () => {
     const [openDialog, setOpenDialog] = useState(false);
     const [editCategory, setEditCategory] = useState(null);
     const [openPopup, setOpenPopup] = useState(null);
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
 
     const handleOpenAdd = () => {
         setEditCategory(null);
@@ -105,6 +110,16 @@ const ListOfCategory = () => {
         }
         handleClose()
     }
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
@@ -130,9 +145,17 @@ const ListOfCategory = () => {
                 <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>Class Style Name</TableCell>
-                            {/* <TableCell sx={tableHeaderCellSx}>Description</TableCell> */}
-                            {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
+                            <TableCell sx={tableHeaderCellSx}>
+                                <TableSortLabel
+                                    id="category"
+                                    active={sortBy === 'category'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'category' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    Class Style Name
+                                </TableSortLabel>
+                            </TableCell>
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
