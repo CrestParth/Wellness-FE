@@ -51,6 +51,7 @@ export const menulist = [
         id: "users",
         name: "User Listing",
         path: "/home/users",
+        view: 'User Information',
         icon: icons.UserOutlined,
     },
 

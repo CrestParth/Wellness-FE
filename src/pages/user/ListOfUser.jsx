@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, Drawer } from "@mui/material";
-// import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment } from "@mui/material";
 import CustomPagination from '../../common/custom/CustomPagination'
+import Search from '@mui/icons-material/Search'
 import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useNavigate } from 'react-router-dom';
 
 const User = {
     data: [
@@ -84,15 +84,10 @@ const User = {
 
 const ListOfUser = () => {
     const isLoading = false
+    const [filter, setFilter] = useState('')
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [openReviews, setOpenReviews] = useState(false);
-
-    const handleOpenVibes = (user) => {
-        setSelectedUser(user);
-        setOpenReviews(true);
-    };
+    const navigate = useNavigate()
 
     const totalUsers = User?.pagination?.totalCount;
     const totalPages = Math.ceil(totalUsers / rowsPerPage);
@@ -114,10 +109,43 @@ const ListOfUser = () => {
         <>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
                 <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                    <Typography variant="h6" fontWeight={590}>
-                        List Of Users
-                    </Typography>
+
+                    <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                        <Typography variant="h6" fontWeight={590}>
+                            List Of Users
+                        </Typography>
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                        <TextField
+                            variant="outlined"
+                            placeholder="Search"
+                            value={filter}
+                            onChange={(e) => setFilter(e.target.value)}
+                            fullWidth
+                            sx={{
+                                width: '100%',
+                                height: '40px',
+                                borderRadius: '8px',
+                                '& .MuiInputBase-root': {
+                                    height: '40px',
+                                    fontSize: '14px',
+                                },
+                                '& .MuiOutlinedInput-input': {
+                                    padding: '10px 14px',
+                                },
+
+                            }}
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start">
+                                        <Search></Search>
+                                    </InputAdornment>
+                                ),
+                            }}
+                        />
+                    </Grid>
                 </Grid>
+
 
                 {isLoading ? (
                     <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>
@@ -133,9 +161,8 @@ const ListOfUser = () => {
                                             color: '#878787', paddingLeft: '30px'
                                         }}>Name</TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Email</TableCell>
-                                        {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
-                                        <TableCell sx={tableHeaderCellSx}>Vibe Checks</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}></TableCell>
+                                        <TableCell align="center" sx={tableHeaderCellSx}>Vibe Checks</TableCell>
+                                        <TableCell align="center" sx={tableHeaderCellSx}>Action</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
@@ -156,39 +183,21 @@ const ListOfUser = () => {
                                                 <TableCell sx={{ fontWeight: 500 }}>
                                                     {user.email || "-"}
                                                 </TableCell>
-                                                {/* <TableCell sx={{ color: '#4B5563' }}>
-                                                    <Chip
-                                                        label={user.status}
-                                                        sx={{
-                                                            backgroundColor: statusStyle.bg,
-                                                            color: statusStyle.color,
-                                                            border: `1px solid ${statusStyle.border}`,
-                                                            '& .MuiChip-label': {
-                                                                textTransform: 'capitalize',
-                                                                fontWeight: 500,
-                                                            }
-                                                        }}
-                                                    />
-                                                </TableCell> */}
                                                 <TableCell>
-                                                    <Stack direction="row" alignItems="center" gap={1}>
+                                                    <Stack direction="row" alignItems="center" justifyContent={'center'} gap={1}>
                                                         <Typography fontWeight={500} >
                                                             {user.vibeChecks?.length || 0}
                                                         </Typography>
-
-                                                        <IconButton
-                                                            size="small"
-                                                            onClick={() => handleOpenVibes(user)}
-                                                        >
-                                                            <VisibilityIcon fontSize="small" />
-                                                        </IconButton>
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell>
-                                                    <IconButton sx={{ color: 'red' }}>
-                                                        <DeleteIcon />
-                                                    </IconButton>
+                                                <TableCell >
+                                                    <Stack direction="row" justifyContent={"center"} spacing={1}>
+
+                                                        <IconButton onClick={() => navigate(`/home/users/user-view/${user.id}`)}>
+                                                            <VisibilityIcon />
+                                                        </IconButton>
+                                                    </Stack>
                                                 </TableCell>
 
                                             </TableRow>
@@ -200,69 +209,6 @@ const ListOfUser = () => {
                         </TableContainer>
 
                         <CustomPagination totalPages={totalPages} setCurrentPage={setCurrentPage} setRowsPerPage={setRowsPerPage} rowsPerPage={rowsPerPage} currentPage={currentPage} />
-                        <Drawer
-                            anchor="right"
-                            open={openReviews}
-                            onClose={() => setOpenReviews(false)}
-
-                        >
-                            <Box sx={{
-                                width: 420, p: 3,
-                                // backgroundColor: '#262626',
-                                height: '100%'
-                            }}>
-                                <Typography variant="h6" fontWeight={600} >
-                                    Vibe Checks by {selectedUser?.firstName}
-                                </Typography>
-
-                                <Stack mt={2} gap={2}>
-                                    {selectedUser?.vibeChecks?.length > 0 ? (
-                                        selectedUser.vibeChecks.map((vibe) => (
-                                            <Box
-                                                key={vibe.id}
-                                                sx={{
-                                                    border: '1px solid #E5E7EB',
-                                                    borderRadius: 2,
-                                                    p: 2
-                                                }}
-                                            >
-                                                <Typography fontWeight={600}>
-                                                    {vibe.classType}
-                                                </Typography>
-
-                                                <Typography variant="body2">
-                                                    Energy: {vibe.energy}/5 | Pace: {vibe.pace}/5
-                                                </Typography>
-
-                                                <Typography variant="body2">
-                                                    Focus: {vibe.focus}/5 | Music: {vibe.music}/5
-                                                </Typography>
-
-                                                <Stack direction="row" gap={1} flexWrap="wrap" mt={1}>
-                                                    {vibe.tags.map((tag, i) => (
-                                                        <Chip key={i} size="small" label={tag} />
-                                                    ))}
-                                                </Stack>
-
-                                                {vibe.note && (
-                                                    <Typography mt={1} fontSize={14} color="text.secondary">
-                                                        {vibe.note}
-                                                    </Typography>
-                                                )}
-
-                                                <Typography mt={1} fontSize={12} color="gray">
-                                                    {vibe.date}
-                                                </Typography>
-                                            </Box>
-
-                                        ))
-                                    ) : (
-                                        <Typography>No vibe checks submitted by this user</Typography>
-                                    )}
-                                </Stack>
-                            </Box>
-                        </Drawer>
-
                     </>
                 ) : (
                     <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>
