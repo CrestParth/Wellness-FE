@@ -147,12 +147,12 @@ const ListOfCategory = () => {
                                         />
                                     </TableCell> */}
                                     <TableCell align="center">
-                                        <Tooltip title="Edit Category">
+                                        <Tooltip title="Edit Class Style">
                                             <IconButton onClick={() => handleOpenEdit(cat)}>
                                                 <EditIcon />
                                             </IconButton>
                                         </Tooltip>
-                                        <Tooltip title="Delete Category">
+                                        <Tooltip title="Delete Class Style">
                                             <IconButton
                                                 color="error"
                                                 onClick={() => handleDelete(cat.id)}
@@ -171,13 +171,13 @@ const ListOfCategory = () => {
             {/* Add / Edit Dialog */}
             <Dialog open={openDialog} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>
-                    {editCategory ? "Edit Category" : "Add Category"}
+                    {editCategory ? "Edit Class Style" : "Add Class Style"}
                 </DialogTitle>
 
                 <DialogContent>
                     <Stack spacing={2} mt={1}>
                         <TextField
-                            label="Category Name"
+                            label="Class Style Name"
                             value={editCategory?.name || ""}
                             onChange={(e) =>
                                 setEditCategory((prev) => ({

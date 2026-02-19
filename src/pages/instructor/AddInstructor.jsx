@@ -146,7 +146,7 @@ const AddInstructor = () => {
                             </FormControl>
                         </Grid>
                         <Grid size={12}>
-                            <Grid container gap={4} sx={{ mt: 1 }}>
+                            <Grid container gap={3} sx={{ mt: 1 }}>
                                 <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image</label>

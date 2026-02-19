@@ -17,7 +17,7 @@ const instructorData = [
         name: "Michael Johnson",
         studio: "Iron Core Fitness",
         services: ["Strength Training", "CrossFit"],
-        location: "Los Angeles, California, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness", "Iron Gym", "Urban Lab"],
         time: "5 AM – 9 AM",
         vibeChecks: 5,
         verified: true,
@@ -29,7 +29,7 @@ const instructorData = [
         name: "Emily Carter",
         studio: "Mind & Body Wellness",
         services: ["Pilates", "Mobility Training"],
-        location: "Austin, Texas, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness"],
         time: "8 AM – 12 PM",
         vibeChecks: 2,
         verified: false,
@@ -41,11 +41,10 @@ const instructorData = [
         name: "David Wilson",
         studio: "Peak Performance Studio",
         services: ["HIIT", "Weight Loss Coaching"],
-        location: "New York City, USA",
+        teachesAt: ["Iron Gym", "Urban Lab"],
         time: "6 PM – 9 PM",
         verified: true,
         vibeChecks: 3,
-
         email: "david.wilson@yopmail.com",
         phone: "+1 917 555 2684",
     },
@@ -54,11 +53,10 @@ const instructorData = [
         name: "Jessica Martinez",
         studio: "Balance Yoga Collective",
         services: ["Hatha Yoga", "Vinyasa Flow"],
-        location: "San Diego, California, USA",
+        teachesAt: ["Urban Lab"],
         time: "6 AM – 8 AM",
         verified: true,
         vibeChecks: 4,
-
         email: "jessica.martinez@yopmail.com",
         phone: "+1 619 555 9043",
     },
@@ -67,10 +65,9 @@ const instructorData = [
         name: "Ryan Thompson",
         studio: "Urban Strength Lab",
         services: ["Personal Training", "Functional Training"],
-        location: "Chicago, Illinois, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness"],
         time: "4 PM – 8 PM",
         vibeChecks: 1,
-
         verified: false,
         email: "ryan.thompson@yopmail.com",
         phone: "+1 312 555 7718",
@@ -200,12 +197,13 @@ const ListOfInstructor = () => {
 
 
 
-            <TableContainer>
-                <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
+            <TableContainer >
+                <Table sx={{ minWidth: '850px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
                             <TableCell sx={tableHeaderCellSx}>Name</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Location</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
+
                             <TableCell sx={{
                                 backgroundColor: '#F9FAFB',
                                 color: '#878787', textAlign: 'center'
@@ -224,7 +222,37 @@ const ListOfInstructor = () => {
                             return (
                                 <TableRow key={i.id}>
                                     <TableCell sx={{ fontWeight: 500 }}>{i.name}</TableCell>
-                                    <TableCell>{i.location}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1} flexWrap="wrap">
+                                            {i.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                <Chip
+                                                    key={index}
+                                                    label={tag}
+                                                    size="medium"
+                                                    sx={{
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        backgroundColor: "transparent",
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                            ))}
+
+                                            {i.teachesAt?.length > 3 && (
+                                                <Chip
+                                                    label={`+${i.teachesAt.length - 3}`}
+                                                    size="meduim"
+                                                    sx={{
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        backgroundColor: "transparent",
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                            )}
+                                        </Stack>
+                                    </TableCell>
+
                                     <TableCell>
                                         <Stack direction="row" justifyContent={"center"} spacing={1}>
                                             <Typography fontWeight={500} >

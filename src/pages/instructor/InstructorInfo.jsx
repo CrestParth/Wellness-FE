@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import {
-    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl
+    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, Stack
 } from "@mui/material";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import CustomSelect from "../../common/custom/CustomSelect";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import GrayPlus from '../../assets/images/GrayPlus.svg'
+import VibeCard from "../../components/VibeCard";
 
 const InstructorInfo = () => {
     const [edit, setEdit] = useState(false)
@@ -15,10 +16,43 @@ const InstructorInfo = () => {
             name: "Michael Johnson",
             studio: "Iron Core Fitness",
             services: "Strength Training",
-            location: "Los Angeles, California, USA",
+            location: ["FitZone", "LifeFitness", "Fitness"],
             email: "michael.johnson@yopmail.com",
             category: ["Strength", "Yoga", "Fitness"],
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore'
+            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+            vibeChecks: [
+                {
+                    id: 1,
+                    userName: "Juliana Silva",
+                    avatar: "/avatar.jpg",
+                    date: "06 June, 2025",
+                    note: "FitZone is the best place to achieve my fitness goals...",
+                    tags: ["Strength", "Yoga", "Fitness"],
+                    energy: "High",
+                    pace: "Athletic",
+                    cueing: "Detailed",
+                    focus: "Burn",
+                    music: "Main Character",
+                    highlights: ["Clear Cues", "Good energy"],
+                    goodFor: ["Beginners", "High energy"]
+                },
+                {
+                    id: 2,
+                    userName: "Jhon Doe",
+                    avatar: "/avatar.jpg",
+                    date: "08 June, 2025",
+                    note: "FitPal is the best place to achieve my fitness goals...",
+                    tags: ["Strength", "Yoga", "Fitness"],
+                    energy: "High",
+                    pace: "Athletic",
+                    cueing: "Detailed",
+                    focus: "Burn",
+                    music: "Main Character",
+                    highlights: ["Clear Cues", "Good energy"],
+                    goodFor: ["Beginners", "High energy"]
+                }
+            ]
+
             // status: 'approved'
         },
         onSubmit: (values) => {
@@ -28,6 +62,11 @@ const InstructorInfo = () => {
     });
 
     const categoryOptions = [
+        { label: "Strength", value: "Strength" },
+        { label: "Yoga", value: "Yoga" },
+        { label: "Fitness", value: "Fitness" },
+    ];
+    const locationOptions = [
         { label: "Strength", value: "Strength" },
         { label: "Yoga", value: "Yoga" },
         { label: "Fitness", value: "Fitness" },
@@ -55,7 +94,7 @@ const InstructorInfo = () => {
                                 Instructor Information
                             </Typography>
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Instructor Name"
@@ -64,7 +103,7 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Instructor Name", instructorForm.values.name)}
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Email"
@@ -73,7 +112,7 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Email", instructorForm.values.email)}
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        {/* <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Location"
@@ -81,10 +120,54 @@ const InstructorInfo = () => {
                                     name="location"
                                     formik={instructorForm}
                                 />) : displayField("Location", instructorForm.values.location)}
+                        </Grid> */}
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {edit ? (
+                                <CustomSelect
+                                    label="Teaches At"
+                                    name="location"
+                                    value={instructorForm.values.location}
+                                    onChange={instructorForm.handleChange}
+                                    options={locationOptions}
+                                    multiple
+                                />
+                            ) : (
+                                <Box mb={3}>
+                                    <Typography
+                                        sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}
+                                    >
+                                        Teaches At
+                                    </Typography>
+
+                                    <Box display="flex" gap={1} flexWrap="wrap">
+                                        {instructorForm.values.location?.length ? (
+                                            instructorForm.values.location.map((cat) => (
+                                                <Box
+                                                    key={cat}
+                                                    sx={{
+                                                        px: 2.5,
+                                                        py: 0.8,
+                                                        borderRadius: "999px",
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        fontWeight: 600,
+                                                        fontSize: "14px",
+                                                        backgroundColor: "transparent",
+                                                    }}
+                                                >
+                                                    {cat}
+                                                </Box>
+                                            ))
+                                        ) : (
+                                            <Typography color="text.secondary">-</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                            )}
                         </Grid>
 
 
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomSelect
                                     label="Class Style"
@@ -128,7 +211,7 @@ const InstructorInfo = () => {
                                 </Box>
                             )}
                         </Grid>
-                        <Grid size={{ xs: 12 }}>
+                        <Grid size={12}>
                             <Grid size={{ xs: edit ? 12 : 6 }}>{edit ? (
                                 <FormControl variant="standard" fullWidth>
 
@@ -161,7 +244,7 @@ const InstructorInfo = () => {
                             ) : displayField("Bio Description", instructorForm.values.description)}</Grid>
                         </Grid>
                         <Grid size={12}>
-                            <Grid container gap={4} sx={{ mt: 1 }}>
+                            <Grid container gap={3} sx={{ mt: 1 }}>
                                 <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image</label>
@@ -397,6 +480,27 @@ const InstructorInfo = () => {
                         </Grid>
                     </Grid>
                 </form>
+            </Box>
+            <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 4, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
+                <Typography variant="h6" fontWeight={600} mb={3}>
+                    Vibe Checks by Users
+                </Typography>
+
+                {instructorForm.values?.vibeChecks?.length > 0 ? (
+                    <Stack spacing={3} >
+                        {instructorForm.values.vibeChecks.map((vibe, i) => (
+                            <Box sx={{
+                                borderRadius: 4,
+                                p: 3,
+                                border: '1px solid black'
+                            }}> <VibeCard key={vibe.id || i} vibe={vibe} /></Box>
+                        ))}
+                    </Stack>
+                ) : (
+                    <Typography color="text.secondary">
+                        No Vibe Checks
+                    </Typography>
+                )}
             </Box>
         </Box>
     );
