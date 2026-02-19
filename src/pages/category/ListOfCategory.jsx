@@ -12,8 +12,6 @@ import { toast } from "react-toastify";
 import { useGetCategories, useCreateCategory, useDeleteCategory, useUpdateCategory } from '../../Api/Api'
 import { useQueryClient } from "@tanstack/react-query";
 import CustomPagination from "../../common/custom/CustomPagination";
-import ConfirmationPopUp from '../../common/ConfirmationPopUp'
-import DeleteConfirm from '../../assets/images/DeleteConfirm.svg'
 
 const ListOfCategory = () => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -90,33 +88,31 @@ const ListOfCategory = () => {
     );
 
     const handleSave = () => {
-        if (!editCategory?.name) {
+        if (!editCategory?.name?.trim()) {
             toast.error("Category name is required");
             return;
         }
+        const payload = {
+            name: editCategory.name.trim(),
+            description: editCategory.description?.trim() || ""
+        };
 
-        if (editCategory?.id) {
+        if (editCategory.id) {
             updateMutation.mutate({
                 id: editCategory.id,
-                data: {
-                    name: editCategory.name,
-                    description: editCategory.description,
-                },
+                data: payload
             });
         } else {
-            createMutation.mutate({
-                name: editCategory.name,
-                description: editCategory.description,
-            });
+            createMutation.mutate(payload);
         }
+
     };
 
     const handleDelete = () => {
-        if (!selectedId) {
-            return
-        }
+        if (!selectedId) return;
         deleteMutation.mutate(selectedId);
     };
+
 
 
     const handleOpen = (type) => setOpenPopup(type);
@@ -158,8 +154,7 @@ const ListOfCategory = () => {
                                 <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow>
                                         <TableCell sx={tableHeaderCellSx}>Category Name</TableCell>
-                                        <TableCell sx={tableHeaderCellSx}>Description</TableCell>
-                                        {/* <TableCell sx={tableHeaderCellSx}>Status</TableCell> */}
+
                                         <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                                     </TableRow>
                                 </TableHead>
@@ -170,22 +165,6 @@ const ListOfCategory = () => {
                                         return (
                                             <TableRow key={cat.id}>
                                                 <TableCell fontWeight={500}>{cat.name}</TableCell>
-                                                {/* <TableCell>{cat.description}</TableCell> */}
-                                                {/* <TableCell>
-                                        <Chip
-                                            label={cat.status}
-
-                                            sx={{
-                                                backgroundColor: statusStyle.bg,
-                                                color: statusStyle.color,
-                                                border: `1px solid ${statusStyle.border}`,
-                                                '& .MuiChip-label': {
-                                                    textTransform: 'capitalize',
-                                                    fontWeight: 500,
-                                                }
-                                            }}
-                                        />
-                                    </TableCell> */}
                                                 <TableCell align="center">
                                                     <Tooltip title="Edit Category">
                                                         <IconButton onClick={() => handleOpenEdit(cat)}>
@@ -223,9 +202,9 @@ const ListOfCategory = () => {
                 icon={DeleteConfirm}
                 onClose={() => setOpenDelete(false)}
                 onConfirm={handleDelete}
-                title="Delete Category"
-                message="Are you sure you want to delete this category? This action cannot be undone."
-                BtnText="Delete Category"
+                title="Delete Class Style"
+                message="Are you sure you want to delete this class style? This action cannot be undone."
+                BtnText="Delete Class Style"
             />
             {/* Add / Edit Dialog */}
             <Dialog open={openDialog} onClose={handleClose} fullWidth maxWidth="sm">
