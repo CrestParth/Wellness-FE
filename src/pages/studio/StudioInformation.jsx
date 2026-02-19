@@ -7,15 +7,16 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import GrayPlus from '../../assets/images/GrayPlus.svg'
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import CustomSelect from '../../common/custom/CustomSelect'
 import CustomInput from "../../common/custom/CustomInput";
+import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 
 const StudioInformation = () => {
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
+    const [openPopup, setOpenPopup] = useState(null);
 
     // const onSuccess = () => {
     //     toast.success("Profile Updated Successfully.");
@@ -71,6 +72,15 @@ const StudioInformation = () => {
             </Typography>
         </Box>
     );
+    const handleOpen = (type) => setOpenPopup(type);
+    const handleClose = () => setOpenPopup(null);
+
+    const handleConfirm = () => {
+        if (openPopup === "delete") {
+            toast.success('Deleted Successfully')
+        }
+        handleClose()
+    }
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -394,9 +404,8 @@ const StudioInformation = () => {
                                 )}
                                 <Button
                                     variant="contained"
-                                    sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: 'red' }}
-                                // onClick={() => setedit(true)}
-                                >Delete
+                                    sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: '#F01510' }}
+                                    onClick={() => { handleOpen('delete') }}>Delete
                                 </Button>
                             </Box>
                         </Grid>
@@ -404,6 +413,16 @@ const StudioInformation = () => {
                     </Grid>
                 </form>
             </Box>
+            <ConfirmationPopUp
+                open={openPopup === "delete"}
+                onClose={handleClose}
+                onConfirm={handleConfirm}
+                title="Delete Studio"
+                message={`Are you sure you want to permanently delete this studio?`}
+                BtnText={'Delete'}
+                BtnColor="red"
+                icon={DeleteConfirm}
+            />
         </Box>
     );
 };

@@ -5,7 +5,7 @@ import "./App.css";
 import { AuthGuard, LogGuard } from "./common/Gaurd";
 import StudioInformation from "./pages/studio/StudioInformation";
 import ListOfVibeChecks from './pages/vibeChecks/ListOfVibeChecks'
-import AddInstructor from "./pages/instructor/AddInstructor";
+import AddInstructor from "./components/instructor/AddInstructor";
 import InstructorInfo from './pages/instructor/InstructorInfo'
 import ListOfCategory from "./pages/category/ListOfCategory";
 import ListOfSubscription from "./pages/subscription/ListOfSubscription";

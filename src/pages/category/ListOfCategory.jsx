@@ -6,6 +6,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 
 const initialCategories = [
@@ -39,6 +41,7 @@ const ListOfCategory = () => {
     const [categories, setCategories] = useState(initialCategories);
     const [openDialog, setOpenDialog] = useState(false);
     const [editCategory, setEditCategory] = useState(null);
+    const [openPopup, setOpenPopup] = useState(null);
 
     const handleOpenAdd = () => {
         setEditCategory(null);
@@ -53,6 +56,7 @@ const ListOfCategory = () => {
     const handleClose = () => {
         setEditCategory(null);
         setOpenDialog(false);
+        setOpenPopup(null)
     };
 
     const handleSave = () => {
@@ -92,6 +96,15 @@ const ListOfCategory = () => {
             bg: '#FEF2F2'
         }
     };
+
+    const handleOpen = (type) => setOpenPopup(type);
+
+    const handleConfirm = () => {
+        if (openPopup === "delete") {
+            toast.success('Deleted Successfully')
+        }
+        handleClose()
+    }
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
@@ -155,7 +168,7 @@ const ListOfCategory = () => {
                                         <Tooltip title="Delete Class Style">
                                             <IconButton
                                                 color="error"
-                                                onClick={() => handleDelete(cat.id)}
+                                                onClick={() => { handleOpen('delete') }}
                                             >
                                                 <DeleteIcon />
                                             </IconButton>
@@ -167,6 +180,16 @@ const ListOfCategory = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
+            <ConfirmationPopUp
+                open={openPopup === "delete"}
+                onClose={handleClose}
+                onConfirm={handleConfirm}
+                title="Delete Class Style"
+                message={`Are you sure you want to permanently delete this class style?`}
+                BtnText={'Delete'}
+                BtnColor="red"
+                icon={DeleteConfirm}
+            />
 
             {/* Add / Edit Dialog */}
             <Dialog open={openDialog} onClose={handleClose} fullWidth maxWidth="sm">

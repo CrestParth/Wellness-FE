@@ -179,7 +179,7 @@ const Home = () => {
                             border: "1px solid #E5E7EB",
                             cursor: "pointer"
                         }}
-                        onClick={() => nav('/home/vendors/add-studio')}
+                        onClick={() => nav('/home/studio/add-studio')}
                     >
                         <Typography fontWeight={500}>
                             Add Studio

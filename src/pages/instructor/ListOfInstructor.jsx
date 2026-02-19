@@ -1,14 +1,10 @@
 import React, { useState } from "react";
-import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, Switch, InputAdornment, MenuItem, Button, Tooltip } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
-import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import CheckIcon from '@mui/icons-material/Check';
 
 
 const instructorData = [
@@ -77,45 +73,9 @@ const instructorData = [
 
 const ListOfInstructor = () => {
     const [instructors, setInstructors] = useState(instructorData);
-    const [openPopup, setOpenPopup] = useState(null);
     const [filter, setFilter] = useState('')
     const [statusFilter, setStatusFilter] = useState('')
-    const [selectedId, setSelectedId] = useState(null);
-
     const nav = useNavigate()
-
-    const handleOpen = (type) => setOpenPopup(type);
-    const handleClose = () => setOpenPopup(null);
-
-    const handleConfirm = () => {
-        if (openPopup === "delete") {
-            toast.success('Deleted Successfully')
-        }
-        if (openPopup === "approve") {
-            setInstructors(prev =>
-                prev.map(i =>
-                    i.id === selectedId ? { ...i, status: 'approved' } : i
-                )
-            );
-            toast.success('Instructor approved successfully');
-        }
-        handleClose()
-    }
-
-    const handleStatusToggle = (id) => {
-        setInstructors((prev) =>
-            prev.map((i) =>
-                i.id === id
-                    ? {
-                        ...i,
-                        status: i.status === "approved" ? "suspended" : "approved",
-                    }
-                    : i
-            )
-        );
-    };
-
-
 
     const filtered = instructors.filter(
         (i) =>
@@ -276,19 +236,6 @@ const ListOfInstructor = () => {
 
                                     <TableCell >
                                         <Stack direction="row" justifyContent={"center"} spacing={1}>
-                                            {/* {i.status === 'pending' && (
-                                            <Tooltip title="Approve Instructor">
-                                                <IconButton
-                                                    sx={{ color: '#16A34A' }}
-                                                    onClick={() => {
-                                                        setSelectedId(i.id);
-                                                        handleOpen('approve');
-                                                    }}
-                                                >
-                                                    <CheckIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        )} */}
                                             <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
                                                 <VisibilityIcon />
                                             </IconButton>
@@ -300,26 +247,6 @@ const ListOfInstructor = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ConfirmationPopUp
-                open={openPopup === "delete"}
-                onClose={handleClose}
-                onConfirm={handleConfirm}
-                title="Delete Review"
-                message={`Are you sure you want to permanently delete this review?`}
-                BtnText={'Delete'}
-                BtnColor="red"
-                icon={DeleteConfirm}
-            />
-            <ConfirmationPopUp
-                open={openPopup === "approve"}
-                onClose={handleClose}
-                onConfirm={handleConfirm}
-                title={"Approve Instructor"}
-                message={"Are you sure you want to approve this instructor?"}
-                BtnText={"Approve"}
-                BtnColor={"green"}
-                icon={DeleteConfirm}
-            />
 
         </Box>
     );
