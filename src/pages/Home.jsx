@@ -1,5 +1,6 @@
 import { Typography, Box, Grid } from '@mui/material'
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 
 const dashboardData = {
     stats: {
@@ -52,11 +53,12 @@ const StatCard = ({ title, value, bg }) => (
 
 
 const Home = () => {
+    const nav = useNavigate()
     return (
         <>
             <Box sx={{ p: { xs: 0, sm: 2 } }}>
                 <Grid container spacing={3} mb={5}>
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Total Instructors"
                             value={dashboardData.stats.totalInstructors}
@@ -64,7 +66,7 @@ const Home = () => {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Active Instructors"
                             value={dashboardData.stats.activeInstructors}
@@ -72,15 +74,15 @@ const Home = () => {
                         />
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    {/* <Grid size={{ xs: 12, md: 3 }}>
                         <StatCard
                             title="Pending Approvals"
                             value={dashboardData.stats.pendingInstructors}
                             bg="#aa971b33"
                         />
-                    </Grid>
+                    </Grid> */}
 
-                    <Grid size={{ xs: 12, md: 3 }}>
+                    <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="New Instructor Signups"
                             value={dashboardData.stats.newInstructorSignups}
@@ -133,33 +135,61 @@ const Home = () => {
                 </Typography>
 
                 <Grid container spacing={2}>
-                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
-
-                        <Typography fontWeight={500}>Approve Instructors</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Review pending instructor requests
+                    <Grid
+                        size={{ xs: 12, md: 4 }}
+                        sx={{
+                            p: 2,
+                            borderRadius: "12px",
+                            border: "1px solid #E5E7EB",
+                            cursor: "pointer"
+                        }}
+                        onClick={() => nav('/home/instructors/add-instructor')}
+                    >
+                        <Typography fontWeight={500}>
+                            Add Instructors
                         </Typography>
-
+                        <Typography variant="body2" color="text.secondary">
+                            Create new instructor profiles
+                        </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
-
-                        <Typography fontWeight={500}>Manage Reviews</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Moderate user reviews
+                    <Grid
+                        size={{ xs: 12, md: 4 }}
+                        sx={{
+                            p: 2,
+                            borderRadius: "12px",
+                            border: "1px solid #E5E7EB",
+                            cursor: "pointer"
+                        }}
+                        onClick={() => nav('/home/vibe')}
+                    >
+                        <Typography fontWeight={500}>
+                            Manage Vibe Checks
                         </Typography>
-
+                        <Typography variant="body2" color="text.secondary">
+                            Review and moderate user-submitted vibe checks
+                        </Typography>
                     </Grid>
 
-                    <Grid size={{ xs: 12, md: 4 }} sx={{ p: 2, borderRadius: "12px", border: "1px solid #E5E7EB", cursor: 'pointer' }}>
-
-                        <Typography fontWeight={500}>View Reports</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Check flagged content
+                    <Grid
+                        size={{ xs: 12, md: 4 }}
+                        sx={{
+                            p: 2,
+                            borderRadius: "12px",
+                            border: "1px solid #E5E7EB",
+                            cursor: "pointer"
+                        }}
+                        onClick={() => nav('/home/studio/add-studio')}
+                    >
+                        <Typography fontWeight={500}>
+                            Add Studio
                         </Typography>
-
+                        <Typography variant="body2" color="text.secondary">
+                            Create studio information
+                        </Typography>
                     </Grid>
                 </Grid>
+
             </Box>
 
 

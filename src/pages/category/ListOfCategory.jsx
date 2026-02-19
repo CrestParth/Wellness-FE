@@ -6,6 +6,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 import { useGetCategories, useCreateCategory, useDeleteCategory, useUpdateCategory } from '../../Api/Api'
 import { useQueryClient } from "@tanstack/react-query";
@@ -21,6 +23,8 @@ const ListOfCategory = () => {
     const [openDelete, setOpenDelete] = useState(false);
     const [selectedId, setSelectedId] = useState(null)
     const queryClient = useQueryClient();
+    const [openPopup, setOpenPopup] = useState(null);
+
     const handleOpenAdd = () => {
         setEditCategory(null);
         setOpenDialog(true);
@@ -35,6 +39,7 @@ const ListOfCategory = () => {
     const handleClose = () => {
         setEditCategory(null);
         setOpenDialog(false);
+        setOpenPopup(null)
     };
 
     const statusColorMap = {
@@ -114,12 +119,21 @@ const ListOfCategory = () => {
     };
 
 
+    const handleOpen = (type) => setOpenPopup(type);
+
+    const handleConfirm = () => {
+        if (openPopup === "delete") {
+            toast.success('Deleted Successfully')
+        }
+        handleClose()
+    }
+
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
                 <Grid size={{ xs: 12, sm: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
-                        Vendor Categories
+                        Class Style Listing
                     </Typography>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
@@ -129,7 +143,7 @@ const ListOfCategory = () => {
                         startIcon={<AddIcon sx={{ color: 'white' }} />}
                         onClick={handleOpenAdd}
                     >
-                        Add Category
+                        Add Class Style
                     </Button>
                 </Grid>
             </Grid>
@@ -156,7 +170,7 @@ const ListOfCategory = () => {
                                         return (
                                             <TableRow key={cat.id}>
                                                 <TableCell fontWeight={500}>{cat.name}</TableCell>
-                                                <TableCell>{cat.description}</TableCell>
+                                                {/* <TableCell>{cat.description}</TableCell> */}
                                                 {/* <TableCell>
                                         <Chip
                                             label={cat.status}
@@ -216,13 +230,13 @@ const ListOfCategory = () => {
             {/* Add / Edit Dialog */}
             <Dialog open={openDialog} onClose={handleClose} fullWidth maxWidth="sm">
                 <DialogTitle>
-                    {editCategory ? "Edit Category" : "Add Category"}
+                    {editCategory ? "Edit Class Style" : "Add Class Style"}
                 </DialogTitle>
 
                 <DialogContent>
                     <Stack spacing={2} mt={1}>
                         <TextField
-                            label="Category Name"
+                            label="Class Style Name"
                             value={editCategory?.name || ""}
                             onChange={(e) =>
                                 setEditCategory((prev) => ({

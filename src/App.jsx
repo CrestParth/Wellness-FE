@@ -3,13 +3,14 @@ import { Suspense, lazy } from "react";
 
 import "./App.css";
 import { AuthGuard, LogGuard } from "./common/Gaurd";
-import VendorInformation from "./pages/vendor/VendorInformation";
-import Review from "./pages/review/Review";
-import AddInstructor from "./pages/instructor/AddInstructor";
+import StudioInformation from "./pages/studio/StudioInformation";
+import ListOfVibeChecks from './pages/vibeChecks/ListOfVibeChecks'
+import AddInstructor from "./components/instructor/AddInstructor";
 import InstructorInfo from './pages/instructor/InstructorInfo'
 import ListOfCategory from "./pages/category/ListOfCategory";
 import ListOfSubscription from "./pages/subscription/ListOfSubscription";
-import VibeInfo from "./pages/review/VibeInfo";
+import VibeInfo from "./pages/vibeChecks/VibeInfo";
+import AddStudio from "./components/studio/AddStudio";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -17,7 +18,7 @@ const Login = lazy(() => import("./pages/auth/Login"));
 const Home = lazy(() => import("./pages/Home"));
 const UserInformation = lazy(() => import('./pages/user/UserInformation'))
 const ListOfUser = lazy(() => import('./pages/user/ListOfUser'))
-const ListOfVendor = lazy(() => import('./pages/vendor/ListOfVendor'))
+const ListOfStudio = lazy(() => import('./pages/studio/ListOfStudio'))
 const ListOfInstructor = lazy(() => import('./pages/instructor/ListOfInstructor'))
 
 const Profile = lazy(() => import("./pages/Profile"));
@@ -51,10 +52,11 @@ function App() {
           ],
         },
         {
-          path: "vendors",
+          path: "studio",
           children: [
-            { path: "", element: <ListOfVendor /> },
-            { path: "vendor-view/:id", element: <VendorInformation /> },
+            { path: "", element: <ListOfStudio /> },
+            { path: "add-studio", element: <AddStudio /> },
+            { path: "studio-view/:id", element: <StudioInformation /> },
           ],
         },
         {
@@ -70,7 +72,7 @@ function App() {
           path: "vibe",
           children: [{
             path: "",
-            element: <Review />
+            element: <ListOfVibeChecks />
           }, {
             path: "vibe-view/:id", element: <VibeInfo />
           }]

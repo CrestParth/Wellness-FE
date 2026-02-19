@@ -1,23 +1,62 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Button, FormControl } from "@mui/material";
+import {
+    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, Stack
+} from "@mui/material";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
-import { useGetInstructorById, useUpdateInstructor } from "../../Api/Api";
+import CustomSelect from "../../common/custom/CustomSelect";
+import { BootstrapInput } from "../../common/custom/BootstrapInput";
+import GrayPlus from '../../assets/images/GrayPlus.svg'
+import VibeCard from "../../components/VibeCard";
+import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import DeleteConfirm from '../../assets/images/deleteIcon.svg'
+import { toast } from "react-toastify";
 
 const InstructorInfo = () => {
     const [edit, setEdit] = useState(false)
+    const [openPopup, setOpenPopup] = useState(null);
     const instructorForm = useFormik({
         initialValues: {
             name: "Michael Johnson",
             studio: "Iron Core Fitness",
             services: "Strength Training",
-            location: "Los Angeles, California, USA",
-            time: "5 AM – 9 AM",
+            location: ["FitZone", "LifeFitness", "Fitness"],
             email: "michael.johnson@yopmail.com",
-            phone: "+1 310 555 7821",
-            countryCode: ""
+            category: ["Strength", "Yoga", "Fitness"],
+            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
+            vibeChecks: [
+                {
+                    id: 1,
+                    userName: "Juliana Silva",
+                    avatar: "/avatar.jpg",
+                    date: "06 June, 2025",
+                    note: "FitZone is the best place to achieve my fitness goals...",
+                    tags: ["Strength", "Yoga", "Fitness"],
+                    energy: "High",
+                    pace: "Athletic",
+                    cueing: "Detailed",
+                    focus: "Burn",
+                    music: "Main Character",
+                    highlights: ["Clear Cues", "Good energy"],
+                    goodFor: ["Beginners", "High energy"]
+                },
+                {
+                    id: 2,
+                    userName: "Jhon Doe",
+                    avatar: "/avatar.jpg",
+                    date: "08 June, 2025",
+                    note: "FitPal is the best place to achieve my fitness goals...",
+                    tags: ["Strength", "Yoga", "Fitness"],
+                    energy: "High",
+                    pace: "Athletic",
+                    cueing: "Detailed",
+                    focus: "Burn",
+                    music: "Main Character",
+                    highlights: ["Clear Cues", "Good energy"],
+                    goodFor: ["Beginners", "High energy"]
+                }
+            ]
+
             // status: 'approved'
         },
         onSubmit: (values) => {
@@ -25,6 +64,17 @@ const InstructorInfo = () => {
             alert("Instructor added (dummy)");
         },
     });
+
+    const categoryOptions = [
+        { label: "Strength", value: "Strength" },
+        { label: "Yoga", value: "Yoga" },
+        { label: "Fitness", value: "Fitness" },
+    ];
+    const locationOptions = [
+        { label: "Strength", value: "Strength" },
+        { label: "Yoga", value: "Yoga" },
+        { label: "Fitness", value: "Fitness" },
+    ];
     const displayField = (label, value) => (
         <Box mb={3}>
             <Typography sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}>{label}</Typography>
@@ -33,6 +83,17 @@ const InstructorInfo = () => {
             </Typography>
         </Box>
     );
+
+
+    const handleOpen = (type) => setOpenPopup(type);
+    const handleClose = () => setOpenPopup(null);
+
+    const handleConfirm = () => {
+        if (openPopup === "delete") {
+            toast.success('Deleted Successfully')
+        }
+        handleClose()
+    }
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -48,7 +109,7 @@ const InstructorInfo = () => {
                                 Instructor Information
                             </Typography>
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Instructor Name"
@@ -57,43 +118,7 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Instructor Name", instructorForm.values.name)}
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Studio"
-                                    placeholder="Studio"
-                                    name="studio"
-                                    formik={instructorForm}
-                                />) : displayField("Studio", instructorForm.values.studio)}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Services"
-                                    placeholder="Services"
-                                    name="services"
-                                    formik={instructorForm}
-                                />) : displayField("Services", instructorForm.values.services)}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Location"
-                                    placeholder="Location"
-                                    name="location"
-                                    formik={instructorForm}
-                                />) : displayField("Location", instructorForm.values.location)}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Available Time"
-                                    placeholder="Available Time"
-                                    name="time"
-                                    formik={instructorForm}
-                                />) : displayField("Available Time", instructorForm.values.time)}
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Email"
@@ -102,55 +127,330 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Email", instructorForm.values.email)}
                         </Grid>
-                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
+                        {/* <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
-                                <FormControl variant="standard" fullWidth>
-                                    <label style={{ marginBottom: 10 }}>Phone Number</label>
-                                    <PhoneInput
-                                        country={"za"}
-                                        value={`${instructorForm.values.countryCode ?? ''}${instructorForm.values.phone ?? ''}`}
-                                        onChange={(phone, countryData) => {
-                                            const withoutCountryCode = phone.startsWith(countryData.dialCode)
-                                                ? phone.slice(countryData.dialCode.length).trim()
-                                                : phone;
+                                <CustomInput
+                                    label="Location"
+                                    placeholder="Location"
+                                    name="location"
+                                    formik={instructorForm}
+                                />) : displayField("Location", instructorForm.values.location)}
+                        </Grid> */}
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {edit ? (
+                                <CustomSelect
+                                    label="Teaches At"
+                                    name="location"
+                                    value={instructorForm.values.location}
+                                    onChange={instructorForm.handleChange}
+                                    options={locationOptions}
+                                    multiple
+                                />
+                            ) : (
+                                <Box mb={3}>
+                                    <Typography
+                                        sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}
+                                    >
+                                        Teaches At
+                                    </Typography>
 
-                                            instructorForm.setFieldValue("phone", withoutCountryCode);
-                                            instructorForm.setFieldValue("countryCode", `+${countryData.dialCode}`);
+                                    <Box display="flex" gap={1} flexWrap="wrap">
+                                        {instructorForm.values.location?.length ? (
+                                            instructorForm.values.location.map((cat) => (
+                                                <Box
+                                                    key={cat}
+                                                    sx={{
+                                                        px: 2.5,
+                                                        py: 0.8,
+                                                        borderRadius: "999px",
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        fontWeight: 600,
+                                                        fontSize: "14px",
+                                                        backgroundColor: "transparent",
+                                                    }}
+                                                >
+                                                    {cat}
+                                                </Box>
+                                            ))
+                                        ) : (
+                                            <Typography color="text.secondary">-</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                            )}
+                        </Grid>
+
+
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {edit ? (
+                                <CustomSelect
+                                    label="Class Style"
+                                    name="category"
+                                    value={instructorForm.values.category}
+                                    onChange={instructorForm.handleChange}
+                                    options={categoryOptions}
+                                    multiple
+                                />
+                            ) : (
+                                <Box mb={3}>
+                                    <Typography
+                                        sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}
+                                    >
+                                        Class Style
+                                    </Typography>
+
+                                    <Box display="flex" gap={1} flexWrap="wrap">
+                                        {instructorForm.values.category?.length ? (
+                                            instructorForm.values.category.map((cat) => (
+                                                <Box
+                                                    key={cat}
+                                                    sx={{
+                                                        px: 2.5,
+                                                        py: 0.8,
+                                                        borderRadius: "999px",
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        fontWeight: 600,
+                                                        fontSize: "14px",
+                                                        backgroundColor: "transparent",
+                                                    }}
+                                                >
+                                                    {cat}
+                                                </Box>
+                                            ))
+                                        ) : (
+                                            <Typography color="text.secondary">-</Typography>
+                                        )}
+                                    </Box>
+                                </Box>
+                            )}
+                        </Grid>
+                        <Grid size={12}>
+                            <Grid size={{ xs: edit ? 12 : 6 }}>{edit ? (
+                                <FormControl variant="standard" fullWidth>
+
+                                    <InputLabel
+                                        shrink
+                                        htmlFor={'description'}
+                                        sx={{
+                                            fontSize: "1.3rem",
+                                            fontWeight: 450,
+                                            color: "rgba(0,0,0,0.8)",
+                                            '&.Mui-focused': { color: 'black' }
                                         }}
-                                        inputStyle={{
-                                            width: '100%',
-                                            height: '46px',
-                                            borderRadius: '6px',
-                                            border: '1px solid #E0E3E7',
-                                            fontSize: '16px',
-                                            paddingLeft: '48px',
-                                            background: '#fff',
-                                            outline: 'none',
-                                            boxShadow: 'none',
-                                            borderColor: '#E0E3E7',
-                                        }}
-                                        buttonStyle={{
-                                            borderRadius: '6px 0 0 6px',
-                                            border: '1px solid #E0E3E7',
-                                            background: '#fff'
-                                        }}
-                                        containerStyle={{
-                                            height: '46px',
-                                            width: '100%',
-                                            marginBottom: '8px'
-                                        }}
-                                        specialLabel=""
-                                        inputProps={{
-                                            name: 'phone',
-                                            required: true,
-                                            autoFocus: false
-                                        }}
+                                    >
+                                        Description
+                                    </InputLabel>
+
+
+                                    <BootstrapInput
+                                        id={'description'}
+                                        name={'description'}
+                                        type={'text'}
+                                        placeholder={"Enter descripton"}
+                                        multiline
+                                        rows={3}
+                                        value={instructorForm.values.description}
+                                        onChange={instructorForm.handleChange}
+                                        onBlur={instructorForm.handleBlur}
                                     />
-                                    {instructorForm.touched.phone && instructorForm.errors.phone && (
-                                        <FormHelperText error>{instructorForm.errors.phone}</FormHelperText>
-                                    )}
                                 </FormControl>
-                            ) : displayField("Phone Number", `${instructorForm.values.countryCode ?? ''}${instructorForm.values.phone ?? ''}`)}
+                            ) : displayField("Bio Description", instructorForm.values.description)}</Grid>
+                        </Grid>
+                        <Grid size={12}>
+                            <Grid container gap={3} sx={{ mt: 1 }}>
+                                <Grid size={{ xs: 12, sm: 2.7 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: edit ? 'pointer' : 'not-allowed',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="hero_img"
+                                                disabled={!edit}
+                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                            />
+                                            {instructorForm.values.hero_img instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : instructorForm.values.hero_img ? (
+                                                <img
+                                                    src={instructorForm.values.hero_img}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
+                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 2.7 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: edit ? 'pointer' : 'not-allowed',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="profile_img"
+                                                disabled={!edit}
+                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                            />
+                                            {instructorForm.values.profile_img instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : instructorForm.values.profile_img ? (
+                                                <img
+                                                    src={instructorForm.values.profile_img}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
+                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 2.7 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 1</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: edit ? 'pointer' : 'not-allowed',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="hero_img"
+                                                disabled={!edit}
+                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                            />
+                                            {instructorForm.values.hero_img instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : instructorForm.values.hero_img ? (
+                                                <img
+                                                    src={instructorForm.values.hero_img}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
+                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 2.7 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 2</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: edit ? 'pointer' : 'not-allowed',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="profile_img"
+                                                disabled={!edit}
+                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                            />
+                                            {instructorForm.values.profile_img instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : instructorForm.values.profile_img ? (
+                                                <img
+                                                    src={instructorForm.values.profile_img}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
+                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        )}
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+
+
                         </Grid>
                         <Grid size={12}>
                             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
@@ -185,11 +485,47 @@ const InstructorInfo = () => {
                                         Edit
                                     </Button>
                                 )}
+                                <Button
+                                    variant="contained"
+                                    sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: '#F01510' }}
+                                    onClick={() => { handleOpen('delete') }}>Delete
+                                </Button>
                             </Box>
                         </Grid>
                     </Grid>
                 </form>
             </Box>
+            <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 4, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
+                <Typography variant="h6" fontWeight={600} mb={3}>
+                    Vibe Checks by Users
+                </Typography>
+
+                {instructorForm.values?.vibeChecks?.length > 0 ? (
+                    <Stack spacing={3} >
+                        {instructorForm.values.vibeChecks.map((vibe, i) => (
+                            <Box sx={{
+                                borderRadius: 4,
+                                p: 3,
+                                border: '1px solid black'
+                            }}> <VibeCard key={vibe.id || i} vibe={vibe} /></Box>
+                        ))}
+                    </Stack>
+                ) : (
+                    <Typography color="text.secondary">
+                        No Vibe Checks
+                    </Typography>
+                )}
+            </Box>
+            <ConfirmationPopUp
+                open={openPopup === "delete"}
+                onClose={handleClose}
+                onConfirm={handleConfirm}
+                title="Delete Instructor"
+                message={`Are you sure you want to permanently delete this instructor?`}
+                BtnText={'Delete'}
+                BtnColor="red"
+                icon={DeleteConfirm}
+            />
         </Box>
     );
 };

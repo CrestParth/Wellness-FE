@@ -1,11 +1,8 @@
 import React, { useState } from "react";
-import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, Switch, InputAdornment, MenuItem, Button, Tooltip } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
-import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useGetInstructors, useDeleteInstructor } from "../../Api/Api";
@@ -17,8 +14,9 @@ const instructorData = [
         name: "Michael Johnson",
         studio: "Iron Core Fitness",
         services: ["Strength Training", "CrossFit"],
-        location: "Los Angeles, California, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness", "Iron Gym", "Urban Lab"],
         time: "5 AM – 9 AM",
+        vibeChecks: 5,
         verified: true,
         email: "michael.johnson@yopmail.com",
         phone: "+1 310 555 7821",
@@ -28,8 +26,9 @@ const instructorData = [
         name: "Emily Carter",
         studio: "Mind & Body Wellness",
         services: ["Pilates", "Mobility Training"],
-        location: "Austin, Texas, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness"],
         time: "8 AM – 12 PM",
+        vibeChecks: 2,
         verified: false,
         email: "emily.carter@yopmail.com",
         phone: "+1 512 555 4390",
@@ -39,9 +38,10 @@ const instructorData = [
         name: "David Wilson",
         studio: "Peak Performance Studio",
         services: ["HIIT", "Weight Loss Coaching"],
-        location: "New York City, USA",
+        teachesAt: ["Iron Gym", "Urban Lab"],
         time: "6 PM – 9 PM",
         verified: true,
+        vibeChecks: 3,
         email: "david.wilson@yopmail.com",
         phone: "+1 917 555 2684",
     },
@@ -50,9 +50,10 @@ const instructorData = [
         name: "Jessica Martinez",
         studio: "Balance Yoga Collective",
         services: ["Hatha Yoga", "Vinyasa Flow"],
-        location: "San Diego, California, USA",
+        teachesAt: ["Urban Lab"],
         time: "6 AM – 8 AM",
         verified: true,
+        vibeChecks: 4,
         email: "jessica.martinez@yopmail.com",
         phone: "+1 619 555 9043",
     },
@@ -61,8 +62,9 @@ const instructorData = [
         name: "Ryan Thompson",
         studio: "Urban Strength Lab",
         services: ["Personal Training", "Functional Training"],
-        location: "Chicago, Illinois, USA",
+        teachesAt: ["FitZone", "LifeFitness", "Fitness"],
         time: "4 PM – 8 PM",
+        vibeChecks: 1,
         verified: false,
         email: "ryan.thompson@yopmail.com",
         phone: "+1 312 555 7718",
@@ -72,45 +74,9 @@ const instructorData = [
 
 const ListOfInstructor = () => {
     const [instructors, setInstructors] = useState(instructorData);
-    const [openPopup, setOpenPopup] = useState(null);
     const [filter, setFilter] = useState('')
     const [statusFilter, setStatusFilter] = useState('')
-    const [selectedId, setSelectedId] = useState(null);
-
     const nav = useNavigate()
-
-    const handleOpen = (type) => setOpenPopup(type);
-    const handleClose = () => setOpenPopup(null);
-
-    const handleConfirm = () => {
-        if (openPopup === "delete") {
-            toast.success('Deleted Successfully')
-        }
-        if (openPopup === "approve") {
-            setInstructors(prev =>
-                prev.map(i =>
-                    i.id === selectedId ? { ...i, status: 'approved' } : i
-                )
-            );
-            toast.success('Instructor approved successfully');
-        }
-        handleClose()
-    }
-
-    const handleStatusToggle = (id) => {
-        setInstructors((prev) =>
-            prev.map((i) =>
-                i.id === id
-                    ? {
-                        ...i,
-                        status: i.status === "approved" ? "suspended" : "approved",
-                    }
-                    : i
-            )
-        );
-    };
-
-
 
     const filtered = instructors.filter(
         (i) =>
@@ -195,15 +161,19 @@ const ListOfInstructor = () => {
 
 
 
-            <TableContainer>
-                <Table sx={{ '& .MuiTableCell-root': { fontSize: '15px' } }}>
+            <TableContainer >
+                <Table sx={{ minWidth: '850px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
                             <TableCell sx={tableHeaderCellSx}>Name</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Studio</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Services</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Location</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
+
+                            <TableCell sx={{
+                                backgroundColor: '#F9FAFB',
+                                color: '#878787', textAlign: 'center'
+                            }}>Vibe Checks</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Status</TableCell>
+
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -216,9 +186,43 @@ const ListOfInstructor = () => {
                             return (
                                 <TableRow key={i.id}>
                                     <TableCell sx={{ fontWeight: 500 }}>{i.name}</TableCell>
-                                    <TableCell>{i.studio}</TableCell>
-                                    <TableCell sx={{ color: '#4B5563' }}>{i.services.join(", ")}</TableCell>
-                                    <TableCell>{i.location}</TableCell>
+                                    <TableCell>
+                                        <Stack direction="row" spacing={1} flexWrap="wrap">
+                                            {i.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                <Chip
+                                                    key={index}
+                                                    label={tag}
+                                                    size="medium"
+                                                    sx={{
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        backgroundColor: "transparent",
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                            ))}
+
+                                            {i.teachesAt?.length > 3 && (
+                                                <Chip
+                                                    label={`+${i.teachesAt.length - 3}`}
+                                                    size="meduim"
+                                                    sx={{
+                                                        border: "1px solid #A855F7",
+                                                        color: "#A855F7",
+                                                        backgroundColor: "transparent",
+                                                        fontWeight: 500
+                                                    }}
+                                                />
+                                            )}
+                                        </Stack>
+                                    </TableCell>
+
+                                    <TableCell>
+                                        <Stack direction="row" justifyContent={"center"} spacing={1}>
+                                            <Typography fontWeight={500} >
+                                                {i.vibeChecks || 0}
+                                            </Typography>
+                                        </Stack></TableCell>
                                     <TableCell>
                                         <Chip
                                             label={statusLabel}
@@ -235,32 +239,10 @@ const ListOfInstructor = () => {
                                     </TableCell>
 
                                     <TableCell >
-                                        <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
-                                            {/* {i.status === 'pending' && (
-                                            <Tooltip title="Approve Instructor">
-                                                <IconButton
-                                                    sx={{ color: '#16A34A' }}
-                                                    onClick={() => {
-                                                        setSelectedId(i.id);
-                                                        handleOpen('approve');
-                                                    }}
-                                                >
-                                                    <CheckIcon />
-                                                </IconButton>
-                                            </Tooltip>
-                                        )} */}
+                                        <Stack direction="row" justifyContent={"center"} spacing={1}>
                                             <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
                                                 <VisibilityIcon />
                                             </IconButton>
-                                            <Tooltip title="Delete Instructor">
-
-                                                <IconButton color="error" onClick={() => {
-                                                    handleOpen('delete')
-                                                    setSelectedId(i.id)
-                                                }}>
-                                                    <DeleteIcon />
-                                                </IconButton>
-                                            </Tooltip>
                                         </Stack>
                                     </TableCell>
                                 </TableRow>
@@ -269,26 +251,6 @@ const ListOfInstructor = () => {
                     </TableBody>
                 </Table>
             </TableContainer>
-            <ConfirmationPopUp
-                open={openPopup === "delete"}
-                onClose={handleClose}
-                onConfirm={handleConfirm}
-                title="Delete Review"
-                message={`Are you sure you want to permanently delete this review?`}
-                BtnText={'Delete'}
-                BtnColor="red"
-                icon={DeleteConfirm}
-            />
-            <ConfirmationPopUp
-                open={openPopup === "approve"}
-                onClose={handleClose}
-                onConfirm={handleConfirm}
-                title={"Approve Instructor"}
-                message={"Are you sure you want to approve this instructor?"}
-                BtnText={"Approve"}
-                BtnColor={"green"}
-                icon={DeleteConfirm}
-            />
 
         </Box>
     );

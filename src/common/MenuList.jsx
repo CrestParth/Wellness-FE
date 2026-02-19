@@ -30,16 +30,17 @@ export const menulist = [
     },
 
     {
-        id: "vendors",
-        name: "Vendor Management",
-        path: "/home/vendors",
-        view: "Vendor Management",
+        id: "studio",
+        name: "Studio Listing",
+        path: "/home/studio",
+        add: "Add Studio",
+        view: "Studio Information",
         icon: icons.ShopOutlined,
     },
 
     {
         id: "instructors",
-        name: "Instructor Management",
+        name: "Instructor Listing",
         path: "/home/instructors",
         add: "Add Instructor",
         view: 'Instructor Information',
@@ -48,8 +49,9 @@ export const menulist = [
 
     {
         id: "users",
-        name: "User Management",
+        name: "User Listing",
         path: "/home/users",
+        view: 'User Information',
         icon: icons.UserOutlined,
     },
 
@@ -70,7 +72,7 @@ export const menulist = [
 
     {
         id: "categories",
-        name: "Categories",
+        name: "Class Style",
         path: "/home/categories",
         icon: icons.AppstoreOutlined,
     },
