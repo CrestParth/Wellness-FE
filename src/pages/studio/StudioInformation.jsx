@@ -13,7 +13,7 @@ import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import CustomSelect from '../../common/custom/CustomSelect'
 import CustomInput from "../../common/custom/CustomInput";
 
-const VendorInformation = () => {
+const StudioInformation = () => {
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
 
@@ -408,11 +408,11 @@ const VendorInformation = () => {
     );
 };
 
-export default VendorInformation;
+export default StudioInformation;
 
 const vendorInitialValues = {
     vendorName: "test",
-    category: ["Strength", "Yoga", "Fitness"], // ✅ array
+    category: ["Strength", "Yoga", "Fitness"],
     email: "test@yopmail.com",
     location: "test",
     status: "active",

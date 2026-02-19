@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Box, Typography, Grid, Button } from "@mui/material";
 import VibeCard from '../../components/VibeCard'
-import DeleteIcon from "@mui/icons-material/Delete";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 const VibeInfo = () => {
@@ -26,7 +25,6 @@ const VibeInfo = () => {
     const handleConfirm = () => {
         if (openPopup === "delete") {
             toast.success('Deleted Successfully')
-            setReviews((prev) => prev.filter((r) => r.id !== selectedId));
         }
         handleClose()
     }

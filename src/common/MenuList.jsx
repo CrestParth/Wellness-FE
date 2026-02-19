@@ -30,9 +30,9 @@ export const menulist = [
     },
 
     {
-        id: "vendors",
+        id: "studio",
         name: "Studio Listing",
-        path: "/home/vendors",
+        path: "/home/studio",
         add: "Add Studio",
         view: "Studio Information",
         icon: icons.ShopOutlined,

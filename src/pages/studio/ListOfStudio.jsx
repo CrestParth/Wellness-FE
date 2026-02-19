@@ -64,12 +64,11 @@ const VendorData = {
 
 
 
-const ListOfVendor = () => {
+const ListOfStudio = () => {
     const isLoading = false
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('')
-    const [vendors, setVendors] = useState(VendorData.data);
     const isVendorActive = (status) => status === 'active';
     const nav = useNavigate()
 
@@ -145,7 +144,7 @@ const ListOfVendor = () => {
                                 ),
                             }}
                         />
-                        <Button sx={{ width: '250px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/vendors/add-studio')}>
+                        <Button sx={{ width: '250px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/studio/add-studio')}>
                             <AddIcon />
                             Add Studio
                         </Button>
@@ -168,11 +167,11 @@ const ListOfVendor = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filteredVendors?.map((vendor) => {
-                                        const statusStyle = statusColorMap[vendor.status];
+                                    {filteredVendors?.map((studio) => {
+                                        const statusStyle = statusColorMap[studio.status];
 
                                         return (
-                                            <TableRow key={vendor.id}>
+                                            <TableRow key={studio.id}>
                                                 <TableCell>
                                                     {/* <Stack direction="row" alignItems="center" gap={1}>
                                                         <Avatar>
@@ -180,17 +179,17 @@ const ListOfVendor = () => {
                                                         </Avatar>
                                                         
                                                     </Stack> */}
-                                                    <Typography fontWeight={500}>{vendor.name}</Typography>
+                                                    <Typography fontWeight={500}>{studio.name}</Typography>
                                                 </TableCell>
 
-                                                <TableCell>{vendor.location}</TableCell>
+                                                <TableCell>{studio.location}</TableCell>
 
                                                 {/* Status */}
                                                 <TableCell>
 
                                                     <Switch
-                                                        checked={isVendorActive(vendor.status)}
-                                                        onChange={() => handleStatusToggle(vendor.id)}
+                                                        checked={isVendorActive(studio.status)}
+                                                        onChange={() => handleStatusToggle(studio.id)}
                                                         sx={{
                                                             '& .MuiSwitch-switchBase.Mui-checked': {
                                                                 color: '#B57EDC',
@@ -209,7 +208,7 @@ const ListOfVendor = () => {
 
                                                 <TableCell>
                                                     <Stack direction="row" spacing={1}>
-                                                        <IconButton size="small" onClick={() => nav(`/home/vendors/vendor-view/${vendor.id}`)}>
+                                                        <IconButton size="small" onClick={() => nav(`/home/studio/studio-view/${studio.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
                                                         {/* <IconButton size="small" color="error">
@@ -240,7 +239,7 @@ const ListOfVendor = () => {
     )
 }
 
-export default ListOfVendor
+export default ListOfStudio
 
 const tableHeaderCellSx = {
     backgroundColor: '#F9FAFB',

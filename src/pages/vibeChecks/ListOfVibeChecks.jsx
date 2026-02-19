@@ -37,7 +37,7 @@ const reviewData = [
         isHidden: false,
     },
 ];
-const Review = () => {
+const ListOfVibeChecks = () => {
     const [reviews, setReviews] = useState(reviewData);
     const [instructorFilter, setInstructorFilter] = useState("");
     const nav = useNavigate()
@@ -173,7 +173,7 @@ const Review = () => {
     );
 };
 
-export default Review;
+export default ListOfVibeChecks;
 
 const tableHeaderCellSx = {
     backgroundColor: '#F9FAFB',
