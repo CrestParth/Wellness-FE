@@ -1,16 +1,22 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText } from "@mui/material";
+import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, Stack, IconButton } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+
+
 
 const AddInstructor = () => {
     const instructorForm = useFormik({
         initialValues: {
             name: "",
             studio: "",
-            location: "",
+            teachesAt: [
+                { studioName: "", location: "" }
+            ],
             email: "",
             categories: [],
             description: ""
@@ -26,6 +32,19 @@ const AddInstructor = () => {
         "Meditation",
         "Fitness Center",
     ];
+
+    const addTeachesAt = () => {
+        instructorForm.setFieldValue("teachesAt", [
+            ...instructorForm.values.teachesAt,
+            { studioName: "", location: "" }
+        ]);
+    };
+
+    const removeTeachesAt = (index) => {
+        const updated = instructorForm.values.teachesAt.filter((_, i) => i !== index);
+        instructorForm.setFieldValue("teachesAt", updated);
+    };
+
 
 
     return (
@@ -56,14 +75,6 @@ const AddInstructor = () => {
                                 label="Email"
                                 placeholder="Email"
                                 name="email"
-                                formik={instructorForm}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                            <CustomInput
-                                label="Teaches at"
-                                placeholder="Teaches at"
-                                name="location"
                                 formik={instructorForm}
                             />
                         </Grid>
@@ -115,6 +126,65 @@ const AddInstructor = () => {
                                 </Select>
                             </FormControl>
                         </Grid>
+                        <Grid size={12}>
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        fontSize: "1rem",
+                                        fontWeight: 400,
+                                        mb: 2
+                                    }}
+                                >
+                                    Teaches At
+                                </Typography>
+
+                                <Stack spacing={2}>
+                                    {instructorForm.values.teachesAt.map((item, index) => (
+                                        <Stack
+                                            key={index}
+                                            direction="row"
+                                            spacing={2}
+                                            alignItems="center"
+                                        >
+                                            <BootstrapInput
+                                                name={`teachesAt[${index}].studioName`}
+                                                placeholder="Studio Name"
+                                                value={item.studioName}
+                                                onChange={instructorForm.handleChange}
+                                                sx={{ flex: 1 }}
+                                            />
+
+                                            <BootstrapInput
+                                                name={`teachesAt[${index}].location`}
+                                                placeholder="Location"
+                                                value={item.location}
+                                                onChange={instructorForm.handleChange}
+                                                sx={{ flex: 1 }}
+                                            />
+                                            {index !== instructorForm.values.teachesAt.length - 1 && (
+                                                <IconButton
+                                                    color="error"
+                                                    onClick={() => removeTeachesAt(index)}
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            )}
+
+                                            {index === instructorForm.values.teachesAt.length - 1 && (
+                                                <IconButton
+                                                    sx={{ color: "var(--Blue)" }}
+                                                    onClick={addTeachesAt}
+                                                >
+                                                    <AddIcon />
+                                                </IconButton>
+                                            )}
+                                        </Stack>
+                                    ))}
+                                </Stack>
+                            </Box>
+                        </Grid>
+
+
                         <Grid size={{ xs: 12 }}>
                             <FormControl variant="standard" fullWidth>
 

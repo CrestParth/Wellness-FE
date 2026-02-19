@@ -18,7 +18,7 @@ import { startOfYear } from "date-fns";
 const CustomDateRangePicker = ({
     value,
     onChange,
-    borderColor = 'var(--light-gray)',
+    borderColor = 'var(--icon-gray)',
     buttonLabel = 'Select Date Range',
     buttonSx = {},
 }) => {
@@ -118,7 +118,7 @@ const CustomDateRangePicker = ({
                                 onChange={(item) => onChange([item.selection])}
                                 moveRangeOnFirstSelection={false}
                                 ranges={value}
-                                rangeColors={["#1976d2"]}
+                                rangeColors={["#B57EDC"]}
                             />
                         </Box>
                     </Popper>

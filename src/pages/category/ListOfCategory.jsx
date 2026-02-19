@@ -210,19 +210,6 @@ const ListOfCategory = () => {
                             }
                             fullWidth
                         />
-                        <TextField
-                            label="Description"
-                            value={editCategory?.description || ""}
-                            onChange={(e) =>
-                                setEditCategory((prev) => ({
-                                    ...prev,
-                                    description: e.target.value,
-                                }))
-                            }
-                            fullWidth
-                            multiline
-                            rows={3}
-                        />
                     </Stack>
                 </DialogContent>
 
