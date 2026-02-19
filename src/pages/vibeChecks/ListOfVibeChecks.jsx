@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, MenuItem, Stack, InputAdornment } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { startOfYear } from "date-fns";
 import Search from '@mui/icons-material/Search'
-
+import CustomDateRangePicker from '../../common/custom/CustomDateRangePicker'
 import { useNavigate } from "react-router-dom";
 
 const reviewData = [
@@ -13,7 +14,7 @@ const reviewData = [
         rating: 5,
         comment: "Excellent training sessions, highly recommended!",
         tags: ["Strength", "Yoga", "Fitness", "Strength"],
-        date: "2024-06-10",
+        date: "06-10-2025",
         isHidden: false,
     },
     {
@@ -23,7 +24,7 @@ const reviewData = [
         rating: 3,
         tags: ["Strength", "Yoga", "Fitness"],
         comment: "Good experience but classes were crowded.",
-        date: "2024-06-08",
+        date: "06-01-2023",
         isHidden: false,
     },
     {
@@ -33,16 +34,23 @@ const reviewData = [
         rating: 1,
         tags: ["Strength", "Yoga", "Fitness"],
         comment: "Trainer was unprofessional.",
-        date: "2024-05-28",
+        date: "06-03-2024",
         isHidden: false,
     },
 ];
 const ListOfVibeChecks = () => {
     const [reviews, setReviews] = useState(reviewData);
     const [instructorFilter, setInstructorFilter] = useState("");
+    const [range, setRange] = useState([
+        {
+            startDate: startOfYear(new Date()),
+            endDate: new Date(),
+            key: 'selection'
+        }
+    ]);
+    const startDate = range[0].startDate.toISOString();
+    const endDate = range[0].endDate.toISOString();
     const nav = useNavigate()
-
-
 
     const filteredReviews = reviews.filter((review) => {
 
@@ -92,6 +100,7 @@ const ListOfVibeChecks = () => {
                             ),
                         }}
                     />
+                    <CustomDateRangePicker value={range} onChange={setRange} />
                 </Grid>
             </Grid>
 
