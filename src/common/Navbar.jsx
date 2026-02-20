@@ -122,7 +122,7 @@ const Navbar = ({ setActive, isActive }) => {
                     </IconButton>
                 ) : (
                     !isMdUp && ( // Show hamburger only on xs/sm
-                        <IconButton sx={{ mr: 2, color: 'white' }} onClick={() => setActive(true)}>
+                        <IconButton sx={{ mr: 2, color: 'black' }} onClick={() => setActive(true)}>
                             <MenuIcon size={24} />
                         </IconButton>
                     )
