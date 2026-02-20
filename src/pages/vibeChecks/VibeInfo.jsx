@@ -59,7 +59,7 @@ const VibeInfo = () => {
                                     handleOpen('delete')
                                 }}
                             >
-                                delete
+                                Delete
                             </Button>
                         </Box>
                     </Grid>

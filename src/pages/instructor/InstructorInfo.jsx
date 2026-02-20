@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import {
-    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, Stack
+    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, IconButton, Stack
 } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import CustomSelect from "../../common/custom/CustomSelect";
@@ -20,7 +22,10 @@ const InstructorInfo = () => {
             name: "Michael Johnson",
             studio: "Iron Core Fitness",
             services: "Strength Training",
-            location: ["FitZone", "LifeFitness", "Fitness"],
+            teachesAt: [
+                { studioName: "FitZone", location: "Los Angeles" },
+                { studioName: "LifeFitness", location: "California" }
+            ],
             email: "michael.johnson@yopmail.com",
             category: ["Strength", "Yoga", "Fitness"],
             description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
@@ -94,6 +99,20 @@ const InstructorInfo = () => {
         }
         handleClose()
     }
+    const addTeachesAt = () => {
+        instructorForm.setFieldValue("teachesAt", [
+            ...instructorForm.values.teachesAt,
+            { studioName: "", location: "" }
+        ]);
+    };
+
+    const removeTeachesAt = (index) => {
+        const updated = instructorForm.values.teachesAt.filter(
+            (_, i) => i !== index
+        );
+        instructorForm.setFieldValue("teachesAt", updated);
+    };
+
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -136,16 +155,63 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Location", instructorForm.values.location)}
                         </Grid> */}
-                        <Grid size={{ xs: 12, sm: 6 }}>
+                        <Grid size={12}>
                             {edit ? (
-                                <CustomSelect
-                                    label="Teaches At"
-                                    name="location"
-                                    value={instructorForm.values.location}
-                                    onChange={instructorForm.handleChange}
-                                    options={locationOptions}
-                                    multiple
-                                />
+                                <Box>
+                                    <Typography
+                                        sx={{
+                                            fontSize: "1rem",
+                                            fontWeight: 400,
+                                            mb: 2
+                                        }}
+                                    >
+                                        Teaches At
+                                    </Typography>
+
+                                    <Stack spacing={2}>
+                                        {instructorForm.values.teachesAt.map((item, index) => (
+                                            <Stack
+                                                key={index}
+                                                direction="row"
+                                                spacing={2}
+                                                alignItems="center"
+                                            >
+                                                <BootstrapInput
+                                                    name={`teachesAt[${index}].studioName`}
+                                                    placeholder="Studio Name"
+                                                    value={item.studioName}
+                                                    onChange={instructorForm.handleChange}
+                                                    sx={{ flex: 1 }}
+                                                />
+
+                                                <BootstrapInput
+                                                    name={`teachesAt[${index}].location`}
+                                                    placeholder="Location"
+                                                    value={item.location}
+                                                    onChange={instructorForm.handleChange}
+                                                    sx={{ flex: 1 }}
+                                                />
+                                                {index !== instructorForm.values.teachesAt.length - 1 && (
+                                                    <IconButton
+                                                        color="error"
+                                                        onClick={() => removeTeachesAt(index)}
+                                                    >
+                                                        <DeleteIcon />
+                                                    </IconButton>
+                                                )}
+
+                                                {index === instructorForm.values.teachesAt.length - 1 && (
+                                                    <IconButton
+                                                        sx={{ color: "var(--Blue)" }}
+                                                        onClick={addTeachesAt}
+                                                    >
+                                                        <AddIcon />
+                                                    </IconButton>
+                                                )}
+                                            </Stack>
+                                        ))}
+                                    </Stack>
+                                </Box>
                             ) : (
                                 <Box mb={3}>
                                     <Typography
@@ -155,10 +221,10 @@ const InstructorInfo = () => {
                                     </Typography>
 
                                     <Box display="flex" gap={1} flexWrap="wrap">
-                                        {instructorForm.values.location?.length ? (
-                                            instructorForm.values.location.map((cat) => (
+                                        {instructorForm.values.teachesAt?.length ? (
+                                            instructorForm.values.teachesAt.map((item, i) => (
                                                 <Box
-                                                    key={cat}
+                                                    key={i}
                                                     sx={{
                                                         px: 2.5,
                                                         py: 0.8,
@@ -170,7 +236,7 @@ const InstructorInfo = () => {
                                                         backgroundColor: "transparent",
                                                     }}
                                                 >
-                                                    {cat}
+                                                    {item.studioName} — {item.location}
                                                 </Box>
                                             ))
                                         ) : (
@@ -180,6 +246,7 @@ const InstructorInfo = () => {
                                 </Box>
                             )}
                         </Grid>
+
 
 
                         <Grid size={{ xs: 12, sm: 6 }}>

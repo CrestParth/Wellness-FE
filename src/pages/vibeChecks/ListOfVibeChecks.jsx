@@ -1,9 +1,13 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, MenuItem, Stack, InputAdornment } from "@mui/material";
+import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, TableSortLabel, Stack, InputAdornment } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { startOfYear } from "date-fns";
 import Search from '@mui/icons-material/Search'
-
+import CustomDateRangePicker from '../../common/custom/CustomDateRangePicker'
 import { useNavigate } from "react-router-dom";
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
 
 const reviewData = [
     {
@@ -13,7 +17,7 @@ const reviewData = [
         rating: 5,
         comment: "Excellent training sessions, highly recommended!",
         tags: ["Strength", "Yoga", "Fitness", "Strength"],
-        date: "2024-06-10",
+        date: "06-10-2025",
         isHidden: false,
     },
     {
@@ -23,7 +27,7 @@ const reviewData = [
         rating: 3,
         tags: ["Strength", "Yoga", "Fitness"],
         comment: "Good experience but classes were crowded.",
-        date: "2024-06-08",
+        date: "06-01-2023",
         isHidden: false,
     },
     {
@@ -33,16 +37,25 @@ const reviewData = [
         rating: 1,
         tags: ["Strength", "Yoga", "Fitness"],
         comment: "Trainer was unprofessional.",
-        date: "2024-05-28",
+        date: "06-03-2024",
         isHidden: false,
     },
 ];
 const ListOfVibeChecks = () => {
     const [reviews, setReviews] = useState(reviewData);
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
     const [instructorFilter, setInstructorFilter] = useState("");
+    const [range, setRange] = useState([
+        {
+            startDate: startOfYear(new Date()),
+            endDate: new Date(),
+            key: 'selection'
+        }
+    ]);
+    const startDate = range[0].startDate.toISOString();
+    const endDate = range[0].endDate.toISOString();
     const nav = useNavigate()
-
-
 
     const filteredReviews = reviews.filter((review) => {
 
@@ -54,6 +67,16 @@ const ListOfVibeChecks = () => {
 
         return instructorMatch;
     });
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
@@ -92,6 +115,7 @@ const ListOfVibeChecks = () => {
                             ),
                         }}
                     />
+                    <CustomDateRangePicker value={range} onChange={setRange} />
                 </Grid>
             </Grid>
 
@@ -103,10 +127,41 @@ const ListOfVibeChecks = () => {
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
 
                         <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>Instructor</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>User</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Class Style</TableCell>
-                            <TableCell sx={tableHeaderCellSx}>Date</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>
+                                <TableSortLabel
+                                    id="firstName"
+                                    active={sortBy === 'firstName'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    Instructor
+                                </TableSortLabel></TableCell>
+                            <TableCell sx={tableHeaderCellSx}>
+                                <TableSortLabel
+                                    id="firstName"
+                                    active={sortBy === 'firstName'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    User
+                                </TableSortLabel>
+                            </TableCell>
+                            <TableCell sx={tableHeaderCellSx}>
+                                Class Style
+                            </TableCell>
+                            <TableCell sx={tableHeaderCellSx}>
+                                <TableSortLabel
+                                    id="date"
+                                    active={sortBy === 'date'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'date' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    Date
+                                </TableSortLabel>
+                            </TableCell>
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                         </TableRow>
                     </TableHead>

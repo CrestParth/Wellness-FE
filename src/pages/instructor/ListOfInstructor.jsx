@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button } from "@mui/material";
+import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useGetInstructors, useDeleteInstructor } from "../../Api/Api";
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
 
 
 const instructorData = [
@@ -76,6 +79,8 @@ const ListOfInstructor = () => {
     const [instructors, setInstructors] = useState(instructorData);
     const [filter, setFilter] = useState('')
     const [statusFilter, setStatusFilter] = useState('')
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
 
     const filtered = instructors.filter(
@@ -95,6 +100,16 @@ const ListOfInstructor = () => {
             bg: '#FEF2F2'
         }
     };
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
 
     const { data } = useGetInstructors()
     console.log(data?.data?.instructors)
@@ -165,13 +180,31 @@ const ListOfInstructor = () => {
                 <Table sx={{ minWidth: '850px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
                     <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                         <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>Name</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>
+                                <TableSortLabel
+                                    id="firstName"
+                                    active={sortBy === 'firstName'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    Name
+                                </TableSortLabel></TableCell>
                             <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
 
                             <TableCell sx={{
                                 backgroundColor: '#F9FAFB',
                                 color: '#878787', textAlign: 'center'
-                            }}>Vibe Checks</TableCell>
+                            }}>
+                                <TableSortLabel
+                                    id="vibeChecks"
+                                    active={sortBy === 'vibeChecks'}
+                                    direction={sortOrder}
+                                    onClick={changeSortOrder}
+                                    IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                >
+                                    Vibe Checks
+                                </TableSortLabel></TableCell>
                             <TableCell sx={tableHeaderCellSx}>Status</TableCell>
 
                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>

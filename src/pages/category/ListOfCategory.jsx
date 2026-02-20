@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
     Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Button, Dialog, DialogTitle,
-    DialogContent, DialogActions, TextField, Stack, Tooltip, Grid
+    DialogContent, DialogActions, TextField, Stack, Tooltip, Grid, TableSortLabel
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
@@ -12,6 +12,36 @@ import { toast } from "react-toastify";
 import { useGetCategories, useCreateCategory, useDeleteCategory, useUpdateCategory } from '../../Api/Api'
 import { useQueryClient } from "@tanstack/react-query";
 import CustomPagination from "../../common/custom/CustomPagination";
+import arrowup from '../../assets/images/arrowup.svg';
+import arrowdown from '../../assets/images/arrowdown.svg';
+import arrownuteral from '../../assets/images/arrownuteral.svg';
+
+const initialCategories = [
+    {
+        id: 1,
+        name: "Gym",
+        description: "Strength training and gym-based workouts",
+        status: "active",
+    },
+    {
+        id: 2,
+        name: "Yoga",
+        description: "Yoga and flexibility-focused practices",
+        status: "active",
+    },
+    {
+        id: 3,
+        name: "Meditation Center",
+        description: "Mindfulness and meditation programs",
+        status: "active",
+    },
+    {
+        id: 4,
+        name: "Fitness Center",
+        description: "General fitness and wellness facilities",
+        status: "suspended",
+    },
+];
 
 const ListOfCategory = () => {
     const [openDialog, setOpenDialog] = useState(false);
@@ -22,6 +52,8 @@ const ListOfCategory = () => {
     const [selectedId, setSelectedId] = useState(null)
     const queryClient = useQueryClient();
     const [openPopup, setOpenPopup] = useState(null);
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
 
     const handleOpenAdd = () => {
         setEditCategory(null);
@@ -122,6 +154,16 @@ const ListOfCategory = () => {
             toast.success('Deleted Successfully')
         }
         handleClose()
+    }
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
     }
 
     return (
@@ -224,19 +266,6 @@ const ListOfCategory = () => {
                                 }))
                             }
                             fullWidth
-                        />
-                        <TextField
-                            label="Description"
-                            value={editCategory?.description || ""}
-                            onChange={(e) =>
-                                setEditCategory((prev) => ({
-                                    ...prev,
-                                    description: e.target.value,
-                                }))
-                            }
-                            fullWidth
-                            multiline
-                            rows={3}
                         />
                     </Stack>
                 </DialogContent>
