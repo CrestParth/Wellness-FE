@@ -195,7 +195,7 @@ export const useCreateStudio = (onSuccess, onError) => {
     });
 };
 // get all Studios
-export const useGetStudio = (page, limit) => {
+export const useGetStudio = (page, limit, searchKey, sortBy, sortOrder) => {
     return useQuery({
         queryKey: ['studios', page, limit],
         queryFn: async () => {

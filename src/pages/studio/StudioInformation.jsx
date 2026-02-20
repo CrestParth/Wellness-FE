@@ -12,25 +12,42 @@ import CustomSelect from '../../common/custom/CustomSelect'
 import CustomInput from "../../common/custom/CustomInput";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
+import { useGetStudioById, useDeleteStudio, useUpdateStudio } from '../../Api/Api'
+import { useParams } from "react-router-dom";
 
 const StudioInformation = () => {
+    const params = useParams()
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
     const [openPopup, setOpenPopup] = useState(null);
 
-    // const onSuccess = () => {
-    //     toast.success("Profile Updated Successfully.");
-    //     client.invalidateQueries("profile");
-    // };
-    // const onError = (error) => {
-    //     toast.error(error.response.data.message || "Something went Wrong");
-    // };
+    const onSuccessUpdate = () => {
+        toast.success("Studio Updated Successfully.");
+        // client.invalidateQueries("profile");
+    };
+    const onErrorUpdate = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
+
+    const onSuccessDelete = () => {
+        toast.success("Studio Deleted Successfully.");
+        // client.invalidateQueries("profile");
+    };
+    const onErrorDelete = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
+
 
     const categoryOptions = [
         { label: "Strength", value: "Strength" },
         { label: "Yoga", value: "Yoga" },
         { label: "Fitness", value: "Fitness" },
     ];
+
+    const { data } = useGetStudioById(params.id)
+    const { mutate: updateStudio } = useUpdateStudio(onSuccessUpdate, onErrorUpdate)
+    const { mutate: deleteStudio } = useDeleteStudio(onSuccessDelete, onErrorDelete)
+    console.log(data?.data)
 
 
 
@@ -40,12 +57,11 @@ const StudioInformation = () => {
         onSubmit: (values) => {
             setedit(false);
             console.log("Vendor Data (Dummy):", values);
-            toast.success("Vendor updated successfully");
-            // const formData = new FormData();
-            // Object.keys(values).forEach((key) => {
-            //         formData.append(key, values[key]);
-            // });
-            // mutate({ profileId: localStorage.getItem("userID"), data: formData });
+            const formData = new FormData();
+            Object.keys(values).forEach((key) => {
+                formData.append(key, values[key]);
+            });
+            mutate({ profileId: localStorage.getItem("userID"), data: formData });
         },
 
     });

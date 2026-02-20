@@ -11,6 +11,7 @@ import AddIcon from '@mui/icons-material/Add'
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
+import { useGetStudio } from '../../Api/Api'
 const VendorData = {
     data: [
         {
@@ -68,7 +69,6 @@ const VendorData = {
 
 
 const ListOfStudio = () => {
-    const isLoading = false
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('')
@@ -77,31 +77,8 @@ const ListOfStudio = () => {
     const isVendorActive = (status) => status === 'active';
     const nav = useNavigate()
 
-
-    const totalUsers = VendorData?.pagination?.totalCount;
-    const totalPages = Math.ceil(totalUsers / rowsPerPage);
-    const statusColorMap = {
-        active: {
-            color: '#10B981',
-            border: '#10B981',
-        },
-        pending: {
-            color: '#F59E0B',
-            border: '#F59E0B',
-        },
-        suspended: {
-            color: '#EF4444',
-            border: '#EF4444',
-        },
-    };
-    const filteredVendors = VendorData?.data?.filter((v) =>
-        v.name.toLowerCase().includes(filter.toLowerCase()) ||
-        v.email.toLowerCase().includes(filter.toLowerCase())
-    );
-
     const changeSortOrder = (e) => {
         const field = e.target.id;
-
         if (field !== sortBy) {
             setSortBy(field);
             setSortOrder("asc");
@@ -110,7 +87,11 @@ const ListOfStudio = () => {
         }
     }
 
+    const { data, isLoading } = useGetStudio(currentPage, rowsPerPage, filter, sortBy, sortOrder)
+    const studioData = data?.data
 
+    const totalUsers = studioData?.pagination?.total;
+    const totalPages = Math.ceil(totalUsers / rowsPerPage);
 
     return (
         <>
@@ -169,7 +150,7 @@ const ListOfStudio = () => {
 
                 {isLoading ? (
                     <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>
-                ) : Array.isArray(VendorData?.data) && VendorData?.data?.length > 0 ? (
+                ) : Array.isArray(studioData?.studios) && studioData?.studios?.length > 0 ? (
                     <>
 
                         <TableContainer >
@@ -178,11 +159,11 @@ const ListOfStudio = () => {
                                     <TableRow >
                                         <TableCell sx={tableHeaderCellSx}>
                                             <TableSortLabel
-                                                id="firstName"
-                                                active={sortBy === 'firstName'}
+                                                id="name"
+                                                active={sortBy === 'name'}
                                                 direction={sortOrder}
                                                 onClick={changeSortOrder}
-                                                IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                IconComponent={() => <img src={sortBy === 'name' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                             >
                                                 Studio
                                             </TableSortLabel>
@@ -203,8 +184,7 @@ const ListOfStudio = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {filteredVendors?.map((studio) => {
-                                        const statusStyle = statusColorMap[studio.status];
+                                    {studioData?.studios?.map((studio) => {
 
                                         return (
                                             <TableRow key={studio.id}>
