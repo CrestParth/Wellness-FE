@@ -2,7 +2,7 @@ import {
     Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl
 } from "@mui/material";
 import { useFormik } from "formik";
-import { vendorValidationSchema } from "../../common/FormValidation";
+import { studioValidationSchema } from "../../common/FormValidation";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-toastify";
@@ -13,17 +13,18 @@ import CustomInput from "../../common/custom/CustomInput";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { useGetStudioById, useDeleteStudio, useUpdateStudio } from '../../Api/Api'
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const StudioInformation = () => {
     const params = useParams()
+    const navigate = useNavigate()
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
     const [openPopup, setOpenPopup] = useState(null);
 
     const onSuccessUpdate = () => {
         toast.success("Studio Updated Successfully.");
-        // client.invalidateQueries("profile");
+        client.invalidateQueries(["studio"], { exact: false });
     };
     const onErrorUpdate = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -31,7 +32,8 @@ const StudioInformation = () => {
 
     const onSuccessDelete = () => {
         toast.success("Studio Deleted Successfully.");
-        // client.invalidateQueries("profile");
+        navigate("/home/studio");
+        client.invalidateQueries(["studios"], { exact: false });
     };
     const onErrorDelete = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -44,40 +46,55 @@ const StudioInformation = () => {
         { label: "Fitness", value: "Fitness" },
     ];
 
-    const { data } = useGetStudioById(params.id)
+    const { data: studioData } = useGetStudioById(params.id)
     const { mutate: updateStudio } = useUpdateStudio(onSuccessUpdate, onErrorUpdate)
     const { mutate: deleteStudio } = useDeleteStudio(onSuccessDelete, onErrorDelete)
-    console.log(data?.data)
 
 
 
-    const vendorForm = useFormik({
-        initialValues: vendorInitialValues,
-        validationSchema: vendorValidationSchema,
+    const studioForm = useFormik({
+        initialValues: studioInitialValues,
+        validationSchema: studioValidationSchema,
         onSubmit: (values) => {
-            setedit(false);
-            console.log("Vendor Data (Dummy):", values);
             const formData = new FormData();
-            Object.keys(values).forEach((key) => {
-                formData.append(key, values[key]);
-            });
-            mutate({ profileId: localStorage.getItem("userID"), data: formData });
-        },
 
+            formData.append("name", values.name);
+            formData.append("contact", values.email);
+            formData.append("location", values.location);
+            formData.append("status", values.status);
+            formData.append("about", values.description);
+
+            // Categories (array)
+            values.category?.forEach((cat) => {
+                formData.append("categories[]", cat);
+            });
+
+            // Images (only append if new file selected)
+            if (values.hero_img instanceof File) {
+                formData.append("hero_img", values.hero_img);
+            }
+
+            if (values.profile_img instanceof File) {
+                formData.append("profile_img", values.profile_img);
+            }
+
+            updateStudio({
+                id: params.id,
+                data: formData
+            });
+
+            setedit(false);
+        }
     });
 
-
-    // useEffect(() => {
-    //     const admin = profileData?.data;
-    //     const profile = admin?.AdminProfiles?.[0] || {};
-
-    //     vendorForm.setValues({
-    //         firstName: admin?.firstName || "admin",
-    //         lastName: admin?.lastName || "user",
-    //         email: admin?.email || "adminUser@yopmail.com",
-    //         profile_img: admin?.profile_img || "",
-    //     });
-    // }, [profileData?.data, edit]);
+    useEffect(() => {
+        if (studioData?.data) {
+            setStudioFormValues({
+                form: studioForm,
+                data: studioData.data
+            });
+        }
+    }, [studioData]);
 
 
     const displayField = (label, value) => (
@@ -93,6 +110,7 @@ const StudioInformation = () => {
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
+            deleteStudio(params.id);
             toast.success('Deleted Successfully')
         }
         handleClose()
@@ -116,11 +134,11 @@ const StudioInformation = () => {
                             {edit ? (
                                 <CustomInput
                                     label="Studio Name"
-                                    name="vendorName"
+                                    name="name"
                                     placeholder="Enter studio name"
-                                    formik={vendorForm}
+                                    formik={studioForm}
                                 />
-                            ) : displayField("Studio Name", vendorForm.values.vendorName)}
+                            ) : displayField("Studio Name", studioForm.values.name)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
@@ -128,71 +146,21 @@ const StudioInformation = () => {
                                     label="Email"
                                     placeholder="Email"
                                     name="email"
-                                    formik={vendorForm}
+                                    formik={studioForm}
                                 />
-                            ) : displayField("Email", vendorForm.values.email)}
+                            ) : displayField("Email", studioForm.values.email)}
                         </Grid>
-                        {/* <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
-                            {edit ? (
-                                <FormControl variant="standard" fullWidth>
-                                    <label style={{ marginBottom: 10 }}>Phone Number</label>
-                                    <PhoneInput
-                                        country={"za"}
-                                        value={`${vendorForm.values.countryCode ?? ''}${vendorForm.values.phone ?? ''}`}
-                                        onChange={(phone, countryData) => {
-                                            const withoutCountryCode = phone.startsWith(countryData.dialCode)
-                                                ? phone.slice(countryData.dialCode.length).trim()
-                                                : phone;
-
-                                            vendorForm.setFieldValue("phone", withoutCountryCode);
-                                            vendorForm.setFieldValue("countryCode", `+${countryData.dialCode}`);
-                                        }}
-                                        inputStyle={{
-                                            width: '100%',
-                                            height: '46px',
-                                            borderRadius: '6px',
-                                            border: '1px solid #E0E3E7',
-                                            fontSize: '16px',
-                                            paddingLeft: '48px',
-                                            background: '#fff',
-                                            outline: 'none',
-                                            boxShadow: 'none',
-                                            borderColor: '#E0E3E7',
-                                        }}
-                                        buttonStyle={{
-                                            borderRadius: '6px 0 0 6px',
-                                            border: '1px solid #E0E3E7',
-                                            background: '#fff'
-                                        }}
-                                        containerStyle={{
-                                            height: '46px',
-                                            width: '100%',
-                                            marginBottom: '8px'
-                                        }}
-                                        specialLabel=""
-                                        inputProps={{
-                                            name: 'phone',
-                                            required: true,
-                                            autoFocus: false
-                                        }}
-                                    />
-                                    {vendorForm.touched.phone && vendorForm.errors.phone && (
-                                        <FormHelperText error>{vendorForm.errors.phone}</FormHelperText>
-                                    )}
-                                </FormControl>
-                            ) : displayField("Phone Number", `${vendorForm.values.countryCode ?? ''}${vendorForm.values.phone ?? ''}`)}
-                        </Grid> */}
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
                                 <CustomInput
                                     label="Location"
                                     name="location"
                                     placeholder="City, State"
-                                    formik={vendorForm}
+                                    formik={studioForm}
                                     multiline
                                     rows={3}
                                 />
-                            ) : displayField("Location", vendorForm.values.location)}
+                            ) : displayField("Location", studioForm.values.location)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
 
@@ -200,13 +168,13 @@ const StudioInformation = () => {
                                 <CustomSelect
                                     label="Status"
                                     name="status"
-                                    value={vendorForm.values.status}
-                                    onChange={vendorForm.handleChange}
+                                    value={studioForm.values.status}
+                                    onChange={studioForm.handleChange}
                                     options={[{ label: 'active', value: 'active' }, { label: 'suspended', value: 'suspended' }]}
-                                    error={vendorForm.touched.status && Boolean(vendorForm.errors.status)}
-                                    helperText={vendorForm.touched.status && vendorForm.errors.status}
+                                    error={studioForm.touched.status && Boolean(studioForm.errors.status)}
+                                    helperText={studioForm.touched.status && studioForm.errors.status}
                                 />
-                            ) : displayField("Status", vendorForm.values.status)}
+                            ) : displayField("Status", studioForm.values.status)}
                         </Grid>
 
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
@@ -214,8 +182,8 @@ const StudioInformation = () => {
                                 <CustomSelect
                                     label="Class Style"
                                     name="category"
-                                    value={vendorForm.values.category}
-                                    onChange={vendorForm.handleChange}
+                                    value={studioForm.values.category}
+                                    onChange={studioForm.handleChange}
                                     options={categoryOptions}
                                     multiple
                                 />
@@ -228,8 +196,8 @@ const StudioInformation = () => {
                                     </Typography>
 
                                     <Box display="flex" gap={1} flexWrap="wrap">
-                                        {vendorForm.values.category?.length ? (
-                                            vendorForm.values.category.map((cat) => (
+                                        {studioForm.values.category?.length ? (
+                                            studioForm.values.category.map((cat) => (
                                                 <Box
                                                     key={cat}
                                                     sx={{
@@ -279,12 +247,12 @@ const StudioInformation = () => {
                                         placeholder={"Enter descripton"}
                                         multiline
                                         rows={3}
-                                        value={vendorForm.values.description}
-                                        onChange={vendorForm.handleChange}
-                                        onBlur={vendorForm.handleBlur}
+                                        value={studioForm.values.description}
+                                        onChange={studioForm.handleChange}
+                                        onBlur={studioForm.handleBlur}
                                     />
                                 </FormControl>
-                            ) : displayField("Description", vendorForm.values.description)}
+                            ) : displayField("Description", studioForm.values.description)}
                         </Grid>
 
                         <Grid size={12}>
@@ -312,17 +280,17 @@ const StudioInformation = () => {
                                             hidden
                                             name="hero_img"
                                             disabled={!edit}
-                                            onChange={e => vendorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                            onChange={e => studioForm.setFieldValue('hero_img', e.currentTarget.files[0])}
                                         />
-                                        {vendorForm.values.hero_img instanceof File ? (
+                                        {studioForm.values.hero_img instanceof File ? (
                                             <img
-                                                src={URL.createObjectURL(vendorForm.values.hero_img)}
+                                                src={URL.createObjectURL(studioForm.values.hero_img)}
                                                 alt="Selfie Preview"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
-                                        ) : vendorForm.values.hero_img ? (
+                                        ) : studioForm.values.hero_img ? (
                                             <img
-                                                src={vendorForm.values.hero_img}
+                                                src={studioForm.values.hero_img}
                                                 alt="Selfie"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
@@ -330,8 +298,8 @@ const StudioInformation = () => {
                                             <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                         )}
                                     </Box>
-                                    {vendorForm.touched.hero_img && vendorForm.errors.hero_img && (
-                                        <FormHelperText error>{vendorForm.errors.hero_img}</FormHelperText>
+                                    {studioForm.touched.hero_img && studioForm.errors.hero_img && (
+                                        <FormHelperText error>{studioForm.errors.hero_img}</FormHelperText>
                                     )}
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4 }}>
@@ -357,17 +325,17 @@ const StudioInformation = () => {
                                             hidden
                                             name="profile_img"
                                             disabled={!edit}
-                                            onChange={e => vendorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                            onChange={e => studioForm.setFieldValue('profile_img', e.currentTarget.files[0])}
                                         />
-                                        {vendorForm.values.profile_img instanceof File ? (
+                                        {studioForm.values.profile_img instanceof File ? (
                                             <img
-                                                src={URL.createObjectURL(vendorForm.values.profile_img)}
+                                                src={URL.createObjectURL(studioForm.values.profile_img)}
                                                 alt="Selfie Preview"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
-                                        ) : vendorForm.values.profile_img ? (
+                                        ) : studioForm.values.profile_img ? (
                                             <img
-                                                src={vendorForm.values.profile_img}
+                                                src={studioForm.values.profile_img}
                                                 alt="Selfie"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
@@ -375,8 +343,8 @@ const StudioInformation = () => {
                                             <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                         )}
                                     </Box>
-                                    {vendorForm.touched.profile_img && vendorForm.errors.profile_img && (
-                                        <FormHelperText error>{vendorForm.errors.profile_img}</FormHelperText>
+                                    {studioForm.touched.profile_img && studioForm.errors.profile_img && (
+                                        <FormHelperText error>{studioForm.errors.profile_img}</FormHelperText>
                                     )}
                                 </Grid>
                             </Grid>
@@ -401,7 +369,7 @@ const StudioInformation = () => {
                                             variant="contained"
                                             sx={{ width: 130, height: 48, borderRadius: '8px', color: 'white', backgroundColor: 'var(--Blue)', fontSize: '16px', fontWeight: 400, }}
                                             onClick={() => {
-                                                vendorForm.handleSubmit()
+                                                studioForm.handleSubmit()
                                             }}
                                         >
                                             Save
@@ -445,12 +413,25 @@ const StudioInformation = () => {
 
 export default StudioInformation;
 
-const vendorInitialValues = {
-    vendorName: "test",
-    category: ["Strength", "Yoga", "Fitness"],
-    email: "test@yopmail.com",
-    location: "test",
-    status: "active",
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore'
+const studioInitialValues = {
+    name: "",
+    category: [""],
+    email: "",
+    location: "",
+    status: "",
+    description: ''
 };
+const setStudioFormValues = ({ form, data }) => {
+    if (!data) return;
 
+    form.setValues({
+        name: data.name || "",
+        email: data.contact || "",
+        location: data.location || "",
+        status: data.status || "",
+        description: data.about || "",
+        category: data.categories?.map((cat) => cat.name) || [],
+        hero_img: data.images?.[0] || "",
+        profile_img: data.images?.[1] || ""
+    });
+};

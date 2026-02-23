@@ -12,59 +12,7 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import { useGetStudio } from '../../Api/Api'
-const VendorData = {
-    data: [
-        {
-            id: 1,
-            name: "Power House Gym",
-            category: "Gym",
-            email: "powerhouse@yopmail.com",
-            phone: "+1 212 555 0147",
-            location: "New York, New York",
-            status: "active",
-            instructorsCount: 12,
-            createdAt: "2024-06-01",
-        },
-        {
-            id: 2,
-            name: "Zen Yoga Studio",
-            category: "Yoga",
-            email: "zenyoga@yopmail.com",
-            phone: "+1 310 555 7821",
-            location: "Los Angeles, California",
-            status: "active",
-            instructorsCount: 5,
-            createdAt: "2024-06-12",
-        },
-        {
-            id: 3,
-            name: "Elite Fitness Club",
-            category: "Fitness Center",
-            email: "elitefitness@yopmail.com",
-            phone: "+1 312 555 7718",
-            location: "Chicago, Illinois",
-            status: "suspended",
-            instructorsCount: 8,
-            createdAt: "2024-05-20",
-        },
-        {
-            id: 4,
-            name: "Calm Mind Wellness",
-            category: "Meditation",
-            email: "calmmind@yopmail.com",
-            phone: "+1 512 555 4390",
-            location: "Austin, Texas",
-            status: "active",
-            instructorsCount: 3,
-            createdAt: "2024-04-18",
-        },
-    ],
-    pagination: {
-        currentPage: 1,
-        totalPages: 1,
-        totalCount: 4,
-    },
-};
+
 
 
 
