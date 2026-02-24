@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
+import { useGetUser } from '../../Api/Api'
 
 const User = {
     data: [
@@ -86,7 +87,6 @@ const User = {
 };
 
 const ListOfUser = () => {
-    const isLoading = false
     const [filter, setFilter] = useState('')
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
@@ -94,8 +94,7 @@ const ListOfUser = () => {
     const [sortOrder, setSortOrder] = useState("asc");
     const navigate = useNavigate()
 
-    const totalUsers = User?.pagination?.totalCount;
-    const totalPages = Math.ceil(totalUsers / rowsPerPage);
+    const { data, isLoading } = useGetUser(currentPage, rowsPerPage);
     const statusColorMap = {
         active: {
             color: '#7BC8A9',
@@ -118,6 +117,11 @@ const ListOfUser = () => {
             setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
         }
     }
+    const userData = data?.data?.users || [];
+    const pagination = data?.data?.pagination;
+
+    const totalUsers = pagination?.total || 0;
+    const totalPages = pagination?.totalPages || 0;
 
 
     return (
@@ -164,7 +168,7 @@ const ListOfUser = () => {
 
                 {isLoading ? (
                     <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>
-                ) : Array.isArray(User?.data) && User?.data?.length > 0 ? (
+                ) : Array.isArray(userData) && userData?.length > 0 ? (
                     <>
 
                         <TableContainer >
@@ -211,14 +215,14 @@ const ListOfUser = () => {
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
-                                    {User?.data?.map((user) => {
+                                    {userData?.map((user) => {
                                         const statusStyle = statusColorMap[user.status];
                                         return (
                                             <TableRow key={user.id}>
                                                 <TableCell sx={{ paddingLeft: '30px' }}>
                                                     <Stack direction="row" alignItems="center" gap={1}>
 
-                                                        <Avatar src={user?.profile_img || undefined} alt="User" >
+                                                        <Avatar src={user?.profileImage || undefined}>
                                                             <PersonIcon />
                                                         </Avatar>
 
