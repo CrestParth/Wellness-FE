@@ -242,6 +242,19 @@ export const useUpdateStudio = (onSuccess, onError) => {
 };
 
 
+// get all Vibe Checks
+export const useGetVibes = (page, limit, searchKey, sortBy, sortOrder) => {
+    return useQuery({
+        queryKey: ['vibes', page, limit],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/vibes`, { params: { page, limit } });
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+
 
 
 // reset password 

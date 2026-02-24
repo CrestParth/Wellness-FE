@@ -3,30 +3,65 @@ import { Box, Typography, Grid, Button } from "@mui/material";
 import VibeCard from '../../components/VibeCard'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
+import { useLocation } from "react-router-dom";
+import { toast } from "react-toastify";
 const VibeInfo = () => {
+    const location = useLocation();
+    const vibe = location.state?.vibe;
     const [openPopup, setOpenPopup] = useState(null);
     const handleOpen = (type) => setOpenPopup(type);
     const handleClose = () => setOpenPopup(null);
-    const vibeData = {
-        userName: "Juliana Silva",
-        avatar: "/avatar.jpg",
-        date: "06 June, 2025",
-        note: "FitZone is the best place to achieve my fitness goals...",
-        tags: ["Strength", "Yoga", "Fitness"],
-        energy: "High",
-        pace: "Athletic",
-        cueing: "Detailed",
-        focus: "Burn",
-        music: "Main Character",
-        highlights: ["Clear Cues", "Good energy"],
-        goodFor: ["Beginners", "High energy"]
-    };
+    // const vibeData = {
+    //     userName: "Juliana Silva",
+    //     avatar: "/avatar.jpg",
+    //     date: "06 June, 2025",
+    //     note: "FitZone is the best place to achieve my fitness goals...",
+    //     tags: ["Strength", "Yoga", "Fitness"],
+    //     energy: "High",
+    //     pace: "Athletic",
+    //     cueing: "Detailed",
+    //     focus: "Burn",
+    //     music: "Main Character",
+    //     highlights: ["Clear Cues", "Good energy"],
+    //     goodFor: ["Beginners", "High energy"]
+    // };
+
+    const vibeData = vibe
+        ? {
+            userName:
+                `${vibe.user?.firstName || ""} ${vibe.user?.lastName || ""}`.trim(),
+
+            avatar: vibe.user?.profileImage || "",
+
+            date: new Date(vibe.createdAt).toLocaleDateString(),
+
+            note: vibe.vibeText || "",
+
+            tags: vibe.classStyle?.map((c) => c.name) || [],
+
+            energy: vibe.describeVibe?.energy,
+            pace: vibe.describeVibe?.pace,
+            cueing: vibe.describeVibe?.cueing,
+            focus: vibe.describeVibe?.focus,
+            music: vibe.describeVibe?.music,
+
+            highlights: vibe.vibeTags?.experienceHighlights || [],
+            goodFor: vibe.vibeTags?.goodFitFor || []
+        }
+        : null;
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
             toast.success('Deleted Successfully')
         }
         handleClose()
+    }
+    if (!vibe) {
+        return (
+            <Box p={3}>
+                <Typography>No vibe data found</Typography>
+            </Box>
+        );
     }
 
     return (

@@ -8,41 +8,12 @@ import { useNavigate } from "react-router-dom";
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
+import { useGetVibes } from "../../Api/Api";
+import CustomPagination from '../../common/custom/CustomPagination'
 
-const reviewData = [
-    {
-        id: 1,
-        userName: "John Doe",
-        instructorName: "Alex Trainer",
-        rating: 5,
-        comment: "Excellent training sessions, highly recommended!",
-        tags: ["Strength", "Yoga", "Fitness", "Strength"],
-        date: "06-10-2025",
-        isHidden: false,
-    },
-    {
-        id: 2,
-        userName: "Jane Smith",
-        instructorName: "Zen Yoga Studio",
-        rating: 3,
-        tags: ["Strength", "Yoga", "Fitness"],
-        comment: "Good experience but classes were crowded.",
-        date: "06-01-2023",
-        isHidden: false,
-    },
-    {
-        id: 3,
-        userName: "Michael Brown",
-        instructorName: "Power House Gym",
-        rating: 1,
-        tags: ["Strength", "Yoga", "Fitness"],
-        comment: "Trainer was unprofessional.",
-        date: "06-03-2024",
-        isHidden: false,
-    },
-];
 const ListOfVibeChecks = () => {
-    const [reviews, setReviews] = useState(reviewData);
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const [instructorFilter, setInstructorFilter] = useState("");
@@ -57,16 +28,14 @@ const ListOfVibeChecks = () => {
     const endDate = range[0].endDate.toISOString();
     const nav = useNavigate()
 
-    const filteredReviews = reviews.filter((review) => {
+    const { data, isLoading } = useGetVibes(currentPage, rowsPerPage);
 
-        const instructorMatch = instructorFilter
-            ? review.instructorName
-                .toLowerCase()
-                .includes(instructorFilter.toLowerCase())
-            : true;
+    const userData = data?.data?.vibes || [];
+    const pagination = data?.data?.pagination;
 
-        return instructorMatch;
-    });
+    const totalUsers = pagination?.total || 0;
+    const totalPages = pagination?.totalPages || 0;
+
     const changeSortOrder = (e) => {
         const field = e.target.id;
 
@@ -122,107 +91,115 @@ const ListOfVibeChecks = () => {
 
 
             {/* Table */}
-            <TableContainer>
-                <Table sx={{ minWidth: '900px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
-                    <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+            {isLoading ? (
+                <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>
+            ) : Array.isArray(userData) && userData?.length > 0 ? (
+                <>
+                    <TableContainer>
+                        <Table sx={{ minWidth: '900px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
+                            <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
 
-                        <TableRow>
-                            <TableCell sx={tableHeaderCellSx}>
-                                <TableSortLabel
-                                    id="firstName"
-                                    active={sortBy === 'firstName'}
-                                    direction={sortOrder}
-                                    onClick={changeSortOrder}
-                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
-                                >
-                                    Instructor
-                                </TableSortLabel></TableCell>
-                            <TableCell sx={tableHeaderCellSx}>
-                                <TableSortLabel
-                                    id="firstName"
-                                    active={sortBy === 'firstName'}
-                                    direction={sortOrder}
-                                    onClick={changeSortOrder}
-                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
-                                >
-                                    User
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell sx={tableHeaderCellSx}>
-                                Class Style
-                            </TableCell>
-                            <TableCell sx={tableHeaderCellSx}>
-                                <TableSortLabel
-                                    id="date"
-                                    active={sortBy === 'date'}
-                                    direction={sortOrder}
-                                    onClick={changeSortOrder}
-                                    IconComponent={() => <img src={sortBy === 'date' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
-                                >
-                                    Date
-                                </TableSortLabel>
-                            </TableCell>
-                            <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-
-                    <TableBody>
-                        {filteredReviews.length > 0 ? (
-                            filteredReviews.map((review) => (
-                                <TableRow key={review.id}>
-                                    <TableCell>{review.instructorName}</TableCell>
-                                    <TableCell>{review.userName}</TableCell>
-                                    <TableCell>
-                                        <Stack direction="row" spacing={1} flexWrap="wrap">
-                                            {review.tags?.slice(0, 3).map((tag, index) => (
-                                                <Chip
-                                                    key={index}
-                                                    label={tag}
-                                                    size="medium"
-                                                    sx={{
-                                                        border: "1px solid #A855F7",
-                                                        color: "#A855F7",
-                                                        backgroundColor: "transparent",
-                                                        fontWeight: 500
-                                                    }}
-                                                />
-                                            ))}
-
-                                            {review.tags?.length > 3 && (
-                                                <Chip
-                                                    label={`+${review.tags.length - 3}`}
-                                                    size="meduim"
-                                                    sx={{
-                                                        border: "1px solid #A855F7",
-                                                        color: "#A855F7",
-                                                        backgroundColor: "transparent",
-                                                        fontWeight: 500
-                                                    }}
-                                                />
-                                            )}
-                                        </Stack>
+                                <TableRow>
+                                    <TableCell sx={tableHeaderCellSx}>
+                                        <TableSortLabel
+                                            id="firstName"
+                                            active={sortBy === 'firstName'}
+                                            direction={sortOrder}
+                                            onClick={changeSortOrder}
+                                            IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                        >
+                                            Instructor
+                                        </TableSortLabel></TableCell>
+                                    <TableCell sx={tableHeaderCellSx}>
+                                        <TableSortLabel
+                                            id="firstName"
+                                            active={sortBy === 'firstName'}
+                                            direction={sortOrder}
+                                            onClick={changeSortOrder}
+                                            IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                        >
+                                            User
+                                        </TableSortLabel>
                                     </TableCell>
-                                    <TableCell>{review.date}</TableCell>
-                                    <TableCell align="center">
-                                        <Stack direction="row" justifyContent="center" spacing={1}>
-                                            <IconButton onClick={() => nav(`/home/vibe/vibe-view/${review.id}`)}>
-                                                <VisibilityIcon />
-                                            </IconButton>
-
-                                        </Stack>
+                                    <TableCell sx={tableHeaderCellSx}>
+                                        Class Style
                                     </TableCell>
+                                    <TableCell sx={tableHeaderCellSx}>
+                                        <TableSortLabel
+                                            id="date"
+                                            active={sortBy === 'date'}
+                                            direction={sortOrder}
+                                            onClick={changeSortOrder}
+                                            IconComponent={() => <img src={sortBy === 'date' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                        >
+                                            Date
+                                        </TableSortLabel>
+                                    </TableCell>
+                                    <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                                 </TableRow>
-                            ))
-                        ) : (
-                            <TableRow>
-                                <TableCell colSpan={6} align="center">
-                                    No reviews found
-                                </TableCell>
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+                            </TableHead>
+
+                            <TableBody>
+                                {userData?.map((vibe) => (
+                                    <TableRow key={vibe.id}>
+                                        <TableCell>{vibe?.instructor?.displayName || "-"}</TableCell>
+                                        <TableCell>{`${vibe.user?.firstName || ""} ${vibe.user?.lastName || ""}`.trim() || "-"}</TableCell>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1} flexWrap="wrap">
+                                                {vibe?.classStyle?.slice(0, 3).map((tag, index) => (
+                                                    <Chip
+                                                        key={index}
+                                                        label={tag.name}
+                                                        size="medium"
+                                                        sx={{
+                                                            border: "1px solid #A855F7",
+                                                            color: "#A855F7",
+                                                            backgroundColor: "transparent",
+                                                            fontWeight: 500
+                                                        }}
+                                                    />
+                                                ))}
+
+                                                {vibe?.classStyle?.length > 3 && (
+                                                    <Chip
+                                                        label={`+${vibe?.classStyle?.length - 3}`}
+                                                        size="meduim"
+                                                        sx={{
+                                                            border: "1px solid #A855F7",
+                                                            color: "#A855F7",
+                                                            backgroundColor: "transparent",
+                                                            fontWeight: 500
+                                                        }}
+                                                    />
+                                                )}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>{new Date(vibe.createdAt).toLocaleDateString()}</TableCell>
+                                        <TableCell align="center">
+                                            <Stack direction="row" justifyContent="center" spacing={1}>
+                                                <IconButton
+                                                    onClick={() =>
+                                                        nav(`/home/vibe/vibe-view/${vibe.id}`, {
+                                                            state: { vibe }
+                                                        })
+                                                    }
+                                                >
+                                                    <VisibilityIcon />
+                                                </IconButton>
+
+                                            </Stack>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                                }
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                    <CustomPagination totalPages={totalPages} setCurrentPage={setCurrentPage} setRowsPerPage={setRowsPerPage} rowsPerPage={rowsPerPage} currentPage={currentPage} />
+                </>) : (<Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>
+                    No data found
+                </Typography>)}
+
 
         </Box>
     );
