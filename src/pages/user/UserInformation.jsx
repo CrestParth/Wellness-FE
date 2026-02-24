@@ -219,7 +219,7 @@ const UserInformation = () => {
             />
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 4, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
                 <Typography variant="h6" fontWeight={600} mb={3}>
-                    Vibe Checks given by User
+                    Vibes given by User
                 </Typography>
 
                 {userForm.values?.vibeChecks?.length > 0 ? (

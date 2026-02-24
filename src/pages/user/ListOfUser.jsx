@@ -132,7 +132,7 @@ const ListOfUser = () => {
                                                 onClick={changeSortOrder}
                                                 IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                             >
-                                                Vibe Checks
+                                                Vibe Given
                                             </TableSortLabel>
                                         </TableCell>
                                         <TableCell align="center" sx={tableHeaderCellSx}>Action</TableCell>
