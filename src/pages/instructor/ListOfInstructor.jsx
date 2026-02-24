@@ -212,7 +212,7 @@ const ListOfInstructor = () => {
 
                                                 <TableCell >
                                                     <Stack direction="row" justifyContent={"center"} spacing={1}>
-                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i.id}`)}>
+                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
                                                     </Stack>

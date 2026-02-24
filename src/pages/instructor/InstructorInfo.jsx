@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, IconButton, Stack
 } from "@mui/material";
@@ -13,56 +13,23 @@ import VibeCard from "../../components/VibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
+import { useGetInstructorById } from '../../Api/Api'
+import { useParams } from "react-router-dom";
 
 const InstructorInfo = () => {
+    const { id } = useParams();
     const [edit, setEdit] = useState(false)
     const [openPopup, setOpenPopup] = useState(null);
     const instructorForm = useFormik({
         initialValues: {
-            name: "Michael Johnson",
-            studio: "Iron Core Fitness",
-            services: "Strength Training",
-            teachesAt: [
-                { studioName: "FitZone", location: "Los Angeles" },
-                { studioName: "LifeFitness", location: "California" }
-            ],
-            email: "michael.johnson@yopmail.com",
-            category: ["Strength", "Yoga", "Fitness"],
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-            vibeChecks: [
-                {
-                    id: 1,
-                    userName: "Juliana Silva",
-                    avatar: "/avatar.jpg",
-                    date: "06 June, 2025",
-                    note: "FitZone is the best place to achieve my fitness goals...",
-                    tags: ["Strength", "Yoga", "Fitness"],
-                    energy: "High",
-                    pace: "Athletic",
-                    cueing: "Detailed",
-                    focus: "Burn",
-                    music: "Main Character",
-                    highlights: ["Clear Cues", "Good energy"],
-                    goodFor: ["Beginners", "High energy"]
-                },
-                {
-                    id: 2,
-                    userName: "Jhon Doe",
-                    avatar: "/avatar.jpg",
-                    date: "08 June, 2025",
-                    note: "FitPal is the best place to achieve my fitness goals...",
-                    tags: ["Strength", "Yoga", "Fitness"],
-                    energy: "High",
-                    pace: "Athletic",
-                    cueing: "Detailed",
-                    focus: "Burn",
-                    music: "Main Character",
-                    highlights: ["Clear Cues", "Good energy"],
-                    goodFor: ["Beginners", "High energy"]
-                }
-            ]
-
-            // status: 'approved'
+            name: "",
+            teachesAt: [{ studioName: "", location: "" }],
+            email: "",
+            category: [],
+            description: "",
+            hero_img: "",
+            profile_img: "",
+            vibeChecks: []
         },
         onSubmit: (values) => {
             console.log("Instructor Added (Dummy):", values);
@@ -70,12 +37,9 @@ const InstructorInfo = () => {
         },
     });
 
+    const { data: instructorData } = useGetInstructorById(id);
+
     const categoryOptions = [
-        { label: "Strength", value: "Strength" },
-        { label: "Yoga", value: "Yoga" },
-        { label: "Fitness", value: "Fitness" },
-    ];
-    const locationOptions = [
         { label: "Strength", value: "Strength" },
         { label: "Yoga", value: "Yoga" },
         { label: "Fitness", value: "Fitness" },
@@ -112,6 +76,32 @@ const InstructorInfo = () => {
         );
         instructorForm.setFieldValue("teachesAt", updated);
     };
+
+    useEffect(() => {
+        if (!instructorData?.data) return;
+
+        const apiData = instructorData.data;
+
+        instructorForm.setValues({
+            name: apiData.displayName || "",
+            email: apiData.user?.email || "",
+            description: apiData.bio || "",
+
+            teachesAt:
+                apiData.teachesAt?.map((studio) => ({
+                    studioName: studio.name,
+                    location: studio.location
+                })) || [{ studioName: "", location: "" }],
+
+            category:
+                apiData.classStyle?.map((style) => style.name) || [],
+
+            hero_img: apiData.heroPhoto || "",
+            profile_img: apiData.galleryPhotos?.[0] || "",
+
+            vibeChecks: apiData.vibes || []
+        });
+    }, [instructorData]);
 
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
