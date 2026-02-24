@@ -11,6 +11,9 @@ import ListOfCategory from "./pages/category/ListOfCategory";
 import ListOfSubscription from "./pages/subscription/ListOfSubscription";
 import VibeInfo from "./pages/vibeChecks/VibeInfo";
 import AddStudio from "./components/studio/AddStudio";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsCondition from "./pages/TermsCondition";
+import AccountDeletion from "./pages/AccountDeletion";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -82,6 +85,9 @@ function App() {
         { path: "profile", element: <Profile /> },
       ],
     },
+    { path: "/privacy-policy", element: <PrivacyPolicy /> },
+    { path: "/terms-condition", element: <TermsCondition /> },
+    { path: "/account-deletion", element: <AccountDeletion /> },
   ]);
 
   return (
