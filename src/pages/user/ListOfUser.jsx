@@ -159,7 +159,7 @@ const ListOfUser = () => {
                                                 <TableCell>
                                                     <Stack direction="row" alignItems="center" justifyContent={'center'} gap={1}>
                                                         <Typography fontWeight={500} >
-                                                            {user.vibeChecks?.length || 0}
+                                                            {user?.TotalVibeGiven || 0}
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>

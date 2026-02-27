@@ -192,7 +192,7 @@ const ListOfInstructor = () => {
                                                 <TableCell>
                                                     <Stack direction="row" justifyContent={"center"} spacing={1}>
                                                         <Typography fontWeight={500} >
-                                                            {i.vibeChecks || 0}
+                                                            {i?.instructorProfile?.TotalVibeChecks || 0}
                                                         </Typography>
                                                     </Stack></TableCell>
                                                 <TableCell>

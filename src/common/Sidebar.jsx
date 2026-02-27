@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
 import { menulist } from "./MenuList";
-import logo4 from "../assets/images/logo.svg";
+import logo4 from "../assets/images/logo4.png";
 import { useTheme } from "@mui/material/styles";
 
 const drawerWidth = 260;

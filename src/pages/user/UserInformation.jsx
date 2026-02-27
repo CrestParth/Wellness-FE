@@ -10,6 +10,7 @@ import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 
+
 const UserInformation = () => {
     const [edit, setEdit] = useState(false)
     const [openPopup, setOpenPopup] = useState(null);
