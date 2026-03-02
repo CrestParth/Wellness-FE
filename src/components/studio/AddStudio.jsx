@@ -4,8 +4,36 @@ import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
+import { useJsApiLoader } from "@react-google-maps/api";
+import { Autocomplete } from "@react-google-maps/api";
+
 
 const AddStudio = () => {
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+        libraries: ["places"],
+    });
+    const [autocomplete, setAutocomplete] = useState(null);
+
+    const onLoad = (auto) => {
+        setAutocomplete(auto);
+    };
+
+    const onPlaceChanged = () => {
+        if (autocomplete) {
+            const place = autocomplete.getPlace();
+
+            const lat = place.geometry?.location?.lat();
+            const lng = place.geometry?.location?.lng();
+            const address = place.formatted_address;
+
+            studioForm.setFieldValue("location", address);
+            studioForm.setFieldValue("lat", lat);
+            studioForm.setFieldValue("lng", lng);
+
+            console.log("Selected:", address, lat, lng);
+        }
+    };
     const studioForm = useFormik({
         initialValues: {
             name: "",
@@ -13,6 +41,10 @@ const AddStudio = () => {
             description: "",
             email: "",
             categories: [],
+            hero_img: "",
+            profile_img: "",
+            lat: "",
+            lng: "",
         },
         onSubmit: (values) => {
             console.log("Studio Added:", values);
@@ -51,12 +83,29 @@ const AddStudio = () => {
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
-                            <CustomInput
-                                label="Location"
-                                placeholder="Location"
-                                name="location"
-                                formik={studioForm}
-                            />
+                            {isLoaded && (
+                                <FormControl fullWidth>
+                                    <label style={{ marginBottom: 8 }}>Location</label>
+                                    <Autocomplete
+                                        onLoad={onLoad}
+                                        onPlaceChanged={onPlaceChanged}
+                                    >
+                                        <TextField
+                                            placeholder="Search Location"
+                                            value={studioForm.values.location}
+                                            onChange={(e) =>
+                                                studioForm.setFieldValue("location", e.target.value)
+                                            }
+                                            fullWidth
+                                            sx={{
+                                                '& .MuiOutlinedInput-root': {
+                                                    height: 45,
+                                                }
+                                            }}
+                                        />
+                                    </Autocomplete>
+                                </FormControl>
+                            )}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
