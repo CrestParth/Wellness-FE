@@ -32,13 +32,9 @@ const Login = () => {
 
     const onSuccess = (res) => {
         toast.success("Logged In successfully.");
-        localStorage.clear();
-        localStorage.setItem("accessToken", res.data.accessToken);
-        localStorage.setItem("userID", res.data.user.id);
-        localStorage.setItem("userName", res.data.user.firstName);
-        localStorage.setItem("role", res.data.user.Role.name);
-        localStorage.setItem("profileImg", res.data.user.profile_img)
-        nav("/home");
+        // if OTP required
+nav("/verification", { state: { email: res.data.email } });
+       
     };
 
     const loginfn = useLogin(onSuccess, onError);

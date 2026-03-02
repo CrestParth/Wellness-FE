@@ -102,11 +102,11 @@ const ListOfVibeChecks = () => {
                                 <TableRow>
                                     <TableCell sx={tableHeaderCellSx}>
                                         <TableSortLabel
-                                            id="firstName"
-                                            active={sortBy === 'firstName'}
+                                            id="displayName"
+                                            active={sortBy === 'displayName'}
                                             direction={sortOrder}
                                             onClick={changeSortOrder}
-                                            IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            IconComponent={() => <img src={sortBy === 'displayName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                         >
                                             Instructor
                                         </TableSortLabel></TableCell>
@@ -126,11 +126,11 @@ const ListOfVibeChecks = () => {
                                     </TableCell>
                                     <TableCell sx={tableHeaderCellSx}>
                                         <TableSortLabel
-                                            id="date"
-                                            active={sortBy === 'date'}
+                                            id="createdAt"
+                                            active={sortBy === 'createdAt'}
                                             direction={sortOrder}
                                             onClick={changeSortOrder}
-                                            IconComponent={() => <img src={sortBy === 'date' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                            IconComponent={() => <img src={sortBy === 'createdAt' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                         >
                                             Date
                                         </TableSortLabel>

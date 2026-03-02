@@ -14,6 +14,7 @@ import AddStudio from "./components/studio/AddStudio";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsCondition from "./pages/TermsCondition";
 import AccountDeletion from "./pages/AccountDeletion";
+import Verification from "./pages/auth/Verification";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -39,11 +40,19 @@ function App() {
       ),
     },
     {
+      path: "/verification",
+      element: (
+        <LogGuard>
+          <Verification />
+        </LogGuard>
+      ),
+    },
+    {
       path: "/home",
       element: (
-        // <AuthGuard>
+        <AuthGuard>
         <Layout />
-        // </AuthGuard>
+        </AuthGuard>
       ),
       children: [
         { path: "", element: <Home /> },

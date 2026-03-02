@@ -197,9 +197,9 @@ export const useCreateStudio = (onSuccess, onError) => {
 // get all Studios
 export const useGetStudio = (page, limit, searchKey, sortBy, sortOrder) => {
     return useQuery({
-        queryKey: ['studios', page, limit],
+        queryKey: ['studios', page, limit,searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/studios`, { params: { page, limit } });
+            const { data } = await apiClient.get(`/admin/studios`, { params: { page, limit ,searchKey, sortBy, sortOrder} });
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -273,6 +273,40 @@ export const useLogin = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async (credentials) => {
             const response = await apiClient.post('/auth/login', credentials);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            if (data?.success === true) {
+                onSuccess(data);
+            } else {
+                onError(data);
+            }
+        },
+        onError,
+    });
+};
+// verify otp
+export const useVerifyOtp = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (otp) => {
+            const response = await apiClient.post('/auth/verify-admin-otp', otp);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            if (data?.success === true) {
+                onSuccess(data);
+            } else {
+                onError(data);
+            }
+        },
+        onError,
+    });
+};
+// Resend verify otp
+export const useResendVerifyOtp = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (email) => {
+            const response = await apiClient.post('/auth/resend-otp', {email});
             return response.data;
         },
         onSuccess: (data) => {

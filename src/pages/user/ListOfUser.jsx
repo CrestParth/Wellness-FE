@@ -126,11 +126,11 @@ const ListOfUser = () => {
                                         </TableCell>
                                         <TableCell align="center" sx={tableHeaderCellSx}>
                                             <TableSortLabel
-                                                id="vibeChecks"
-                                                active={sortBy === 'vibeChecks'}
+                                                id="TotalVibeGiven"
+                                                active={sortBy === 'TotalVibeGiven'}
                                                 direction={sortOrder}
                                                 onClick={changeSortOrder}
-                                                IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                IconComponent={() => <img src={sortBy === 'TotalVibeGiven' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                             >
                                                 Vibe Given
                                             </TableSortLabel>
