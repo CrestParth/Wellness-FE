@@ -6,6 +6,7 @@ import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
+import {useCreateStudio} from '../../Api/Api'
 
 
 const AddStudio = () => {
@@ -47,17 +48,35 @@ const AddStudio = () => {
             lng: "",
         },
         onSubmit: (values) => {
-            console.log("Studio Added:", values);
+            const formData = new FormData();
+            formData.append("name", values.name);
+            formData.append("location", values.location);
+            formData.append("description", values.description);
+            formData.append("email", values.email);
+            values.categories.forEach((id) => {
+                formData.append("categories[]", id);
+            });
+            formData.append("hero_img", values.hero_img);
+            formData.append("profile_img", values.profile_img);
+            formData.append("lat", values.lat);
+            createStudio(formData)
         },
     });
     const categoryOptions = [
-        "Gym",
-        "Wellness",
-        "Meditation",
-        "Fitness Center",
+        { id: 1, label: "Gym" },
+        { id: 2, label: "Wellness" },
+        { id: 3, label: "Meditation" },
+        { id: 4, label: "Fitness Center" },
     ];
 
+    const onSuccess = () => {
+        toast.success("Studio Added Successfully.");
+    };
+    const onError = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
 
+    const {mutate:createStudio}=useCreateStudio(onSuccess,onError)
 
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
@@ -130,7 +149,12 @@ const AddStudio = () => {
                                         if (!selected || selected.length === 0) {
                                             return <span style={{ color: "#878787" }}>Select Class Style</span>;
                                         }
-                                        return selected.join(", ");
+                                    
+                                        const selectedLabels = categoryOptions
+                                            .filter(option => selected.includes(option.id))
+                                            .map(option => option.label);
+                                    
+                                        return selectedLabels.join(", ");
                                     }}
                                     sx={{
                                         height: 45,
@@ -155,12 +179,12 @@ const AddStudio = () => {
                                         },
                                     }}
                                 >
-                                    {categoryOptions.map((cat) => (
-                                        <MenuItem key={cat} value={cat}>
-                                            <Checkbox checked={studioForm.values.categories.includes(cat)} />
-                                            <ListItemText primary={cat} />
-                                        </MenuItem>
-                                    ))}
+                                 {categoryOptions.map((cat) => (
+    <MenuItem key={cat.id} value={cat.id}>
+        <Checkbox checked={studioForm.values.categories.includes(cat.id)} />
+        <ListItemText primary={cat.label} />
+    </MenuItem>
+))}
                                 </Select>
                             </FormControl>
                         </Grid>
