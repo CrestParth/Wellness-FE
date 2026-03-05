@@ -43,7 +43,7 @@ const ListOfInstructor = () => {
         }
     }
 
-    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage)
+    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage,statusFilter,filter,sortBy,sortOrder)
     const instructorData = data?.data
 
     const totalUsers = instructorData?.pagination?.total;
@@ -86,21 +86,18 @@ const ListOfInstructor = () => {
                         }}
                     />
 
-                    <TextField
-                        select
-                        label="Filter by Status"
-                        fullWidth
-                        value={statusFilter}
-                        size="small"
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        {["pending", "verified"].map((r) => (
-                            <MenuItem key={r} value={r}>
-                                {r}
-                            </MenuItem>
-                        ))}
-                    </TextField>
+<TextField
+    select
+    label="Filter by Status"
+    fullWidth
+    value={statusFilter}
+    size="small"
+    onChange={(e) => setStatusFilter(e.target.value)}
+>
+    <MenuItem value="">All</MenuItem>
+    <MenuItem value={false}>Pending</MenuItem>
+    <MenuItem value={true}>Verified</MenuItem>
+</TextField>
 
                     <Button sx={{ width: '400px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/instructors/add-instructor')}>
                         <AddIcon />
@@ -150,7 +147,7 @@ const ListOfInstructor = () => {
 
                                 <TableBody>
                                     {instructorData?.instructors?.map((i) => {
-                                        const statusLabel = i?.instructorProfile?.status ? "Verified" : "Pending";
+                                        const statusLabel = i?.instructorProfile?.isVerified ? "Verified" : "Pending";
                                         const statusStyle = statusColorMap[statusLabel];
 
                                         return (

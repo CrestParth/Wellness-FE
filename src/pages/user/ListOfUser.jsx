@@ -18,7 +18,7 @@ const ListOfUser = () => {
     const [sortOrder, setSortOrder] = useState("asc");
     const navigate = useNavigate()
 
-    const { data, isLoading } = useGetUser(currentPage, rowsPerPage);
+    const { data, isLoading } = useGetUser(currentPage, rowsPerPage,filter,sortBy,sortOrder);
     const statusColorMap = {
         active: {
             color: '#7BC8A9',

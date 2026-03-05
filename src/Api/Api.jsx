@@ -2,12 +2,12 @@ import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import apiClient from "./ApiClient";
 
 // get list of user
-export const useGetUser = (page = 1, limit = 2) => {
+export const useGetUser = (page = 1, limit = 2,searchKey='',sortBy='',sortOrder='') => {
     return useQuery({
-        queryKey: ['users', page, limit],
+        queryKey: ['users', page, limit,searchKey,sortBy,sortOrder],
         queryFn: async () => {
             const response = await apiClient.get('/admin/users', {
-                params: { page, limit },
+                params: { page, limit,searchKey,sortBy,sortOrder },
             });
             return response.data;
         },
@@ -136,11 +136,11 @@ export const useCreateInstructor = (onSuccess, onError) => {
     });
 };
 // get all Instructor
-export const useGetInstructors = (page, limit) => {
+export const useGetInstructors = (page, limit,isVerified='',searchKey='',sortBy='',sortOrder='') => {
     return useQuery({
-        queryKey: ['instructors', page, limit],
+        queryKey: ['instructors', page, limit,isVerified,searchKey,sortBy,sortOrder ],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/instructors`, { params: { page, limit } });
+            const { data } = await apiClient.get(`/admin/instructors`, { params: { page, limit,isVerified,searchKey,sortBy,sortOrder  } });
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -243,11 +243,11 @@ export const useUpdateStudio = (onSuccess, onError) => {
 
 
 // get all Vibe Checks
-export const useGetVibes = (page, limit, searchKey, sortBy, sortOrder) => {
+export const useGetVibes = (page, limit,startDate,endDate, searchKey, sortBy, sortOrder) => {
     return useQuery({
-        queryKey: ['vibes', page, limit],
+        queryKey: ['vibes', page, limit,startDate,endDate,searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/vibes`, { params: { page, limit } });
+            const { data } = await apiClient.get(`/admin/vibes`, { params: { page, limit,startDate,endDate,searchKey, sortBy, sortOrder } });
             return data;
         },
         staleTime: 15 * 60 * 1000,

@@ -16,7 +16,7 @@ const ListOfVibeChecks = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
-    const [instructorFilter, setInstructorFilter] = useState("");
+    const [filter, setFilter] = useState("");
     const [range, setRange] = useState([
         {
             startDate: startOfYear(new Date()),
@@ -28,7 +28,7 @@ const ListOfVibeChecks = () => {
     const endDate = range[0].endDate.toISOString();
     const nav = useNavigate()
 
-    const { data, isLoading } = useGetVibes(currentPage, rowsPerPage);
+    const { data, isLoading } = useGetVibes(currentPage, rowsPerPage,startDate,endDate,filter,sortBy,sortOrder);
 
     const userData = data?.data?.vibes || [];
     const pagination = data?.data?.pagination;
@@ -60,8 +60,8 @@ const ListOfVibeChecks = () => {
                     <TextField
                         variant="outlined"
                         placeholder="Search"
-                        value={instructorFilter}
-                        onChange={(e) => setInstructorFilter(e.target.value)}
+                        value={filter}
+                        onChange={(e) => setFilter(e.target.value)}
                         fullWidth
                         sx={{
                             width: '100%',
