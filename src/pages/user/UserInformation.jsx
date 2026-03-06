@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
     Box, Typography, Button, Grid, FormHelperText, Stack
 } from "@mui/material";
@@ -9,59 +9,44 @@ import VibeCard from "../../components/VibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
+import { useGetUserById,useUpdateUser,useDeleteUser } from "../../Api/Api";
+import { useParams,useNavigate } from "react-router-dom";
 
 
 const UserInformation = () => {
+    const {id}=useParams()
     const [edit, setEdit] = useState(false)
     const [openPopup, setOpenPopup] = useState(null);
+    const navigate = useNavigate();
+    const {data:userData}=useGetUserById(id)
+
     const userForm = useFormik({
         initialValues: {
-            name: "Michael Johnson",
-            studio: "Iron Core Fitness",
-            services: "Strength Training",
-            location: ["FitZone", "LifeFitness", "Fitness"],
-            email: "michael.johnson@yopmail.com",
-            category: ["Strength", "Yoga", "Fitness"],
-            description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore',
-            vibeChecks: [
-                {
-                    id: 1,
-                    userName: "Juliana Silva",
-                    avatar: "/avatar.jpg",
-                    date: "06 June, 2025",
-                    note: "FitZone is the best place to achieve my fitness goals...",
-                    tags: ["Strength", "Yoga", "Fitness"],
-                    energy: "High",
-                    pace: "Athletic",
-                    cueing: "Detailed",
-                    focus: "Burn",
-                    music: "Main Character",
-                    highlights: ["Clear Cues", "Good energy"],
-                    goodFor: ["Beginners", "High energy"]
-                },
-                {
-                    id: 2,
-                    userName: "Jhon Doe",
-                    avatar: "/avatar.jpg",
-                    date: "08 June, 2025",
-                    note: "FitPal is the best place to achieve my fitness goals...",
-                    tags: ["Strength", "Yoga", "Fitness"],
-                    energy: "High",
-                    pace: "Athletic",
-                    cueing: "Detailed",
-                    focus: "Burn",
-                    music: "Main Character",
-                    highlights: ["Clear Cues", "Good energy"],
-                    goodFor: ["Beginners", "High energy"]
-                }
-            ]
-
-            // status: 'approved'
+            firstName: "",
+            lastName: "",
+            email: "",
+            profileImage: "",
+            vibeChecks: []
         },
         onSubmit: (values) => {
-            console.log("Instructor Added (Dummy):", values);
-            alert("Instructor added (dummy)");
-        },
+    
+            const formData = new FormData();
+    
+            formData.append("firstName", values.firstName);
+            formData.append("lastName", values.lastName);
+            formData.append("email", values.email);
+    
+            if (values.profileImage instanceof File) {
+                formData.append("profileImage", values.profileImage);
+            }
+    
+            UpdateUser({
+                id: id,
+                body: formData
+            });
+    
+            setEdit(false);
+        }
     });
     const displayField = (label, value) => (
         <Box mb={3}>
@@ -76,10 +61,38 @@ const UserInformation = () => {
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
-            toast.success('Deleted Successfully')
+            DeleteUser(id);
         }
-        handleClose()
-    }
+        handleClose();
+    };
+    useEffect(() => {
+        if (userData?.data) {
+            const user = userData.data;
+    
+            userForm.setValues({
+                firstName: user.firstName || "",
+                lastName: user.lastName || "",
+                email: user.email || "",
+                profileImage: user.profileImage || "",
+                vibeChecks: user.vibes || []
+            });
+        }
+    }, [userData]);
+
+    const { mutate: DeleteUser } = useDeleteUser(
+        () => {
+            toast.success("User deleted successfully");
+            navigate("/home/users");
+        },
+        (error) => toast.error(error?.response?.data?.message || "Something went wrong")
+    );
+    const onSuccess = () => {
+        toast.success("User edited Successfully.");
+    };
+    const onError = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
+    const {mutate:UpdateUser}=useUpdateUser(onSuccess,onError)
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -96,14 +109,26 @@ const UserInformation = () => {
                             </Typography>
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
-                            {edit ? (
-                                <CustomInput
-                                    label="Name"
-                                    placeholder="Enter Name"
-                                    name="name"
-                                    formik={userForm}
-                                />) : displayField("Name", userForm.values.name)}
-                        </Grid>
+    {edit ? (
+        <CustomInput
+            label="First Name"
+            placeholder="Enter First Name"
+            name="firstName"
+            formik={userForm}
+        />
+    ) : displayField("First Name", userForm.values.firstName)}
+</Grid>
+
+<Grid size={{ xs: 12, sm: 6 }}>
+    {edit ? (
+        <CustomInput
+            label="Last Name"
+            placeholder="Enter Last Name"
+            name="lastName"
+            formik={userForm}
+        />
+    ) : displayField("Last Name", userForm.values.lastName)}
+</Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
@@ -138,19 +163,19 @@ const UserInformation = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="profile_img"
+                                                name="profileImage"
                                                 disabled={!edit}
-                                                onChange={e => userForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                                onChange={e => userForm.setFieldValue('profileImage', e.currentTarget.files[0])}
                                             />
-                                            {userForm.values.profile_img instanceof File ? (
+                                            {userForm.values.profileImage instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(userForm.values.profile_img)}
+                                                    src={URL.createObjectURL(userForm.values.profileImage)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : userForm.values.profile_img ? (
+                                            ) : userForm.values.profileImage ? (
                                                 <img
-                                                    src={userForm.values.profile_img}
+                                                    src={userForm.values.profileImage}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -158,8 +183,8 @@ const UserInformation = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {userForm.touched.profile_img && userForm.errors.profile_img && (
-                                            <FormHelperText error>{userForm.errors.profile_img}</FormHelperText>
+                                        {userForm.touched.profileImage && userForm.errors.profileImage && (
+                                            <FormHelperText error>{userForm.errors.profileImage}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -226,11 +251,11 @@ const UserInformation = () => {
                 {userForm.values?.vibeChecks?.length > 0 ? (
                     <Stack spacing={3} >
                         {userForm.values.vibeChecks.map((vibe, i) => (
-                            <Box sx={{
+                            <Box  key={vibe.id || i} sx={{
                                 borderRadius: 4,
                                 p: 3,
                                 border: '1px solid black'
-                            }}> <VibeCard key={vibe.id || i} vibe={vibe} /></Box>
+                            }}> <VibeCard vibe={vibe} /></Box>
                         ))}
                     </Stack>
                 ) : (

@@ -15,11 +15,11 @@ export const useGetUser = (page = 1, limit = 2,searchKey='',sortBy='',sortOrder=
         placeholderData: keepPreviousData,
     });
 };
-// update user status
-export const useUpdateStatus = (onSuccess, onError) => {
+// update user 
+export const useUpdateUser = (onSuccess, onError) => {
     return useMutation({
-        mutationFn: async ({ userId, body }) => {
-            const response = await apiClient.patch(`/super-admin/users/status/${userId}`, body);
+        mutationFn: async ({ id, body }) => {
+            const response = await apiClient.put(`/admin/users/${id}`, body);
             return response.data;
         },
         onSuccess,
@@ -37,6 +37,18 @@ export const useDeleteUser = (onSuccess, onError) => {
         onError,
     });
 };
+// get user by id 
+export const useGetUserById = (id) => {
+    return useQuery({
+        queryKey: ['user', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/users/${id}`);
+            return data;
+        },
+        staleTime: Infinity,
+        enabled: !!id,
+    });
+}
 
 
 
@@ -252,6 +264,29 @@ export const useGetVibes = (page, limit,startDate,endDate, searchKey, sortBy, so
         },
         staleTime: 15 * 60 * 1000,
         placeholderData: keepPreviousData,
+    });
+};
+// get vibes by id 
+export const useGetVibeById = (id) => {
+    return useQuery({
+        queryKey: ['vibe', id],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/vibes/${id}`);
+            return data;
+        },
+        staleTime: Infinity,
+        enabled: !!id,
+    });
+};
+//  Delete vibes by ID
+export const useDeleteVibe = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (id) => {
+            const { data } = await apiClient.delete(`/admin/vibes/${id}`);
+            return data;
+        },
+        onSuccess,
+        onError,
     });
 };
 

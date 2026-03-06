@@ -26,25 +26,25 @@ const VibeCard = ({ vibe }) => {
             {/* Header */}
             <Stack direction="row" justifyContent="space-between" alignItems="center">
                 <Stack direction="row" alignItems="center" spacing={2}>
-                    <Avatar src={vibe.avatar} />
+                    <Avatar src={vibe?.avatar} />
                     <Typography fontWeight={600}>
-                        {vibe.userName}
+                        {vibe?.userName}
                     </Typography>
                 </Stack>
 
                 <Typography variant="body2" color="#B0B0B0">
-                    {vibe.date}
+                    {vibe?.date}
                 </Typography>
             </Stack>
 
             {/* Review Text */}
             <Typography mt={2} lineHeight={1.7} color="black">
-                {vibe.note}
+                {vibe?.note}
             </Typography>
 
             {/* Tags */}
             <Stack direction="row" gap={1} flexWrap="wrap" mt={2}>
-                {vibe.tags?.map((tag, i) => (
+                {vibe?.tags?.map((tag, i) => (
                     <Chip
                         key={i}
                         label={tag}
@@ -69,11 +69,11 @@ const VibeCard = ({ vibe }) => {
             {/* Vibes Icons Row */}
             <Stack direction="row" justifyContent="space-between" mt={4}>
                 {[
-                    { icon: energyIcon, label: "Energy", value: vibe.energy },
-                    { icon: paceIcon, label: "Pace", value: vibe.pace },
-                    { icon: cueingIcon, label: "Cueing", value: vibe.cueing },
-                    { icon: focusIcon, label: "Focus", value: vibe.focus },
-                    { icon: musicIcon, label: "Music", value: vibe.music }
+                    { icon: energyIcon, label: "Energy", value: vibe?.energy },
+                    { icon: paceIcon, label: "Pace", value: vibe?.pace },
+                    { icon: cueingIcon, label: "Cueing", value: vibe?.cueing },
+                    { icon: focusIcon, label: "Focus", value: vibe?.focus },
+                    { icon: musicIcon, label: "Music", value: vibe?.music }
                 ].map((item, i) => (
                     <Stack key={i} alignItems="center" spacing={1}>
                         {/* <Box
@@ -115,7 +115,7 @@ const VibeCard = ({ vibe }) => {
                     <Typography fontWeight={600} mb={1}>
                         Experience Highlights
                     </Typography>
-                    {vibe.highlights?.map((h, i) => (
+                    {vibe?.highlights?.map((h, i) => (
                         <Typography key={i} fontSize={13}>
                             {h}
                         </Typography>
@@ -133,7 +133,7 @@ const VibeCard = ({ vibe }) => {
                     <Typography fontWeight={600} mb={1}>
                         Good fit for
                     </Typography>
-                    {vibe.goodFor?.map((g, i) => (
+                    {vibe?.goodFor?.map((g, i) => (
                         <Typography key={i} fontSize={13}>
                             {g}
                         </Typography>

@@ -3,60 +3,55 @@ import { Box, Typography, Grid, Button } from "@mui/material";
 import VibeCard from '../../components/VibeCard'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-import { useLocation } from "react-router-dom";
+import { useParams ,useNavigate} from "react-router-dom";
 import { toast } from "react-toastify";
+import { useGetVibeById, useDeleteVibe } from '../../Api/Api'
+import { useQueryClient } from "@tanstack/react-query";
 const VibeInfo = () => {
-    const location = useLocation();
-    const vibe = location.state?.vibe;
+    const { id } = useParams();
+    const navigate=useNavigate()
     const [openPopup, setOpenPopup] = useState(null);
     const handleOpen = (type) => setOpenPopup(type);
     const handleClose = () => setOpenPopup(null);
-    // const vibeData = {
-    //     userName: "Juliana Silva",
-    //     avatar: "/avatar.jpg",
-    //     date: "06 June, 2025",
-    //     note: "FitZone is the best place to achieve my fitness goals...",
-    //     tags: ["Strength", "Yoga", "Fitness"],
-    //     energy: "High",
-    //     pace: "Athletic",
-    //     cueing: "Detailed",
-    //     focus: "Burn",
-    //     music: "Main Character",
-    //     highlights: ["Clear Cues", "Good energy"],
-    //     goodFor: ["Beginners", "High energy"]
-    // };
 
-    const vibeData = vibe
-        ? {
-            userName:
-                `${vibe.user?.firstName || ""} ${vibe.user?.lastName || ""}`.trim(),
+    const client=useQueryClient()
+    const { data: vibeData } = useGetVibeById(id);
 
-            avatar: vibe.user?.profileImage || "",
-
-            date: new Date(vibe.createdAt).toLocaleDateString(),
-
-            note: vibe.vibeText || "",
-
-            tags: vibe.classStyle?.map((c) => c.name) || [],
-
-            energy: vibe.describeVibe?.energy,
-            pace: vibe.describeVibe?.pace,
-            cueing: vibe.describeVibe?.cueing,
-            focus: vibe.describeVibe?.focus,
-            music: vibe.describeVibe?.music,
-
-            highlights: vibe.vibeTags?.experienceHighlights || [],
-            goodFor: vibe.vibeTags?.goodFitFor || []
+    const formattedVibe = vibeData?.data
+      ? {
+          userName: `${vibeData.data.user?.firstName || ""} ${vibeData.data.user?.lastName || ""}`.trim(),
+          avatar: vibeData.data.user?.profileImage || "",
+          date: new Date(vibeData.data.createdAt).toLocaleDateString(),
+          note: vibeData.data.vibeText || "",
+          tags: vibeData.data.classStyle?.map((c) => c.name) || [],
+    
+          energy: vibeData.data.describeVibe?.energy,
+          pace: vibeData.data.describeVibe?.pace,
+          cueing: vibeData.data.describeVibe?.cueing,
+          focus: vibeData.data.describeVibe?.focus,
+          music: vibeData.data.describeVibe?.music,
+    
+          highlights: vibeData.data.vibeTags?.experienceHighlights || [],
+          goodFor: vibeData.data.vibeTags?.goodFitFor || []
         }
-        : null;
+      : null;
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
-            toast.success('Deleted Successfully')
+            deleteVibe(id);
         }
         handleClose()
     }
-    if (!vibe) {
+ 
+    const {mutate:deleteVibe}=useDeleteVibe(
+        () => {
+            toast.success("Vibe deleted successfully");
+            navigate("/home/vibe");
+            client.invalidateQueries(["vibes"], { exact: false });
+        },
+        (error) => toast.error(error?.message || "Something went Wrong")
+    );
+    if (!formattedVibe) {
         return (
             <Box p={3}>
                 <Typography>No vibe data found</Typography>
@@ -83,7 +78,7 @@ const VibeInfo = () => {
                         </Typography>
                     </Grid>
                     <Grid size={12}>
-                        <VibeCard vibe={vibeData} />
+                    <VibeCard vibe={formattedVibe} />
                     </Grid>
                     <Grid size={12}>
                         <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>

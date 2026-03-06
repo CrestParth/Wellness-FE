@@ -179,9 +179,7 @@ const ListOfVibeChecks = () => {
                                             <Stack direction="row" justifyContent="center" spacing={1}>
                                                 <IconButton
                                                     onClick={() =>
-                                                        nav(`/home/vibe/vibe-view/${vibe.id}`, {
-                                                            state: { vibe }
-                                                        })
+                                                        nav(`/home/vibe/vibe-view/${vibe.id}`)
                                                     }
                                                 >
                                                     <VisibilityIcon />
