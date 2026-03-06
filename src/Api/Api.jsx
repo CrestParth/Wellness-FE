@@ -2,12 +2,12 @@ import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import apiClient from "./ApiClient";
 
 // get list of user
-export const useGetUser = (page = 1, limit = 2,searchKey='',sortBy='',sortOrder='') => {
+export const useGetUser = (page = 1, limit = 2, searchKey = '', sortBy = '', sortOrder = '') => {
     return useQuery({
-        queryKey: ['users', page, limit,searchKey,sortBy,sortOrder],
+        queryKey: ['users', page, limit, searchKey, sortBy, sortOrder],
         queryFn: async () => {
             const response = await apiClient.get('/admin/users', {
-                params: { page, limit,searchKey,sortBy,sortOrder },
+                params: { page, limit, searchKey, sortBy, sortOrder },
             });
             return response.data;
         },
@@ -123,7 +123,7 @@ export const useDeleteCategory = (onSuccess, onError) => {
         onError,
     });
 };
-//  Update user by ID
+//  Update category by ID
 export const useUpdateCategory = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async ({ id, data }) => {
@@ -148,11 +148,11 @@ export const useCreateInstructor = (onSuccess, onError) => {
     });
 };
 // get all Instructor
-export const useGetInstructors = (page, limit,isVerified='',searchKey='',sortBy='',sortOrder='') => {
+export const useGetInstructors = (page, limit, isVerified = '', searchKey = '', sortBy = '', sortOrder = '') => {
     return useQuery({
-        queryKey: ['instructors', page, limit,isVerified,searchKey,sortBy,sortOrder ],
+        queryKey: ['instructors', page, limit, isVerified, searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/instructors`, { params: { page, limit,isVerified,searchKey,sortBy,sortOrder  } });
+            const { data } = await apiClient.get(`/admin/instructors`, { params: { page, limit, isVerified, searchKey, sortBy, sortOrder } });
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -209,9 +209,9 @@ export const useCreateStudio = (onSuccess, onError) => {
 // get all Studios
 export const useGetStudio = (page, limit, searchKey, sortBy, sortOrder) => {
     return useQuery({
-        queryKey: ['studios', page, limit,searchKey, sortBy, sortOrder],
+        queryKey: ['studios', page, limit, searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/studios`, { params: { page, limit ,searchKey, sortBy, sortOrder} });
+            const { data } = await apiClient.get(`/admin/studios`, { params: { page, limit, searchKey, sortBy, sortOrder } });
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -255,11 +255,11 @@ export const useUpdateStudio = (onSuccess, onError) => {
 
 
 // get all Vibe Checks
-export const useGetVibes = (page, limit,startDate,endDate, searchKey, sortBy, sortOrder) => {
+export const useGetVibes = (page, limit, startDate, endDate, searchKey, sortBy, sortOrder) => {
     return useQuery({
-        queryKey: ['vibes', page, limit,startDate,endDate,searchKey, sortBy, sortOrder],
+        queryKey: ['vibes', page, limit, startDate, endDate, searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/vibes`, { params: { page, limit,startDate,endDate,searchKey, sortBy, sortOrder } });
+            const { data } = await apiClient.get(`/admin/vibes`, { params: { page, limit, startDate, endDate, searchKey, sortBy, sortOrder } });
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -341,7 +341,7 @@ export const useVerifyOtp = (onSuccess, onError) => {
 export const useResendVerifyOtp = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async (email) => {
-            const response = await apiClient.post('/auth/resend-otp', {email});
+            const response = await apiClient.post('/auth/resend-otp', { email });
             return response.data;
         },
         onSuccess: (data) => {

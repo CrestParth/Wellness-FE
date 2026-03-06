@@ -43,7 +43,7 @@ const ListOfInstructor = () => {
         }
     }
 
-    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage,statusFilter,filter,sortBy,sortOrder)
+    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
     const instructorData = data?.data
 
     const totalUsers = instructorData?.pagination?.total;
@@ -86,18 +86,18 @@ const ListOfInstructor = () => {
                         }}
                     />
 
-<TextField
-    select
-    label="Filter by Status"
-    fullWidth
-    value={statusFilter}
-    size="small"
-    onChange={(e) => setStatusFilter(e.target.value)}
->
-    <MenuItem value="">All</MenuItem>
-    <MenuItem value={false}>Pending</MenuItem>
-    <MenuItem value={true}>Verified</MenuItem>
-</TextField>
+                    <TextField
+                        select
+                        label="Filter by Status"
+                        fullWidth
+                        value={statusFilter}
+                        size="small"
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                    >
+                        <MenuItem value="">All</MenuItem>
+                        <MenuItem value={false}>Pending</MenuItem>
+                        <MenuItem value={true}>Verified</MenuItem>
+                    </TextField>
 
                     <Button sx={{ width: '400px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/instructors/add-instructor')}>
                         <AddIcon />
@@ -111,7 +111,7 @@ const ListOfInstructor = () => {
                 <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>) : (Array.isArray(instructorData?.instructors) && instructorData?.instructors?.length > 0 ? (
                     <>
                         <TableContainer >
-                            <Table sx={{ minWidth: '900px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
+                            <Table sx={{ minWidth: '800px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
                                 <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
                                     <TableRow>
                                         <TableCell sx={tableHeaderCellSx}>
@@ -155,8 +155,8 @@ const ListOfInstructor = () => {
                                                 <TableCell sx={{ fontWeight: 500 }}>{i.firstName}
                                                     {i.lastName}
                                                 </TableCell>
-                                                <TableCell sx={{ width: '100%' }}>
-                                                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                                                <TableCell sx={{ minWidth: 220 }}>
+                                                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
                                                         {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                             <Chip
                                                                 key={index}
@@ -174,7 +174,7 @@ const ListOfInstructor = () => {
                                                         {i?.instructorProfile?.teachesAt?.length > 3 && (
                                                             <Chip
                                                                 label={`+${i?.instructorProfile?.teachesAt.length - 3}`}
-                                                                size="meduim"
+                                                                size="medium"
                                                                 sx={{
                                                                     border: "1px solid #A855F7",
                                                                     color: "#A855F7",
@@ -226,7 +226,7 @@ const ListOfInstructor = () => {
                     No data found
                 </Typography>)
             )}
-        </Box>
+        </Box >
     );
 };
 
