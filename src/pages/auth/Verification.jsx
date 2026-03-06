@@ -1,11 +1,11 @@
-import {useEffect,useState} from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from "react-router-dom";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import { Box, Card, Typography, Button, FormControl, InputLabel, FormHelperText, CircularProgress } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import logo3 from "../../assets/images/logo2.svg";
-import { useVerifyOtp ,useResendVerifyOtp} from "../../Api/Api"; // create this API hook
+import { useVerifyOtp, useResendVerifyOtp } from "../../Api/Api"; // create this API hook
 import * as Yup from "yup";
 
 const otpValidation = Yup.object({
@@ -18,6 +18,7 @@ const Verification = () => {
     const nav = useNavigate();
     const location = useLocation();
     const email = location.state?.email;
+    const defaultOtp = location.state?.otp;
     const [timer, setTimer] = useState(30);
 
     // If user directly opens page
@@ -54,8 +55,8 @@ const Verification = () => {
 
     const resendFn = useResendVerifyOtp(resendSuccess, resendError);
 
-      // countdown
-      useEffect(() => {
+    // countdown
+    useEffect(() => {
         if (timer === 0) return;
         const interval = setInterval(() => setTimer(t => t - 1), 1000);
         return () => clearInterval(interval);
@@ -63,7 +64,7 @@ const Verification = () => {
 
     const formik = useFormik({
         initialValues: {
-            otp: "",
+            otp: defaultOtp || "",
         },
         validationSchema: otpValidation,
         onSubmit: (values) => {
@@ -86,7 +87,7 @@ const Verification = () => {
             }}
         >
             <Card sx={{ p: 3, borderRadius: 3, boxShadow: 3, maxWidth: 500, width: "100%" }}>
-                
+
                 <Box sx={{ textAlign: "center" }}>
                     <img src={logo3} alt="logo" style={{ width: "20%" }} />
                 </Box>
@@ -144,7 +145,7 @@ const Verification = () => {
                     {/* Resend OTP */}
                     <Button
                         fullWidth
-                        sx={{ mt: 2,color:'black' }}
+                        sx={{ mt: 2, color: 'black' }}
                         disabled={timer > 0 || resendFn.isPending}
                         onClick={() => resendFn.mutate(email)}
                     >

@@ -33,8 +33,8 @@ const Login = () => {
     const onSuccess = (res) => {
         toast.success("Logged In successfully.");
         // if OTP required
-nav("/verification", { state: { email: res.data.email } });
-       
+        nav("/verification", { state: { email: res.data.email, otp: res.data.otp } });
+
     };
 
     const loginfn = useLogin(onSuccess, onError);
