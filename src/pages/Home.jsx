@@ -32,22 +32,25 @@ const dashboardData = {
 };
 
 
-const StatCard = ({ title, value, bg }) => (
+const StatCard = ({ title, value, bg, placeholder }) => (
     <Box
         sx={{
             height: "100%",
             backgroundColor: bg,
             borderRadius: "16px",
             px: 3,
-            py: 3,
+            py: 2,
         }}
     >
-        <Typography variant="body2" color="#878787">
+        <Typography variant="body1" color="#878787">
             {title}
         </Typography>
         <Typography variant="h4" fontWeight={600} mt={1}>
             {value}
         </Typography>
+        {/* <Typography variant="body2" color="#878787" mt={1}>
+            {placeholder}
+        </Typography> */}
     </Box>
 );
 
@@ -68,7 +71,7 @@ const Home = () => {
 
                     <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
-                            title="Active Instructors"
+                            title="Total Studios"
                             value={dashboardData.stats.activeInstructors}
                             bg="#6C63FF33"
                         />
@@ -87,6 +90,7 @@ const Home = () => {
                             title="New Instructor Signups"
                             value={dashboardData.stats.newInstructorSignups}
                             bg="rgba(27, 170, 144, 0.2)"
+                            placeholder='this month'
                         />
                     </Grid>
                 </Grid>
@@ -140,7 +144,7 @@ const Home = () => {
                         sx={{
                             p: 2,
                             borderRadius: "12px",
-                            border: "1px solid #E5E7EB",
+                            border: "1px solid #B57EDC",
                             cursor: "pointer"
                         }}
                         onClick={() => nav('/home/instructors/add-instructor')}
@@ -153,30 +157,14 @@ const Home = () => {
                         </Typography>
                     </Grid>
 
-                    <Grid
-                        size={{ xs: 12, md: 4 }}
-                        sx={{
-                            p: 2,
-                            borderRadius: "12px",
-                            border: "1px solid #E5E7EB",
-                            cursor: "pointer"
-                        }}
-                        onClick={() => nav('/home/vibe')}
-                    >
-                        <Typography fontWeight={500}>
-                            Manage Vibe Checks
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            Review and moderate user-submitted vibe checks
-                        </Typography>
-                    </Grid>
+
 
                     <Grid
                         size={{ xs: 12, md: 4 }}
                         sx={{
                             p: 2,
                             borderRadius: "12px",
-                            border: "1px solid #E5E7EB",
+                            border: "1px solid #B57EDC",
                             cursor: "pointer"
                         }}
                         onClick={() => nav('/home/studio/add-studio')}
@@ -186,6 +174,23 @@ const Home = () => {
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                             Create studio information
+                        </Typography>
+                    </Grid>
+                    <Grid
+                        size={{ xs: 12, md: 4 }}
+                        sx={{
+                            p: 2,
+                            borderRadius: "12px",
+                            border: "1px solid #B57EDC",
+                            cursor: "pointer"
+                        }}
+                        onClick={() => nav('/home/vibe')}
+                    >
+                        <Typography fontWeight={500}>
+                            Manage Vibe Checks
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                            Review and moderate user-submitted vibe checks
                         </Typography>
                     </Grid>
                 </Grid>
