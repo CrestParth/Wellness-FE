@@ -25,7 +25,7 @@ apiClient.interceptors.response.use(
         if (
             error.response &&
             error.response.data &&
-            error.response.data.message === "Invalid or expired token"
+            error.response.data.message === "Invalid authentication token"
         ) {
             // Clear auth data
             localStorage.removeItem("accessToken");

@@ -24,6 +24,7 @@ const UserInformation = lazy(() => import('./pages/user/UserInformation'))
 const ListOfUser = lazy(() => import('./pages/user/ListOfUser'))
 const ListOfStudio = lazy(() => import('./pages/studio/ListOfStudio'))
 const ListOfInstructor = lazy(() => import('./pages/instructor/ListOfInstructor'))
+const ListOfBoosted = lazy(() => import('./pages/boosted/ListOfBoosted'))
 
 const Profile = lazy(() => import("./pages/Profile"));
 
@@ -51,7 +52,7 @@ function App() {
       path: "/home",
       element: (
         <AuthGuard>
-        <Layout />
+          <Layout />
         </AuthGuard>
       ),
       children: [
@@ -77,7 +78,13 @@ function App() {
             { path: "", element: <ListOfInstructor /> },
             { path: "instructor-view/:id", element: <InstructorInfo /> },
             { path: "add-instructor", element: <AddInstructor /> },
-
+          ],
+        },
+        {
+          path: "boosted",
+          children: [
+            { path: "", element: <ListOfBoosted /> },
+            { path: "boosted-view/:id", element: <InstructorInfo /> },
           ],
         },
         {

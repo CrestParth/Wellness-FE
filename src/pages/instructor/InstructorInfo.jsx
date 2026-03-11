@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
 import {
-    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, IconButton, Stack
+    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, IconButton, Stack, Select, MenuItem, Checkbox, ListItemText
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
-import CustomSelect from "../../common/custom/CustomSelect";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import GrayPlus from '../../assets/images/GrayPlus.svg'
 import InstructorVibeCard from "../../components/instructor/InstructorVibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
-import { useGetInstructorById } from '../../Api/Api'
+import { useGetInstructorById, useGetCategories } from '../../Api/Api'
 import { useParams } from "react-router-dom";
 
 const InstructorInfo = () => {
@@ -25,7 +24,7 @@ const InstructorInfo = () => {
             name: "",
             teachesAt: [{ studioName: "", location: "" }],
             email: "",
-            category: [],
+            categories: [],
             description: "",
             hero_img: "",
             profile_img: "",
@@ -39,11 +38,6 @@ const InstructorInfo = () => {
 
     const { data: instructorData } = useGetInstructorById(id);
 
-    const categoryOptions = [
-        { label: "Strength", value: "Strength" },
-        { label: "Yoga", value: "Yoga" },
-        { label: "Fitness", value: "Fitness" },
-    ];
     const displayField = (label, value) => (
         <Box mb={3}>
             <Typography sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}>{label}</Typography>
@@ -77,6 +71,8 @@ const InstructorInfo = () => {
         instructorForm.setFieldValue("teachesAt", updated);
     };
 
+    const { data: classStyles } = useGetCategories()
+
     useEffect(() => {
         if (!instructorData?.data) return;
 
@@ -93,8 +89,8 @@ const InstructorInfo = () => {
                     location: studio.location
                 })) || [{ studioName: "", location: "" }],
 
-            category:
-                apiData.classStyle?.map((style) => style.name) || [],
+            categories:
+                apiData.classStyle?.map((style) => style.id) || [],
 
             hero_img: apiData.heroPhoto || "",
             profile_img: apiData.galleryPhotos?.[0] || "",
@@ -239,16 +235,57 @@ const InstructorInfo = () => {
 
 
 
-                        <Grid size={{ xs: 12, sm: 6 }}>
+                        <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
-                                <CustomSelect
-                                    label="Class Style"
-                                    name="category"
-                                    value={instructorForm.values.category}
-                                    onChange={instructorForm.handleChange}
-                                    options={categoryOptions}
-                                    multiple
-                                />
+                                <FormControl fullWidth>
+                                    <label style={{ marginBottom: 8 }}>Class Style</label>
+                                    <Select
+                                        multiple
+                                        fullWidth
+                                        name="categories"
+                                        value={instructorForm.values.categories || []}
+                                        onChange={instructorForm.handleChange}
+                                        displayEmpty
+                                        renderValue={(selected) => {
+                                            if (!selected || selected.length === 0) {
+                                                return <span style={{ color: "#878787" }}>Select Class Style</span>;
+                                            }
+
+                                            const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id))?.map(option => option.name);
+
+                                            return selectedLabels.join(", ");
+                                        }}
+                                        sx={{
+                                            height: 45,
+                                            mt: '3px',
+                                            '& .MuiSelect-select': {
+                                                height: 50,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                color: 'inherit !important',
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#E0E3E7 !important',
+                                            },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#E0E3E7 !important',
+                                            },
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: '#E0E3E7 !important',
+                                                },
+                                                boxShadow: 'none',
+                                            },
+                                        }}
+                                    >
+                                        {classStyles?.data?.categories?.map((cat) => (
+                                            <MenuItem key={cat.id} value={cat.id}>
+                                                <Checkbox checked={instructorForm.values.categories.includes(cat.id)} />
+                                                <ListItemText primary={cat.name} />
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             ) : (
                                 <Box mb={3}>
                                     <Typography
@@ -258,24 +295,27 @@ const InstructorInfo = () => {
                                     </Typography>
 
                                     <Box display="flex" gap={1} flexWrap="wrap">
-                                        {instructorForm.values.category?.length ? (
-                                            instructorForm.values.category.map((cat) => (
-                                                <Box
-                                                    key={cat}
-                                                    sx={{
-                                                        px: 2.5,
-                                                        py: 0.8,
-                                                        borderRadius: "999px",
-                                                        border: "1px solid #A855F7",
-                                                        color: "#A855F7",
-                                                        fontWeight: 600,
-                                                        fontSize: "14px",
-                                                        backgroundColor: "transparent",
-                                                    }}
-                                                >
-                                                    {cat}
-                                                </Box>
-                                            ))
+                                        {instructorForm.values.categories?.length ? (
+                                            instructorForm.values.categories.map((catId) => {
+                                                const category = classStyles?.data?.categories?.find(c => c.id === catId);
+                                                return (
+                                                    <Box
+                                                        key={catId}
+                                                        sx={{
+                                                            px: 2.5,
+                                                            py: 0.8,
+                                                            borderRadius: "999px",
+                                                            border: "1px solid #A855F7",
+                                                            color: "#A855F7",
+                                                            fontWeight: 600,
+                                                            fontSize: "14px",
+                                                            backgroundColor: "transparent",
+                                                        }}
+                                                    >
+                                                        {category?.name}
+                                                    </Box>
+                                                )
+                                            })
                                         ) : (
                                             <Typography color="text.secondary">-</Typography>
                                         )}

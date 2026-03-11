@@ -1,6 +1,11 @@
-import { Typography, Box, Grid } from '@mui/material'
-import React from 'react'
+import { Typography, Box, Grid, TableContainer, Table, TableHead, TableRow, TableCell, TableSortLabel, TableBody, Stack, Chip, IconButton, Button } from '@mui/material'
+import React, { useState } from 'react'
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from 'react-router-dom';
+import { useGetInstructors } from "../Api/Api";
+import arrowup from '../assets/images/arrowup.svg';
+import arrowdown from '../assets/images/arrowdown.svg';
+import arrownuteral from '../assets/images/arrownuteral.svg';
 
 const dashboardData = {
     stats: {
@@ -56,7 +61,35 @@ const StatCard = ({ title, value, bg, placeholder }) => (
 
 
 const Home = () => {
+    const [rowsPerPage, setRowsPerPage] = useState(5);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [sortBy, setSortBy] = useState("firstName");
+    const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
+    const changeSortOrder = (e) => {
+        const field = e.target.id;
+
+        if (field !== sortBy) {
+            setSortBy(field);
+            setSortOrder("asc");
+        } else {
+            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+        }
+    }
+    const statusColorMap = {
+        Verified: {
+            color: '#7BC8A9',
+            border: '#10B981',
+            bg: '#ECFDF5'
+        },
+        Pending: {
+            color: '#FF927C',
+            border: '#EF4444',
+            bg: '#FEF2F2'
+        }
+    };
+    const { data, isLoading } = useGetInstructors(1, 5)
+    const instructorData = data?.data
     return (
         <>
             <Box sx={{ p: { xs: 0, sm: 2 } }}>
@@ -99,31 +132,138 @@ const Home = () => {
                 sx={{
                     backgroundColor: "#FFFFFF",
                     borderRadius: "16px",
-                    p: 3,
+                    p: 0,
                     my: 5,
                     boxShadow: "0 4px 12px rgba(0,0,0,0.05)",
                 }}
             >
-                <Typography variant="h6" fontWeight={600} mb={2}>
-                    Recent Activities
-                </Typography>
-
-                {dashboardData.recentActivities.map((activity) => (
-                    <Box
-                        key={activity.id}
-                        sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            py: 1.5,
-                            // borderBottom: "1px solid #F3F4F6",
-                        }}
-                    >
-                        <Typography>{activity.message}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                            {activity.time}
+                <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
+                    <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                        <Typography variant="h6" fontWeight={600}>
+                            List of Boosted Instructors
                         </Typography>
-                    </Box>
-                ))}
+                    </Grid>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                        <Button sx={{ width: '130px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/boosted')}>
+                            View more
+                        </Button>
+                    </Grid>
+                </Grid>
+
+
+                {isLoading ? (
+                    <Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>Loading....</Typography>) : (Array.isArray(instructorData?.instructors) && instructorData?.instructors?.length > 0 ? (
+                        <>
+                            <TableContainer >
+                                <Table sx={{ minWidth: '800px', '& .MuiTableCell-root': { fontSize: '15px' } }}>
+                                    <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+                                        <TableRow>
+                                            <TableCell sx={tableHeaderCellSx}>
+                                                <TableSortLabel
+                                                    id="firstName"
+                                                    active={sortBy === 'firstName'}
+                                                    direction={sortOrder}
+                                                    onClick={changeSortOrder}
+                                                    IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                >
+                                                    Name
+                                                </TableSortLabel></TableCell>
+                                            <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
+
+                                            <TableCell sx={{
+                                                backgroundColor: '#F9FAFB',
+                                                color: '#878787'
+                                            }}>
+                                                <TableSortLabel
+                                                    id="startDate"
+                                                    active={sortBy === 'startDate'}
+                                                    direction={sortOrder}
+                                                    onClick={changeSortOrder}
+                                                    IconComponent={() => <img src={sortBy === 'startDate' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                >
+                                                    Start Date
+                                                </TableSortLabel></TableCell>
+                                            <TableCell sx={tableHeaderCellSx}>
+                                                <TableSortLabel
+                                                    id="endDate"
+                                                    active={sortBy === 'endDate'}
+                                                    direction={sortOrder}
+                                                    onClick={changeSortOrder}
+                                                    IconComponent={() => <img src={sortBy === 'endDate' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                >
+                                                    End Date
+                                                </TableSortLabel></TableCell>
+
+                                            <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
+                                        </TableRow>
+                                    </TableHead>
+
+                                    <TableBody>
+                                        {instructorData?.instructors?.map((i) => {
+                                            const statusLabel = i?.instructorProfile?.isVerified ? "Verified" : "Pending";
+                                            const statusStyle = statusColorMap[statusLabel];
+
+                                            return (
+                                                <TableRow key={i.id}>
+                                                    <TableCell sx={{ fontWeight: 500 }}>{i.firstName}
+                                                        {i.lastName}
+                                                    </TableCell>
+                                                    <TableCell sx={{ minWidth: 220 }}>
+                                                        <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
+                                                            {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                                <Chip
+                                                                    key={index}
+                                                                    label={tag.name}
+                                                                    size="medium"
+                                                                    sx={{
+                                                                        border: "1px solid #A855F7",
+                                                                        color: "#A855F7",
+                                                                        backgroundColor: "transparent",
+                                                                        fontWeight: 500
+                                                                    }}
+                                                                />
+                                                            ))}
+
+                                                            {i?.instructorProfile?.teachesAt?.length > 3 && (
+                                                                <Chip
+                                                                    label={`+${i?.instructorProfile?.teachesAt.length - 3}`}
+                                                                    size="medium"
+                                                                    sx={{
+                                                                        border: "1px solid #A855F7",
+                                                                        color: "#A855F7",
+                                                                        backgroundColor: "transparent",
+                                                                        fontWeight: 500
+                                                                    }}
+                                                                />
+                                                            )}
+                                                        </Stack>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        02/03/2026
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        23/08/2026
+                                                    </TableCell>
+
+                                                    <TableCell >
+                                                        <Stack direction="row" justifyContent={"center"} spacing={1}>
+                                                            <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.instructorProfile?.id}`)}>
+                                                                <VisibilityIcon />
+                                                            </IconButton>
+                                                        </Stack>
+                                                    </TableCell>
+                                                </TableRow>
+                                            )
+                                        })}
+                                    </TableBody>
+                                </Table>
+                            </TableContainer>
+                        </>
+                    ) : (<Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>
+                        No data found
+                    </Typography>)
+                )}
             </Box>
 
             <Box
@@ -203,3 +343,7 @@ const Home = () => {
 }
 
 export default Home
+const tableHeaderCellSx = {
+    backgroundColor: '#F9FAFB',
+    color: '#878787'
+};

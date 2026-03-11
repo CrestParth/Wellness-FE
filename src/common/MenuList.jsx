@@ -8,6 +8,7 @@ import {
     AppstoreOutlined,
     FileTextOutlined,
     LogoutOutlined,
+    ThunderboltOutlined
 } from '@ant-design/icons';
 const icons = {
     DashboardOutlined,
@@ -19,6 +20,7 @@ const icons = {
     AppstoreOutlined,
     FileTextOutlined,
     LogoutOutlined,
+    ThunderboltOutlined
 };
 
 export const menulist = [
@@ -75,6 +77,13 @@ export const menulist = [
         name: "Class Style",
         path: "/home/categories",
         icon: icons.AppstoreOutlined,
+    },
+    {
+        id: "boosted",
+        name: "Boosted Instructors",
+        path: "/home/boosted",
+        view: 'Instructor Information',
+        icon: icons.ThunderboltOutlined,
     },
 
     // {

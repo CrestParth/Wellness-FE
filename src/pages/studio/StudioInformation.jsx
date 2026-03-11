@@ -1,5 +1,5 @@
 import {
-    Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl
+    Box, Typography, Button, Grid, FormHelperText, Select, FormControl, InputLabel, Checkbox, ListItemText, MenuItem
 } from "@mui/material";
 import { useFormik } from "formik";
 import { studioValidationSchema } from "../../common/FormValidation";
@@ -12,7 +12,7 @@ import CustomSelect from '../../common/custom/CustomSelect'
 import CustomInput from "../../common/custom/CustomInput";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-import { useGetStudioById, useDeleteStudio, useUpdateStudio } from '../../Api/Api'
+import { useGetStudioById, useDeleteStudio, useUpdateStudio, useGetCategories } from '../../Api/Api'
 import { useParams, useNavigate } from "react-router-dom";
 
 const StudioInformation = () => {
@@ -40,12 +40,6 @@ const StudioInformation = () => {
     };
 
 
-    const categoryOptions = [
-        { label: "Strength", value: "Strength" },
-        { label: "Yoga", value: "Yoga" },
-        { label: "Fitness", value: "Fitness" },
-    ];
-
     const { data: studioData } = useGetStudioById(params.id)
     const { mutate: updateStudio } = useUpdateStudio(onSuccessUpdate, onErrorUpdate)
     const { mutate: deleteStudio } = useDeleteStudio(onSuccessDelete, onErrorDelete)
@@ -65,7 +59,7 @@ const StudioInformation = () => {
             formData.append("about", values.description);
 
             // Categories (array)
-            values.category?.forEach((cat) => {
+            values.categories?.forEach((cat) => {
                 formData.append("categories[]", cat);
             });
 
@@ -74,8 +68,11 @@ const StudioInformation = () => {
                 formData.append("hero_img", values.hero_img);
             }
 
-            if (values.profile_img instanceof File) {
-                formData.append("profile_img", values.profile_img);
+            if (values.image1 instanceof File) {
+                formData.append("image1", values.image1);
+            }
+            if (values.image2 instanceof File) {
+                formData.append("image2", values.image2);
             }
 
             updateStudio({
@@ -115,6 +112,8 @@ const StudioInformation = () => {
         }
         handleClose()
     }
+
+    const { data: classStyles } = useGetCategories()
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -179,14 +178,55 @@ const StudioInformation = () => {
 
                         <Grid size={{ xs: 12, sm: 6, md: edit ? 6 : 4 }}>
                             {edit ? (
-                                <CustomSelect
-                                    label="Class Style"
-                                    name="category"
-                                    value={studioForm.values.category}
-                                    onChange={studioForm.handleChange}
-                                    options={categoryOptions}
-                                    multiple
-                                />
+                                <FormControl fullWidth>
+                                    <label style={{ marginBottom: 8 }}>Class Style</label>
+                                    <Select
+                                        multiple
+                                        fullWidth
+                                        name="categories"
+                                        value={studioForm.values.categories || []}
+                                        onChange={studioForm.handleChange}
+                                        displayEmpty
+                                        renderValue={(selected) => {
+                                            if (!selected || selected.length === 0) {
+                                                return <span style={{ color: "#878787" }}>Select Class Style</span>;
+                                            }
+
+                                            const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id))?.map(option => option.name);
+
+                                            return selectedLabels.join(", ");
+                                        }}
+                                        sx={{
+                                            height: 45,
+                                            mt: '3px',
+                                            '& .MuiSelect-select': {
+                                                height: 50,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                color: 'inherit !important',
+                                            },
+                                            '& .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#E0E3E7 !important',
+                                            },
+                                            '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                borderColor: '#E0E3E7 !important',
+                                            },
+                                            '& .MuiOutlinedInput-root': {
+                                                '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                                                    borderColor: '#E0E3E7 !important',
+                                                },
+                                                boxShadow: 'none',
+                                            },
+                                        }}
+                                    >
+                                        {classStyles?.data?.categories?.map((cat) => (
+                                            <MenuItem key={cat.id} value={cat.id}>
+                                                <Checkbox checked={studioForm.values.categories.includes(cat.id)} />
+                                                <ListItemText primary={cat.name} />
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
                             ) : (
                                 <Box mb={3}>
                                     <Typography
@@ -196,24 +236,27 @@ const StudioInformation = () => {
                                     </Typography>
 
                                     <Box display="flex" gap={1} flexWrap="wrap">
-                                        {studioForm.values.category?.length ? (
-                                            studioForm.values.category.map((cat) => (
-                                                <Box
-                                                    key={cat}
-                                                    sx={{
-                                                        px: 2.5,
-                                                        py: 0.8,
-                                                        borderRadius: "999px",
-                                                        border: "1px solid #A855F7",
-                                                        color: "#A855F7",
-                                                        fontWeight: 600,
-                                                        fontSize: "14px",
-                                                        backgroundColor: "transparent",
-                                                    }}
-                                                >
-                                                    {cat}
-                                                </Box>
-                                            ))
+                                        {studioForm.values.categories?.length ? (
+                                            studioForm.values.categories.map((catId) => {
+                                                const category = classStyles?.data?.categories?.find(c => c.id === catId);
+                                                return (
+                                                    <Box
+                                                        key={catId}
+                                                        sx={{
+                                                            px: 2.5,
+                                                            py: 0.8,
+                                                            borderRadius: "999px",
+                                                            border: "1px solid #A855F7",
+                                                            color: "#A855F7",
+                                                            fontWeight: 600,
+                                                            fontSize: "14px",
+                                                            backgroundColor: "transparent",
+                                                        }}
+                                                    >
+                                                        {category?.name}
+                                                    </Box>
+                                                )
+                                            })
                                         ) : (
                                             <Typography color="text.secondary">-</Typography>
                                         )}
@@ -302,50 +345,99 @@ const StudioInformation = () => {
                                         <FormHelperText error>{studioForm.errors.hero_img}</FormHelperText>
                                     )}
                                 </Grid>
-                                <Grid size={{ xs: 12, sm: 4 }}>
-                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
-                                    <Box
-                                        sx={{
-                                            border: '2px dashed #E0E3E7',
-                                            borderRadius: '12px',
-                                            minHeight: 180,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            cursor: edit ? 'pointer' : 'not-allowed',
-                                            position: 'relative',
-                                            background: '#fafbfc'
-                                        }}
-                                        component="label"
-                                    >
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            hidden
-                                            name="profile_img"
-                                            disabled={!edit}
-                                            onChange={e => studioForm.setFieldValue('profile_img', e.currentTarget.files[0])}
-                                        />
-                                        {studioForm.values.profile_img instanceof File ? (
-                                            <img
-                                                src={URL.createObjectURL(studioForm.values.profile_img)}
-                                                alt="Selfie Preview"
-                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 1</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="image1"
+
+                                                onChange={e => studioForm.setFieldValue('image1', e.currentTarget.files[0])}
                                             />
-                                        ) : studioForm.values.profile_img ? (
-                                            <img
-                                                src={studioForm.values.profile_img}
-                                                alt="Selfie"
-                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
-                                            />
-                                        ) : (<><img src={GrayPlus} alt="gray plus" />
-                                            <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            {studioForm.values.image1 instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(studioForm.values.image1)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : studioForm.values.image1 ? (
+                                                <img
+                                                    src={studioForm.values.image1}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {studioForm.touched.image1 && studioForm.errors.image1 && (
+                                            <FormHelperText error>{studioForm.errors.image1}</FormHelperText>
                                         )}
-                                    </Box>
-                                    {studioForm.touched.profile_img && studioForm.errors.profile_img && (
-                                        <FormHelperText error>{studioForm.errors.profile_img}</FormHelperText>
-                                    )}
+                                    </Grid>
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 2</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="image2"
+
+                                                onChange={e => studioForm.setFieldValue('image2', e.currentTarget.files[0])}
+                                            />
+                                            {studioForm.values.image2 instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(studioForm.values.image2)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : studioForm.values.image2 ? (
+                                                <img
+                                                    src={studioForm.values.image2}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {studioForm.touched.image2 && studioForm.errors.image2 && (
+                                            <FormHelperText error>{studioForm.errors.image2}</FormHelperText>
+                                        )}
+                                    </Grid>
                                 </Grid>
                             </Grid>
 
@@ -415,7 +507,7 @@ export default StudioInformation;
 
 const studioInitialValues = {
     name: "",
-    category: [""],
+    categories: [],
     email: "",
     location: "",
     status: "",
@@ -430,8 +522,9 @@ const setStudioFormValues = ({ form, data }) => {
         location: data.location || "",
         status: data.status || "",
         description: data.about || "",
-        category: data.categories?.map((cat) => cat.name) || [],
+        categories: data.categories?.map((cat) => cat.id) || [],
         hero_img: data.images?.[0] || "",
-        profile_img: data.images?.[1] || ""
+        image1: data.images?.[1] || "",
+        image2: data.images?.[2] || ""
     });
 };

@@ -6,7 +6,7 @@ import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
-import {useCreateInstructor} from '../../Api/Api'
+import { useCreateInstructor, useGetCategories } from '../../Api/Api'
 
 
 
@@ -17,21 +17,21 @@ const AddInstructor = () => {
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
     };
-    const {mutate:createInstructor}=useCreateInstructor(onSuccess,onError)
-    
+    const { mutate: createInstructor } = useCreateInstructor(onSuccess, onError)
+
     const instructorForm = useFormik({
         initialValues: {
             name: "",
             studio: "",
             teachesAt: [
-                { studioName: "", location: "" }
+                { studioName: "", location: "", lat: "", long: "" }
             ],
             email: "",
             categories: [],
             description: ""
         },
         onSubmit: (values) => {
-            const formData=new FormData()
+            const formData = new FormData()
             formData.append("name", values.name);
             formData.append("studio", values.studio);
             formData.append("teachesAt", JSON.stringify(values.teachesAt));
@@ -45,12 +45,6 @@ const AddInstructor = () => {
             createInstructor(formData)
         },
     });
-    const categoryOptions = [
-        { id: 1, label: "Gym" },
-        { id: 2, label: "Wellness" },
-        { id: 3, label: "Meditation" },
-        { id: 4, label: "Fitness Center" },
-    ];
 
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [
@@ -64,7 +58,7 @@ const AddInstructor = () => {
         instructorForm.setFieldValue("teachesAt", updated);
     };
 
-
+    const { data: classStyles } = useGetCategories()
 
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
@@ -111,11 +105,9 @@ const AddInstructor = () => {
                                         if (!selected || selected.length === 0) {
                                             return <span style={{ color: "#878787" }}>Select Class Style</span>;
                                         }
-                                    
-                                        const selectedLabels = categoryOptions
-                                            .filter(option => selected.includes(option.id))
-                                            .map(option => option.label);
-                                    
+
+                                        const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id)).map(option => option.name);
+
                                         return selectedLabels.join(", ");
                                     }}
                                     sx={{
@@ -141,12 +133,12 @@ const AddInstructor = () => {
                                         },
                                     }}
                                 >
-                                                {categoryOptions.map((cat) => (
-    <MenuItem key={cat.id} value={cat.id}>
-        <Checkbox checked={instructorForm.values.categories.includes(cat.id)} />
-        <ListItemText primary={cat.label} />
-    </MenuItem>
-))}
+                                    {classStyles?.data?.categories?.map((cat) => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            <Checkbox checked={instructorForm.values.categories.includes(cat.id)} />
+                                            <ListItemText primary={cat.name} />
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Grid>

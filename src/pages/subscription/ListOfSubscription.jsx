@@ -23,7 +23,8 @@ const subscriptionData = [
         amount: 49.99,
         recurring: true,
         status: "active",
-        purchaseDate: "2024-06-01",
+        purchaseDate: "01/06/2025",
+        expiryDate: "01/07/2025",
     },
     {
         id: 2,
@@ -33,7 +34,8 @@ const subscriptionData = [
         amount: 29.99,
         recurring: false,
         status: "expired",
-        purchaseDate: "2024-05-18",
+        purchaseDate: "18/05/2025",
+        expiryDate: "18/06/2025",
     },
     {
         id: 3,
@@ -43,7 +45,8 @@ const subscriptionData = [
         amount: 49.99,
         recurring: true,
         status: "active",
-        purchaseDate: "2024-06-10",
+        purchaseDate: "10/06/2025",
+        expiryDate: "10/07/2025",
     },
     {
         id: 4,
@@ -53,7 +56,8 @@ const subscriptionData = [
         amount: 29.99,
         recurring: true,
         status: "active",
-        purchaseDate: "2024-06-05",
+        purchaseDate: "05/06/2025",
+        expiryDate: "05/07/2025",
     },
 ];
 
@@ -128,6 +132,7 @@ const ListOfSubscription = () => {
                             <TableCell sx={tableHeaderCellSx}>Status</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Amount</TableCell>
                             <TableCell sx={tableHeaderCellSx}>Purchase Date</TableCell>
+                            <TableCell sx={tableHeaderCellSx}>Expiry Date</TableCell>
                         </TableRow>
                     </TableHead>
 
@@ -156,6 +161,7 @@ const ListOfSubscription = () => {
                                         </TableCell>
                                         <TableCell>${sub.amount}</TableCell>
                                         <TableCell>{sub.purchaseDate}</TableCell>
+                                        <TableCell>{sub.expiryDate}</TableCell>
                                     </TableRow>
                                 )
                             })

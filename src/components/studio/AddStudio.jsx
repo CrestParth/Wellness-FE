@@ -6,7 +6,7 @@ import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
-import {useCreateStudio} from '../../Api/Api'
+import { useCreateStudio, useGetCategories } from '../../Api/Api'
 
 
 const AddStudio = () => {
@@ -43,7 +43,8 @@ const AddStudio = () => {
             email: "",
             categories: [],
             hero_img: "",
-            profile_img: "",
+            image1: "",
+            image2: "",
             lat: "",
             lng: "",
         },
@@ -57,17 +58,12 @@ const AddStudio = () => {
                 formData.append("categories[]", id);
             });
             formData.append("hero_img", values.hero_img);
-            formData.append("profile_img", values.profile_img);
+            formData.append("image1", values.image1);
+            formData.append("image2", values.image2);
             formData.append("lat", values.lat);
             createStudio(formData)
         },
     });
-    const categoryOptions = [
-        { id: 1, label: "Gym" },
-        { id: 2, label: "Wellness" },
-        { id: 3, label: "Meditation" },
-        { id: 4, label: "Fitness Center" },
-    ];
 
     const onSuccess = () => {
         toast.success("Studio Added Successfully.");
@@ -76,7 +72,9 @@ const AddStudio = () => {
         toast.error(error.response.data.message || "Something went Wrong");
     };
 
-    const {mutate:createStudio}=useCreateStudio(onSuccess,onError)
+    const { mutate: createStudio } = useCreateStudio(onSuccess, onError)
+
+    const { data: classStyles } = useGetCategories()
 
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
@@ -149,11 +147,9 @@ const AddStudio = () => {
                                         if (!selected || selected.length === 0) {
                                             return <span style={{ color: "#878787" }}>Select Class Style</span>;
                                         }
-                                    
-                                        const selectedLabels = categoryOptions
-                                            .filter(option => selected.includes(option.id))
-                                            .map(option => option.label);
-                                    
+
+                                        const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id))?.map(option => option.name);
+
                                         return selectedLabels.join(", ");
                                     }}
                                     sx={{
@@ -179,12 +175,12 @@ const AddStudio = () => {
                                         },
                                     }}
                                 >
-                                 {categoryOptions.map((cat) => (
-    <MenuItem key={cat.id} value={cat.id}>
-        <Checkbox checked={studioForm.values.categories.includes(cat.id)} />
-        <ListItemText primary={cat.label} />
-    </MenuItem>
-))}
+                                    {classStyles?.data?.categories?.map((cat) => (
+                                        <MenuItem key={cat.id} value={cat.id}>
+                                            <Checkbox checked={studioForm.values.categories.includes(cat.id)} />
+                                            <ListItemText primary={cat.name} />
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -265,48 +261,98 @@ const AddStudio = () => {
                                     )}
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
-                                    <Box
-                                        sx={{
-                                            border: '2px dashed #E0E3E7',
-                                            borderRadius: '12px',
-                                            minHeight: 180,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            cursor: 'pointer',
-                                            position: 'relative',
-                                            background: '#fafbfc'
-                                        }}
-                                        component="label"
-                                    >
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            hidden
-                                            name="profile_img"
-                                            onChange={e => studioForm.setFieldValue('profile_img', e.currentTarget.files[0])}
-                                        />
-                                        {studioForm.values.profile_img instanceof File ? (
-                                            <img
-                                                src={URL.createObjectURL(studioForm.values.profile_img)}
-                                                alt="Selfie Preview"
-                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 1</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="image1"
+
+                                                onChange={e => studioForm.setFieldValue('image1', e.currentTarget.files[0])}
                                             />
-                                        ) : studioForm.values.profile_img ? (
-                                            <img
-                                                src={studioForm.values.profile_img}
-                                                alt="Selfie"
-                                                style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
-                                            />
-                                        ) : (<><img src={GrayPlus} alt="gray plus" />
-                                            <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            {studioForm.values.image1 instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(studioForm.values.image1)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : studioForm.values.image1 ? (
+                                                <img
+                                                    src={studioForm.values.image1}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {studioForm.touched.image1 && studioForm.errors.image1 && (
+                                            <FormHelperText error>{studioForm.errors.image1}</FormHelperText>
                                         )}
-                                    </Box>
-                                    {studioForm.touched.profile_img && studioForm.errors.profile_img && (
-                                        <FormHelperText error>{studioForm.errors.profile_img}</FormHelperText>
-                                    )}
+                                    </Grid>
+                                </Grid>
+                                <Grid size={{ xs: 12, sm: 4, md: 3 }}>
+                                    <Grid size={{ xs: 12 }}>
+                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 2</label>
+                                        <Box
+                                            sx={{
+                                                border: '2px dashed #E0E3E7',
+                                                borderRadius: '12px',
+                                                minHeight: 180,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                cursor: 'pointer',
+                                                position: 'relative',
+                                                background: '#fafbfc'
+                                            }}
+                                            component="label"
+                                        >
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                hidden
+                                                name="image2"
+
+                                                onChange={e => studioForm.setFieldValue('image2', e.currentTarget.files[0])}
+                                            />
+                                            {studioForm.values.image2 instanceof File ? (
+                                                <img
+                                                    src={URL.createObjectURL(studioForm.values.image2)}
+                                                    alt="Selfie Preview"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : studioForm.values.image2 ? (
+                                                <img
+                                                    src={studioForm.values.image2}
+                                                    alt="Selfie"
+                                                    style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
+                                                />
+                                            ) : (<><img src={GrayPlus} alt="gray plus" />
+                                                <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
+                                            )}
+                                        </Box>
+                                        {studioForm.touched.image2 && studioForm.errors.image2 && (
+                                            <FormHelperText error>{studioForm.errors.image2}</FormHelperText>
+                                        )}
+                                    </Grid>
                                 </Grid>
                             </Grid>
                         </Grid>
