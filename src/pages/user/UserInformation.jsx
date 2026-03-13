@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Box, Typography, Button, Grid, FormHelperText, Stack
 } from "@mui/material";
@@ -9,16 +9,16 @@ import VibeCard from "../../components/VibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
-import { useGetUserById,useUpdateUser,useDeleteUser } from "../../Api/Api";
-import { useParams,useNavigate } from "react-router-dom";
+import { useGetUserById, useUpdateUser, useDeleteUser } from "../../Api/Api";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 const UserInformation = () => {
-    const {id}=useParams()
+    const { id } = useParams()
     const [edit, setEdit] = useState(false)
     const [openPopup, setOpenPopup] = useState(null);
     const navigate = useNavigate();
-    const {data:userData}=useGetUserById(id)
+    const { data: userData } = useGetUserById(id)
 
     const userForm = useFormik({
         initialValues: {
@@ -29,22 +29,22 @@ const UserInformation = () => {
             vibeChecks: []
         },
         onSubmit: (values) => {
-    
+
             const formData = new FormData();
-    
+
             formData.append("firstName", values.firstName);
             formData.append("lastName", values.lastName);
             formData.append("email", values.email);
-    
+
             if (values.profileImage instanceof File) {
                 formData.append("profileImage", values.profileImage);
             }
-    
+
             UpdateUser({
                 id: id,
                 body: formData
             });
-    
+
             setEdit(false);
         }
     });
@@ -68,7 +68,7 @@ const UserInformation = () => {
     useEffect(() => {
         if (userData?.data) {
             const user = userData.data;
-    
+
             userForm.setValues({
                 firstName: user.firstName || "",
                 lastName: user.lastName || "",
@@ -92,7 +92,7 @@ const UserInformation = () => {
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
     };
-    const {mutate:UpdateUser}=useUpdateUser(onSuccess,onError)
+    const { mutate: UpdateUser } = useUpdateUser(onSuccess, onError)
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -109,26 +109,26 @@ const UserInformation = () => {
                             </Typography>
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
-    {edit ? (
-        <CustomInput
-            label="First Name"
-            placeholder="Enter First Name"
-            name="firstName"
-            formik={userForm}
-        />
-    ) : displayField("First Name", userForm.values.firstName)}
-</Grid>
+                            {edit ? (
+                                <CustomInput
+                                    label="First Name"
+                                    placeholder="Enter First Name"
+                                    name="firstName"
+                                    formik={userForm}
+                                />
+                            ) : displayField("First Name", userForm.values.firstName)}
+                        </Grid>
 
-<Grid size={{ xs: 12, sm: 6 }}>
-    {edit ? (
-        <CustomInput
-            label="Last Name"
-            placeholder="Enter Last Name"
-            name="lastName"
-            formik={userForm}
-        />
-    ) : displayField("Last Name", userForm.values.lastName)}
-</Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {edit ? (
+                                <CustomInput
+                                    label="Last Name"
+                                    placeholder="Enter Last Name"
+                                    name="lastName"
+                                    formik={userForm}
+                                />
+                            ) : displayField("Last Name", userForm.values.lastName)}
+                        </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
@@ -251,7 +251,7 @@ const UserInformation = () => {
                 {userForm.values?.vibeChecks?.length > 0 ? (
                     <Stack spacing={3} >
                         {userForm.values.vibeChecks.map((vibe, i) => (
-                            <Box  key={vibe.id || i} sx={{
+                            <Box key={vibe.id || i} sx={{
                                 borderRadius: 4,
                                 p: 3,
                                 border: '1px solid black'

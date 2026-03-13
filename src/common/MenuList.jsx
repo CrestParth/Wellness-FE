@@ -64,7 +64,13 @@ export const menulist = [
         view: "Vibe Checks",
         icon: icons.StarOutlined,
     },
-
+    {
+        id: "boosted",
+        name: "Boosted Instructors",
+        path: "/home/boosted",
+        view: 'Instructor Information',
+        icon: icons.ThunderboltOutlined,
+    },
     {
         id: "subscriptions",
         name: "Subscriptions & Revenue",
@@ -77,13 +83,6 @@ export const menulist = [
         name: "Class Style",
         path: "/home/categories",
         icon: icons.AppstoreOutlined,
-    },
-    {
-        id: "boosted",
-        name: "Boosted Instructors",
-        path: "/home/boosted",
-        view: 'Instructor Information',
-        icon: icons.ThunderboltOutlined,
     },
 
     // {

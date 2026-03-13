@@ -7,10 +7,35 @@ import GrayPlus from '../../assets/images/GrayPlus.svg'
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useCreateInstructor, useGetCategories } from '../../Api/Api'
-
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 
 
 const AddInstructor = () => {
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+        libraries: ["places"],
+    });
+    const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    const handleAutoLoad = (index, auto) => {
+        setAutoCompleteRefs(prev => ({
+            ...prev,
+            [index]: auto
+        }));
+    };
+    const handlePlaceChanged = (index) => {
+        const auto = autoCompleteRefs[index];
+        if (!auto) return;
+
+        const place = auto.getPlace();
+
+        const lat = place.geometry?.location?.lat();
+        const lng = place.geometry?.location?.lng();
+        const address = place.formatted_address;
+
+        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
+        instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
+        instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
+    };
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
     };
@@ -162,21 +187,34 @@ const AddInstructor = () => {
                                             spacing={2}
                                             alignItems="center"
                                         >
-                                            <BootstrapInput
-                                                name={`teachesAt[${index}].studioName`}
-                                                placeholder="Studio Name"
-                                                value={item.studioName}
-                                                onChange={instructorForm.handleChange}
-                                                sx={{ flex: 1 }}
-                                            />
-
-                                            <BootstrapInput
-                                                name={`teachesAt[${index}].location`}
-                                                placeholder="Location"
-                                                value={item.location}
-                                                onChange={instructorForm.handleChange}
-                                                sx={{ flex: 1 }}
-                                            />
+                                            <Box sx={{ flex: 1 }}>
+                                                <BootstrapInput
+                                                    name={`teachesAt[${index}].studioName`}
+                                                    placeholder="Studio Name"
+                                                    value={item.studioName}
+                                                    onChange={instructorForm.handleChange}
+                                                    fullWidth
+                                                />
+                                            </Box>
+                                            <Box sx={{ flex: 1 }}>
+                                                {isLoaded && (
+                                                    <Autocomplete
+                                                        onLoad={(auto) => handleAutoLoad(index, auto)}
+                                                        onPlaceChanged={() => handlePlaceChanged(index)}
+                                                        options={{
+                                                            types: ["geocode"],
+                                                        }}
+                                                    >
+                                                        <BootstrapInput
+                                                            name={`teachesAt[${index}].location`}
+                                                            placeholder="Location"
+                                                            value={item.location}
+                                                            onChange={instructorForm.handleChange}
+                                                            fullWidth
+                                                        />
+                                                    </Autocomplete>
+                                                )}
+                                            </Box>
                                             {index !== instructorForm.values.teachesAt.length - 1 && (
                                                 <IconButton
                                                     color="error"
@@ -431,7 +469,7 @@ const AddInstructor = () => {
                                 <Button variant="contained"
                                     sx={{ width: 180, height: 48, borderRadius: '8px', color: 'white', backgroundColor: 'var(--Blue)', fontSize: '16px', fontWeight: 400, }}
                                     onClick={() => {
-                                        profileForm.handleSubmit()
+                                        instructorForm.handleSubmit()
                                     }}>
                                     Add Instructor
                                 </Button>
