@@ -46,27 +46,27 @@ const AddInstructor = () => {
 
     const instructorForm = useFormik({
         initialValues: {
-            name: "",
-            studio: "",
+            firstName: "",
+            lastName: "",
             teachesAt: [
                 { studioName: "", location: "", lat: "", long: "" }
             ],
+            displayName: "",
             email: "",
             categories: [],
-            description: ""
+            bio: ""
         },
         onSubmit: (values) => {
             const formData = new FormData()
-            formData.append("name", values.name);
-            formData.append("studio", values.studio);
+            formData.append("firstName", values.firstName);
+            formData.append("lastName", values.lastName);
             formData.append("teachesAt", JSON.stringify(values.teachesAt));
             formData.append("email", values.email);
-            values.categories.forEach((id) => {
-                formData.append("categories[]", id);
-            });
-            formData.append("description", values.description);
-            formData.append("hero_img", values.hero_img);
-            formData.append("profile_img", values.profile_img);
+            formData.append("displayName", values.displayName);
+            formData.append("categories", JSON.stringify(values.categories));
+            formData.append("bio", values.bio);
+            formData.append("heroPhoto", values.hero_img);
+            formData.append("galleryPhotos", values.profile_img);
             createInstructor(formData)
         },
     });
@@ -102,9 +102,17 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Instructor Name"
-                                placeholder="Instructor Name"
-                                name="name"
+                                label="First Name"
+                                placeholder="Enter First Name"
+                                name="firstName"
+                                formik={instructorForm}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomInput
+                                label="Last Name"
+                                placeholder="Enter Last Name"
+                                name="lastName"
                                 formik={instructorForm}
                             />
                         </Grid>
@@ -166,6 +174,14 @@ const AddInstructor = () => {
                                     ))}
                                 </Select>
                             </FormControl>
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomInput
+                                label="Display Name"
+                                placeholder="Enter Display Name"
+                                name="displayName"
+                                formik={instructorForm}
+                            />
                         </Grid>
                         <Grid size={12}>
                             <Box>
@@ -244,7 +260,7 @@ const AddInstructor = () => {
 
                                 <InputLabel
                                     shrink
-                                    htmlFor={'description'}
+                                    htmlFor={'bio'}
                                     sx={{
                                         fontSize: "1.3rem",
                                         fontWeight: 450,
@@ -257,13 +273,13 @@ const AddInstructor = () => {
 
 
                                 <BootstrapInput
-                                    id={'description'}
-                                    name={'description'}
+                                    id={'bio'}
+                                    name={'bio'}
                                     type={'text'}
                                     placeholder={"Enter descripton"}
                                     multiline
                                     rows={3}
-                                    value={instructorForm.values.description}
+                                    value={instructorForm.values.bio}
                                     onChange={instructorForm.handleChange}
                                     onBlur={instructorForm.handleBlur}
                                 />

@@ -2,39 +2,10 @@ import { Typography, Box, Grid, TableContainer, Table, TableHead, TableRow, Tabl
 import React, { useState } from 'react'
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from 'react-router-dom';
-import { useGetInstructors } from "../Api/Api";
+import { useGetInstructors, useGetDashboard } from "../Api/Api";
 import arrowup from '../assets/images/arrowup.svg';
 import arrowdown from '../assets/images/arrowdown.svg';
 import arrownuteral from '../assets/images/arrownuteral.svg';
-
-const dashboardData = {
-    stats: {
-        totalInstructors: 66,
-        activeInstructors: 48,
-        pendingInstructors: 18,
-        newInstructorSignups: 22,
-    },
-    recentActivities: [
-        {
-            id: 1,
-            type: "INSTRUCTOR_SIGNUP",
-            message: "Alex Trainer signed up",
-            time: "2 hours ago",
-        },
-        {
-            id: 2,
-            type: "REVIEW",
-            message: "New 5★ review for Fit Studio",
-            time: "5 hours ago",
-        },
-        {
-            id: 3,
-            type: "FLAGGED",
-            message: "Review flagged for inappropriate content",
-            time: "1 day ago",
-        },
-    ],
-};
 
 
 const StatCard = ({ title, value, bg, placeholder }) => (
@@ -61,8 +32,6 @@ const StatCard = ({ title, value, bg, placeholder }) => (
 
 
 const Home = () => {
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
@@ -76,18 +45,10 @@ const Home = () => {
             setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
         }
     }
-    const statusColorMap = {
-        Verified: {
-            color: '#7BC8A9',
-            border: '#10B981',
-            bg: '#ECFDF5'
-        },
-        Pending: {
-            color: '#FF927C',
-            border: '#EF4444',
-            bg: '#FEF2F2'
-        }
-    };
+
+    const { data: analyticsData } = useGetDashboard()
+    const analytics = analyticsData?.data
+
     const { data, isLoading } = useGetInstructors(1, 5)
     const instructorData = data?.data
     return (
@@ -97,7 +58,7 @@ const Home = () => {
                     <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Total Instructors"
-                            value={dashboardData.stats.totalInstructors}
+                            value={analytics?.totalInstructors ?? 0}
                             bg="rgba(27, 120, 170, 0.2)"
                         />
                     </Grid>
@@ -105,7 +66,7 @@ const Home = () => {
                     <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="Total Studios"
-                            value={dashboardData.stats.activeInstructors}
+                            value={analytics?.totalStudios ?? 0}
                             bg="#6C63FF33"
                         />
                     </Grid>
@@ -121,7 +82,7 @@ const Home = () => {
                     <Grid size={{ xs: 12, md: 4 }}>
                         <StatCard
                             title="New Instructor Signups"
-                            value={dashboardData.stats.newInstructorSignups}
+                            value={analytics?.newInstructorSignupsThisMonth ?? 0}
                             bg="rgba(27, 170, 144, 0.2)"
                             placeholder='this month'
                         />
@@ -200,9 +161,6 @@ const Home = () => {
 
                                     <TableBody>
                                         {instructorData?.instructors?.map((i) => {
-                                            const statusLabel = i?.instructorProfile?.isVerified ? "Verified" : "Pending";
-                                            const statusStyle = statusColorMap[statusLabel];
-
                                             return (
                                                 <TableRow key={i.id}>
                                                     <TableCell sx={{ fontWeight: 500 }}>{i.firstName}

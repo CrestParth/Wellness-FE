@@ -5,7 +5,7 @@ import {
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
 import GrayPlus from '../../assets/images/GrayPlus.svg'
-import VibeCard from "../../components/VibeCard";
+import UserVibeCard from "../../components/user/UserVibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
@@ -255,7 +255,7 @@ const UserInformation = () => {
                                 borderRadius: 4,
                                 p: 3,
                                 border: '1px solid black'
-                            }}> <VibeCard vibe={vibe} /></Box>
+                            }}> <UserVibeCard vibe={vibe} /></Box>
                         ))}
                     </Stack>
                 ) : (

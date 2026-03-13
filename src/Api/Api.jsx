@@ -291,6 +291,19 @@ export const useDeleteVibe = (onSuccess, onError) => {
 };
 
 
+// get dashboard analytics
+export const useGetDashboard = () => {
+    return useQuery({
+        queryKey: ['analytics'],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/dashboard/analytics`);
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+
 
 // reset password 
 export const useResetLink = (onSuccess, onError) => {
