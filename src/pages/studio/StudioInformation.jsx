@@ -522,8 +522,8 @@ const setStudioFormValues = ({ form, data }) => {
         status: data.status || "",
         description: data.about || "",
         categories: data.categories?.map((cat) => cat.id) || [],
-        hero_img: data.images?.[0] || "",
-        image1: data.images?.[1] || "",
-        image2: data.images?.[2] || ""
+        hero_img: data.heroImage || "",
+        image1: data.images?.[0] || "",
+        image2: data.images?.[1] || ""
     });
 };

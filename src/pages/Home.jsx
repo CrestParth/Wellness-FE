@@ -171,7 +171,7 @@ const Home = () => {
                                                             {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                                 <Chip
                                                                     key={index}
-                                                                    label={tag.name}
+                                                                    label={tag.studioName}
                                                                     size="medium"
                                                                     sx={{
                                                                         border: "1px solid #A855F7",

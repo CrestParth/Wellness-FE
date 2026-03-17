@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, FormHelperText } from "@mui/material";
+import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, FormHelperText, CircularProgress } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
@@ -78,7 +78,7 @@ const AddStudio = () => {
         toast.error(error.response.data.message || "Something went Wrong");
     };
 
-    const { mutate: createStudio } = useCreateStudio(onSuccess, onError)
+    const { mutate: createStudio, isPending } = useCreateStudio(onSuccess, onError)
 
     const { data: classStyles } = useGetCategories()
 
@@ -385,6 +385,7 @@ const AddStudio = () => {
                                 <Button
                                     type="submit"
                                     variant="contained"
+                                    disabled={isPending}
                                     sx={{
                                         width: 180,
                                         height: 48,
@@ -394,7 +395,12 @@ const AddStudio = () => {
                                         fontSize: '16px',
                                     }}
                                 >
-                                    Add Studio
+
+                                    {isPending ? (
+                                        <CircularProgress size={24} sx={{ color: "white" }} />
+                                    ) : (
+                                        "Add Studio"
+                                    )}
                                 </Button>
 
                             </Box>
