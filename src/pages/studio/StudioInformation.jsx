@@ -108,7 +108,6 @@ const StudioInformation = () => {
     const handleConfirm = () => {
         if (openPopup === "delete") {
             deleteStudio(params.id);
-            toast.success('Deleted Successfully')
         }
         handleClose()
     }

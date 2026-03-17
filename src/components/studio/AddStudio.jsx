@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText } from "@mui/material";
+import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, FormHelperText } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
@@ -7,7 +7,8 @@ import GrayPlus from '../../assets/images/GrayPlus.svg'
 import { useJsApiLoader } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
 import { useCreateStudio, useGetCategories } from '../../Api/Api'
-
+import { toast } from "react-toastify";
+import { studioValidationSchema } from "../../common/FormValidation";
 
 const AddStudio = () => {
     const { isLoaded } = useJsApiLoader({
@@ -24,49 +25,54 @@ const AddStudio = () => {
         if (autocomplete) {
             const place = autocomplete.getPlace();
 
-            const lat = place.geometry?.location?.lat();
-            const lng = place.geometry?.location?.lng();
+            const latitude = place.geometry?.location?.lat();
+            const longitude = place.geometry?.location?.lng();
             const address = place.formatted_address;
 
             studioForm.setFieldValue("location", address);
-            studioForm.setFieldValue("lat", lat);
-            studioForm.setFieldValue("lng", lng);
+            studioForm.setFieldValue("latitude", latitude);
+            studioForm.setFieldValue("longitude", longitude);
 
-            console.log("Selected:", address, lat, lng);
+            console.log("Selected:", address, latitude, longitude);
         }
     };
     const studioForm = useFormik({
         initialValues: {
             name: "",
             location: "",
-            description: "",
-            email: "",
-            categories: [],
-            hero_img: "",
+            about: "",
+            contact: "",
+            categoryIds: [],
+            heroImage: "",
             image1: "",
             image2: "",
-            lat: "",
-            lng: "",
+            latitude: "",
+            longitude: "",
         },
+        validationSchema: studioValidationSchema,
         onSubmit: (values) => {
             const formData = new FormData();
             formData.append("name", values.name);
             formData.append("location", values.location);
-            formData.append("description", values.description);
-            formData.append("email", values.email);
-            values.categories.forEach((id) => {
-                formData.append("categories[]", id);
+            formData.append("about", values.about);
+            formData.append("contact", values.contact);
+            values.categoryIds.forEach((id) => {
+                formData.append("categoryIds[]", id);
             });
-            formData.append("hero_img", values.hero_img);
-            formData.append("image1", values.image1);
-            formData.append("image2", values.image2);
-            formData.append("lat", values.lat);
+            formData.append("heroImage", values.heroImage);
+            formData.append("images", values.image1);
+            formData.append("images", values.image2);
+            formData.append("latitude", values.latitude);
+            formData.append("longitude", values.longitude);
+            formData.append("status", 'active');
+
             createStudio(formData)
         },
     });
 
     const onSuccess = () => {
         toast.success("Studio Added Successfully.");
+        studioForm.resetForm()
     };
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -121,6 +127,18 @@ const AddStudio = () => {
                                             }}
                                         />
                                     </Autocomplete>
+                                    {studioForm.touched.location && studioForm.errors.location && (
+                                        <FormHelperText error>
+                                            {studioForm.errors.location}
+                                        </FormHelperText>
+                                    )}
+                                    {studioForm.touched.location &&
+                                        !studioForm.values.latitude &&
+                                        !studioForm.errors.location && (
+                                            <FormHelperText error>
+                                                Please select a location from suggestions
+                                            </FormHelperText>
+                                        )}
                                 </FormControl>
                             )}
                         </Grid>
@@ -128,7 +146,7 @@ const AddStudio = () => {
                             <CustomInput
                                 label="Email"
                                 placeholder="Email"
-                                name="email"
+                                name="contact"
                                 formik={studioForm}
                             />
                         </Grid>
@@ -139,8 +157,8 @@ const AddStudio = () => {
                                 <Select
                                     multiple
                                     fullWidth
-                                    name="categories"
-                                    value={studioForm.values.categories || []}
+                                    name="categoryIds"
+                                    value={studioForm.values.categoryIds || []}
                                     onChange={studioForm.handleChange}
                                     displayEmpty
                                     renderValue={(selected) => {
@@ -177,11 +195,14 @@ const AddStudio = () => {
                                 >
                                     {classStyles?.data?.categories?.map((cat) => (
                                         <MenuItem key={cat.id} value={cat.id}>
-                                            <Checkbox checked={studioForm.values.categories.includes(cat.id)} />
+                                            <Checkbox checked={studioForm.values.categoryIds.includes(cat.id)} />
                                             <ListItemText primary={cat.name} />
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                {studioForm.touched.categoryIds && studioForm.errors.categoryIds && (
+                                    <FormHelperText error>{studioForm.errors.categoryIds}</FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid size={{ xs: 12 }}>
@@ -189,7 +210,7 @@ const AddStudio = () => {
 
                                 <InputLabel
                                     shrink
-                                    htmlFor={'description'}
+                                    htmlFor={'about'}
                                     sx={{
                                         fontSize: "1.3rem",
                                         fontWeight: 450,
@@ -202,16 +223,19 @@ const AddStudio = () => {
 
 
                                 <BootstrapInput
-                                    id={'description'}
-                                    name={'description'}
+                                    id={'about'}
+                                    name={'about'}
                                     type={'text'}
                                     placeholder={"Enter descripton"}
                                     multiline
                                     rows={3}
-                                    value={studioForm.values.description}
+                                    value={studioForm.values.about}
                                     onChange={studioForm.handleChange}
                                     onBlur={studioForm.handleBlur}
                                 />
+                                {studioForm.touched.about && studioForm.errors.about && (
+                                    <FormHelperText error>{studioForm.errors.about}</FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid size={12}>
@@ -237,18 +261,18 @@ const AddStudio = () => {
                                             type="file"
                                             accept="image/*"
                                             hidden
-                                            name="hero_img"
-                                            onChange={e => studioForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                            name="heroImage"
+                                            onChange={e => studioForm.setFieldValue('heroImage', e.currentTarget.files[0])}
                                         />
-                                        {studioForm.values.hero_img instanceof File ? (
+                                        {studioForm.values.heroImage instanceof File ? (
                                             <img
-                                                src={URL.createObjectURL(studioForm.values.hero_img)}
+                                                src={URL.createObjectURL(studioForm.values.heroImage)}
                                                 alt="Selfie Preview"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
-                                        ) : studioForm.values.hero_img ? (
+                                        ) : studioForm.values.heroImage ? (
                                             <img
-                                                src={studioForm.values.hero_img}
+                                                src={studioForm.values.heroImage}
                                                 alt="Selfie"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
@@ -256,8 +280,8 @@ const AddStudio = () => {
                                             <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                         )}
                                     </Box>
-                                    {studioForm.touched.hero_img && studioForm.errors.hero_img && (
-                                        <FormHelperText error>{studioForm.errors.hero_img}</FormHelperText>
+                                    {studioForm.touched.heroImage && studioForm.errors.heroImage && (
+                                        <FormHelperText error>{studioForm.errors.heroImage}</FormHelperText>
                                     )}
                                 </Grid>
                                 <Grid size={{ xs: 12, sm: 4, md: 3 }}>

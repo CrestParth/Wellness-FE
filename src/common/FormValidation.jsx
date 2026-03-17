@@ -49,11 +49,31 @@ export const profileValidation_s = yup.object({
 
 export const studioValidationSchema = yup.object({
     name: yup.string()
-        .required("Studi Name is required"),
-    // Category: yup.string()
-    //     .required("Studio category is required"),
-    // email: Email,
-    // phone: MobileNumber,
-    // address: String,
-    // status: String
-})
+        .required("Studio Name is required"),
+
+    location: yup.string()
+        .required("Location is required"),
+
+    contact: yup.string()
+        .email("Invalid email")
+        .required("Email is required"),
+
+    about: yup.string()
+        .required("Description is required"),
+
+    categoryIds: yup.array()
+        .min(1, "Select at least one category"),
+
+    heroImage: yup.mixed()
+        .required("Hero image is required"),
+    image1: yup.mixed()
+        .required("Image is required"),
+    image2: yup.mixed()
+        .required("Image is required"),
+
+    latitude: yup.string()
+        .required("Location must be selected from dropdown"),
+
+    longitude: yup.string()
+        .required("Location must be selected from dropdown"),
+});
