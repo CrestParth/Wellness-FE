@@ -85,7 +85,7 @@ const InstructorInfo = () => {
 
             teachesAt:
                 apiData.teachesAt?.map((studio) => ({
-                    studioName: studio.name,
+                    studioName: studio.studioName,
                     location: studio.location
                 })) || [{ studioName: "", location: "" }],
 

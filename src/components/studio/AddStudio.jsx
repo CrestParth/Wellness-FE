@@ -108,7 +108,7 @@ const AddStudio = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {isLoaded && (
                                 <FormControl fullWidth>
-                                    <label style={{ marginBottom: 8 }}>Location</label>
+                                    <label style={{ marginBottom: 11 }}>Location</label>
                                     <Autocomplete
                                         onLoad={onLoad}
                                         onPlaceChanged={onPlaceChanged}
@@ -123,7 +123,16 @@ const AddStudio = () => {
                                             sx={{
                                                 '& .MuiOutlinedInput-root': {
                                                     height: 45,
-                                                }
+                                                    '& fieldset': {
+                                                        borderColor: '#E0E3E7',
+                                                    },
+                                                    '&:hover fieldset': {
+                                                        borderColor: '#E0E3E7',
+                                                    },
+                                                    '&.Mui-focused fieldset': {
+                                                        borderColor: '#E0E3E7',
+                                                    },
+                                                },
                                             }}
                                         />
                                     </Autocomplete>
