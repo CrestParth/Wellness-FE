@@ -57,7 +57,7 @@ export const useGetProfile = () => {
     return useQuery({
         queryKey: ['profile'],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/super-admin`);
+            const { data } = await apiClient.get(`/admin/profile`);
             return data;
         },
         staleTime: 15 * 60 * 1000,
@@ -67,8 +67,8 @@ export const useGetProfile = () => {
 // update profile details
 export const useUpdateProfile = (onSuccess, onError) => {
     return useMutation({
-        mutationFn: async ({ profileId, data }) => {
-            const response = await apiClient.patch(`/super-admin/update-admin-profile/${profileId}`, data);
+        mutationFn: async (data) => {
+            const response = await apiClient.patch(`/admin/profile`, data);
             return response.data;
         },
         onSuccess,

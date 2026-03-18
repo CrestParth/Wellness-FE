@@ -12,7 +12,7 @@ import InstructorVibeCard from "../../components/instructor/InstructorVibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
-import { useGetInstructorById, useGetCategories } from '../../Api/Api'
+import { useGetInstructorById, useGetCategories, useDeleteInstructor } from '../../Api/Api'
 import { useParams } from "react-router-dom";
 
 const InstructorInfo = () => {
@@ -46,17 +46,6 @@ const InstructorInfo = () => {
             </Typography>
         </Box>
     );
-
-
-    const handleOpen = (type) => setOpenPopup(type);
-    const handleClose = () => setOpenPopup(null);
-
-    const handleConfirm = () => {
-        if (openPopup === "delete") {
-            toast.success('Deleted Successfully')
-        }
-        handleClose()
-    }
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [
             ...instructorForm.values.teachesAt,
@@ -99,6 +88,25 @@ const InstructorInfo = () => {
         });
     }, [instructorData]);
 
+    const onSuccessDelete = () => {
+        toast.success("Instructor Deleted Successfully.");
+        navigate("/home/instructors");
+        client.invalidateQueries(["instructors"], { exact: false });
+    };
+    const onErrorDelete = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
+    const { mutate: deleteInstructor } = useDeleteInstructor(onSuccessDelete, onErrorDelete)
+
+    const handleOpen = (type) => setOpenPopup(type);
+    const handleClose = () => setOpenPopup(null);
+
+    const handleConfirm = () => {
+        if (openPopup === "delete") {
+            deleteInstructor(params.id);
+        }
+        handleClose()
+    }
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>

@@ -38,13 +38,6 @@ export const profileValidation_s = yup.object({
     firstName: Username,
     lastName: Username,
     email: Email,
-    phone: MobileNumber,
-    street: String,
-    province: String,
-    city: String,
-    suburb: String,
-    postal_code: Number,
-    country: String
 });
 
 export const studioValidationSchema = yup.object({

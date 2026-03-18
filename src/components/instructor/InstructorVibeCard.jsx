@@ -17,6 +17,13 @@ import musicIcon from "../../assets/images/Music.svg";
 const purple = "#A855F7";
 
 const InstructorVibeCard = ({ vibe }) => {
+    const iconMap = {
+        Energy: energyIcon,
+        Pace: paceIcon,
+        Cueing: cueingIcon,
+        Focus: focusIcon,
+        Music: musicIcon
+    };
     return (
         <Box
             sx={{
@@ -67,39 +74,22 @@ const InstructorVibeCard = ({ vibe }) => {
             </Stack> */}
 
             {/* Vibes Icons Row */}
+
+
             <Stack direction="row" justifyContent="space-between" mt={4}>
-                {[
-                    {
-                        icon: energyIcon, label: "Energy", value: vibe?.describeVibe?.energy
-                    },
-                    { icon: paceIcon, label: "Pace", value: vibe?.describeVibe?.pace },
-                    { icon: cueingIcon, label: "Cueing", value: vibe?.describeVibe?.cueing },
-                    { icon: focusIcon, label: "Focus", value: vibe?.describeVibe?.focus },
-                    { icon: musicIcon, label: "Music", value: vibe?.describeVibe?.music }
-                ].map((item, i) => (
+                {vibe?.describeVibe?.map((item, i) => (
                     <Stack key={i} alignItems="center" spacing={1}>
-                        {/* <Box
-                            sx={{
-                                width: 56,
-                                height: 56,
-                                borderRadius: "50%",
-                                border: `1px solid ${purple}`,
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center"
-                            }}
-                        >
-                           
-                        </Box> */}
-                        <img src={item.icon} alt={item.label} width={54} />
+
+                        <img src={iconMap[item.title]} alt={item.title} width={54} />
 
                         <Typography fontSize={14}>
-                            {item.label}
+                            {item.title}
                         </Typography>
 
-                        <Typography fontSize={13} color={purple}>
-                            {item.value}
+                        <Typography fontSize={14} color={purple}>
+                            {item.range}
                         </Typography>
+
                     </Stack>
                 ))}
             </Stack>

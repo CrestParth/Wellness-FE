@@ -32,18 +32,17 @@ const Profile = () => {
             setedit(false);
             const formData = new FormData();
 
-
             Object.keys(values).forEach((key) => {
-                if (key !== "profile_img") {
+                if (key !== "profileImage") {
                     formData.append(key, values[key]);
                 }
             });
 
-            if (values.profile_img && values.profile_img instanceof File) {
-                formData.append("profile_img", values.profile_img);
+            if (values.profileImage && values.profileImage instanceof File) {
+                formData.append("profileImage", values.profileImage);
             }
 
-            mutate({ profileId: localStorage.getItem("userID"), data: formData });
+            mutate(formData);
         },
 
     });
@@ -51,13 +50,12 @@ const Profile = () => {
 
     useEffect(() => {
         const admin = profileData?.data;
-        const profile = admin?.AdminProfiles?.[0] || {};
 
         profileForm.setValues({
-            firstName: admin?.firstName || "admin",
-            lastName: admin?.lastName || "user",
-            email: admin?.email || "adminUser@yopmail.com",
-            profile_img: admin?.profile_img || "",
+            firstName: admin?.firstName || "",
+            lastName: admin?.lastName || "",
+            email: admin?.email || "",
+            profileImage: admin?.profileImage || "",
         });
     }, [profileData?.data, edit]);
 
@@ -141,19 +139,19 @@ const Profile = () => {
                                             type="file"
                                             accept="image/*"
                                             hidden
-                                            name="profile_img"
+                                            name="profileImage"
                                             disabled={!edit}
-                                            onChange={e => profileForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                            onChange={e => profileForm.setFieldValue('profileImage', e.currentTarget.files[0])}
                                         />
-                                        {profileForm.values.profile_img instanceof File ? (
+                                        {profileForm.values.profileImage instanceof File ? (
                                             <img
-                                                src={URL.createObjectURL(profileForm.values.profile_img)}
+                                                src={URL.createObjectURL(profileForm.values.profileImage)}
                                                 alt="Selfie Preview"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
-                                        ) : profileForm.values.profile_img ? (
+                                        ) : profileForm.values.profileImage ? (
                                             <img
-                                                src={profileForm.values.profile_img}
+                                                src={profileForm.values.profileImage}
                                                 alt="Selfie"
                                                 style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                             />
@@ -161,8 +159,8 @@ const Profile = () => {
                                             <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                         )}
                                     </Box>
-                                    {profileForm.touched.profile_img && profileForm.errors.profile_img && (
-                                        <FormHelperText error>{profileForm.errors.profile_img}</FormHelperText>
+                                    {profileForm.touched.profileImage && profileForm.errors.profileImage && (
+                                        <FormHelperText error>{profileForm.errors.profileImage}</FormHelperText>
                                     )}
                                 </Grid>
                             </Grid>
@@ -217,4 +215,5 @@ const super_admin = {
     firstName: "",
     lastName: "",
     email: "",
+    profileImage: ""
 };

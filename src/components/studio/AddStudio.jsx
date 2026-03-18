@@ -15,7 +15,7 @@ const AddStudio = () => {
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
         libraries: ["places"],
     });
-    const [autocomplete, setAutocomplete] = useState(null);
+    const [autocomplete, setAutocomplete] = useState({});
 
     const onLoad = (auto) => {
         setAutocomplete(auto);

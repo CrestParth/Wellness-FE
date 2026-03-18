@@ -139,7 +139,7 @@ const AddInstructor = () => {
                                             return <span style={{ color: "#878787" }}>Select Class Style</span>;
                                         }
 
-                                        const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id)).map(option => option.name);
+                                        const selectedLabels = classStyles?.data?.categories?.filter(option => selected.includes(option.id))?.map(option => option.name);
 
                                         return selectedLabels.join(", ");
                                     }}
