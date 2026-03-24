@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel } from "@mui/material";
+import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel, Tooltip } from "@mui/material";
+import CheckIcon from "@mui/icons-material/Check";
+import ClearIcon from '@mui/icons-material/Clear';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
@@ -12,11 +14,14 @@ import arrownuteral from '../../assets/images/arrownuteral.svg';
 import CustomPagination from "../../common/custom/CustomPagination";
 import { useApproveInstructor, useRejectInstructor } from "../../Api/Api";
 import { useQueryClient } from "@tanstack/react-query";
+import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 
 const ListOfInstructor = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedId, setSelectedId] = useState()
     const [filter, setFilter] = useState('')
+    const [openPopup, setOpenPopup] = useState(null);
     const [statusFilter, setStatusFilter] = useState('')
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -67,6 +72,19 @@ const ListOfInstructor = () => {
 
     const totalUsers = instructorData?.pagination?.total;
     const totalPages = Math.ceil(totalUsers / rowsPerPage);
+
+    const handleOpen = (type) => setOpenPopup(type);
+    const handleClose = () => setOpenPopup(null);
+
+    const handleConfirm = () => {
+        if (openPopup === "approve") {
+            approveInstructor(selectedId);
+        }
+        else {
+            rejectInstructor(selectedId);
+        }
+        handleClose()
+    }
 
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
@@ -227,35 +245,41 @@ const ListOfInstructor = () => {
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    <Stack direction="row" justifyContent="center" spacing={1}>
+                                                    <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
 
-                                                        {/* View Button */}
-                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
-                                                            <VisibilityIcon />
-                                                        </IconButton>
+
 
                                                         {/* Conditional Approve/Reject */}
                                                         {i?.instructorProfile?.approvalStatus !== "approved" && (
                                                             <>
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="contained"
-                                                                    color="success"
-                                                                    onClick={() => approveInstructor(i?.instructorProfile?.id)}
-                                                                >
-                                                                    Approve
-                                                                </Button>
-
-                                                                <Button
-                                                                    size="small"
-                                                                    variant="outlined"
-                                                                    color="error"
-                                                                    onClick={() => rejectInstructor(i?.instructorProfile?.id)}
-                                                                >
-                                                                    Reject
-                                                                </Button>
+                                                                <Tooltip title="Approve Instructor">
+                                                                    <IconButton
+                                                                        sx={{ color: '#16A34A' }} // green
+                                                                        onClick={() => {
+                                                                            setSelectedId(i?.instructorProfile?.id);
+                                                                            handleOpen('approve');
+                                                                        }}
+                                                                    >
+                                                                        <CheckIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
+                                                                <Tooltip title="Reject Instructor">
+                                                                    <IconButton
+                                                                        sx={{ color: 'red' }}
+                                                                        onClick={() => {
+                                                                            setSelectedId(i?.instructorProfile?.id);
+                                                                            handleOpen('approve');
+                                                                        }}
+                                                                    >
+                                                                        <ClearIcon />
+                                                                    </IconButton>
+                                                                </Tooltip>
                                                             </>
                                                         )}
+                                                        {/* View Button */}
+                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
+                                                            <VisibilityIcon />
+                                                        </IconButton>
 
                                                     </Stack>
                                                 </TableCell>
@@ -266,6 +290,26 @@ const ListOfInstructor = () => {
                             </Table>
                         </TableContainer>
                         <CustomPagination totalPages={totalPages} setCurrentPage={setCurrentPage} setRowsPerPage={setRowsPerPage} rowsPerPage={rowsPerPage} currentPage={currentPage} />
+                        <ConfirmationPopUp
+                            open={openPopup === "approve"}
+                            onClose={handleClose}
+                            onConfirm={handleConfirm}
+                            title={"Approve Instructor"}
+                            message={"Are you sure you want to approve this instructor?"}
+                            BtnText={"Approve"}
+                            BtnColor={"green"}
+                            icon={<CheckIcon />}
+                        />
+                        <ConfirmationPopUp
+                            open={openPopup === "reject"}
+                            onClose={handleClose}
+                            onConfirm={handleConfirm}
+                            title={"Reject Instructor"}
+                            message={"Are you sure you want to reject this instructor?"}
+                            BtnText={"Reject"}
+                            BtnColor={"green"}
+                            icon={ClearIcon}
+                        />
                     </>
                 ) : (<Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>
                     No data found
