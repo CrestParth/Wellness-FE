@@ -10,6 +10,8 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import CustomPagination from "../../common/custom/CustomPagination";
+import { useApproveInstructor, useRejectInstructor } from "../../Api/Api";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ListOfInstructor = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -19,6 +21,7 @@ const ListOfInstructor = () => {
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
+    const client = useQueryClient()
 
     const statusColorMap = {
         Verified: {
@@ -45,6 +48,22 @@ const ListOfInstructor = () => {
 
     const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
     const instructorData = data?.data
+
+    const { mutate: approveInstructor } = useApproveInstructor(
+        () => {
+            client.invalidateQueries(['instructors'], { exact: false })
+            toast.success("Instructor Approved")
+        },
+        () => toast.error("Approval Failed")
+    );
+
+    const { mutate: rejectInstructor } = useRejectInstructor(
+        () => {
+            client.invalidateQueries(['instructors'], { exact: false })
+            toast.success("Instructor Rejected")
+        },
+        () => toast.error("Rejection Failed")
+    );
 
     const totalUsers = instructorData?.pagination?.total;
     const totalPages = Math.ceil(totalUsers / rowsPerPage);
@@ -207,11 +226,37 @@ const ListOfInstructor = () => {
                                                     />
                                                 </TableCell>
 
-                                                <TableCell >
-                                                    <Stack direction="row" justifyContent={"center"} spacing={1}>
+                                                <TableCell>
+                                                    <Stack direction="row" justifyContent="center" spacing={1}>
+
+                                                        {/* View Button */}
                                                         <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
+
+                                                        {/* Conditional Approve/Reject */}
+                                                        {i?.instructorProfile?.approvalStatus !== "approved" && (
+                                                            <>
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="contained"
+                                                                    color="success"
+                                                                    onClick={() => approveInstructor(i?.instructorProfile?.id)}
+                                                                >
+                                                                    Approve
+                                                                </Button>
+
+                                                                <Button
+                                                                    size="small"
+                                                                    variant="outlined"
+                                                                    color="error"
+                                                                    onClick={() => rejectInstructor(i?.instructorProfile?.id)}
+                                                                >
+                                                                    Reject
+                                                                </Button>
+                                                            </>
+                                                        )}
+
                                                     </Stack>
                                                 </TableCell>
                                             </TableRow>

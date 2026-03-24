@@ -193,6 +193,28 @@ export const useUpdateInstructor = (onSuccess, onError) => {
         onError,
     });
 };
+// approve instructor
+export const useApproveInstructor = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (PROFILE_ID) => {
+            const response = await apiClient.post(`/admin/instructors/approve/${PROFILE_ID}`);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+// reject instructor
+export const useRejectInstructor = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (PROFILE_ID) => {
+            const response = await apiClient.post(`/admin/instructors/reject/${PROFILE_ID}`);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
 
 
 // Create Studio

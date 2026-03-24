@@ -8,6 +8,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useCreateInstructor, useGetCategories } from '../../Api/Api'
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
+import { toast } from "react-toastify";
 
 
 const AddInstructor = () => {
@@ -38,6 +39,7 @@ const AddInstructor = () => {
     };
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
+        instructorForm.resetForm()
     };
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -48,33 +50,51 @@ const AddInstructor = () => {
         initialValues: {
             firstName: "",
             lastName: "",
-            teachesAt: [
-                { studioName: "", location: "", lat: "", long: "" }
-            ],
-            displayName: "",
             email: "",
+            password: "",
+            displayName: "",
+            playlistUrl: "",
+            bio: "",
             categories: [],
-            bio: ""
+            teachesAt: [
+                { name: "", location: "", lat: "", long: "" }
+            ],
+            heroPhoto: null,
+            galleryPhotos: []
         },
         onSubmit: (values) => {
-            const formData = new FormData()
+            const formData = new FormData();
+
+            // Basic fields
             formData.append("firstName", values.firstName);
             formData.append("lastName", values.lastName);
-            formData.append("teachesAt", JSON.stringify(values.teachesAt));
             formData.append("email", values.email);
+            formData.append("password", values.password);
             formData.append("displayName", values.displayName);
-            formData.append("categories", JSON.stringify(values.categories));
             formData.append("bio", values.bio);
-            formData.append("heroPhoto", values.hero_img);
-            formData.append("galleryPhotos", values.profile_img);
-            createInstructor(formData)
-        },
+            formData.append("playlistUrl", values.playlistUrl);
+            formData.append("status", true);
+
+            // JSON fields
+            formData.append("teachesAt", JSON.stringify(values.teachesAt));
+            formData.append("classStyle", JSON.stringify(values.categories)); // rename
+
+            // Files
+            if (values.heroPhoto) {
+                formData.append("heroPhoto", values.heroPhoto);
+            }
+            formData.append("galleryPhotos", values.image1);
+            formData.append("galleryPhotos", values.image2);
+
+
+            createInstructor(formData);
+        }
     });
 
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [
             ...instructorForm.values.teachesAt,
-            { studioName: "", location: "" }
+            { name: "", location: "" }
         ]);
     };
 
@@ -183,6 +203,24 @@ const AddInstructor = () => {
                                 formik={instructorForm}
                             />
                         </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomInput
+                                label="Password"
+                                placeholder="Enter Password"
+                                name="password"
+                                // type="password"
+                                formik={instructorForm}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomInput
+                                label="Playlist Url"
+                                placeholder="Enter Playlist Url"
+                                name="playlistUrl"
+                                // type="password"
+                                formik={instructorForm}
+                            />
+                        </Grid>
                         <Grid size={12}>
                             <Box>
                                 <Typography
@@ -205,9 +243,9 @@ const AddInstructor = () => {
                                         >
                                             <Box sx={{ flex: 1 }}>
                                                 <BootstrapInput
-                                                    name={`teachesAt[${index}].studioName`}
+                                                    name={`teachesAt[${index}].name`}
                                                     placeholder="Studio Name"
-                                                    value={item.studioName}
+                                                    value={item.name}
                                                     onChange={instructorForm.handleChange}
                                                     fullWidth
                                                 />
@@ -309,19 +347,19 @@ const AddInstructor = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="hero_img"
+                                                name="heroPhoto"
 
-                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('heroPhoto', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.hero_img instanceof File ? (
+                                            {instructorForm.values.heroPhoto instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.heroPhoto)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.hero_img ? (
+                                            ) : instructorForm.values.heroPhoto ? (
                                                 <img
-                                                    src={instructorForm.values.hero_img}
+                                                    src={instructorForm.values.heroPhoto}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -329,12 +367,12 @@ const AddInstructor = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
-                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        {instructorForm.touched.heroPhoto && instructorForm.errors.heroPhoto && (
+                                            <FormHelperText error>{instructorForm.errors.heroPhoto}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
-                                <Grid size={{ xs: 12, sm: 2.7 }}>
+                                {/* <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
                                         <Box
@@ -380,7 +418,7 @@ const AddInstructor = () => {
                                             <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
                                         )}
                                     </Grid>
-                                </Grid>
+                                </Grid> */}
                                 <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 1</label>
@@ -403,19 +441,19 @@ const AddInstructor = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="hero_img"
+                                                name="image1"
 
-                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('image1', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.hero_img instanceof File ? (
+                                            {instructorForm.values.image1 instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.image1)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.hero_img ? (
+                                            ) : instructorForm.values.image1 ? (
                                                 <img
-                                                    src={instructorForm.values.hero_img}
+                                                    src={instructorForm.values.image1}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -423,8 +461,8 @@ const AddInstructor = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
-                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        {instructorForm.touched.image1 && instructorForm.errors.image1 && (
+                                            <FormHelperText error>{instructorForm.errors.image1}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -450,19 +488,19 @@ const AddInstructor = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="profile_img"
+                                                name="image2"
 
-                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('image2', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.profile_img instanceof File ? (
+                                            {instructorForm.values.image2 instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.image2)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.profile_img ? (
+                                            ) : instructorForm.values.image2 ? (
                                                 <img
-                                                    src={instructorForm.values.profile_img}
+                                                    src={instructorForm.values.image2}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -470,8 +508,8 @@ const AddInstructor = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
-                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        {instructorForm.touched.image2 && instructorForm.errors.image2 && (
+                                            <FormHelperText error>{instructorForm.errors.image2}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>

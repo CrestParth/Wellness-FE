@@ -13,10 +13,14 @@ import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 import { useGetInstructorById, useGetCategories, useDeleteInstructor } from '../../Api/Api'
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+
 
 const InstructorInfo = () => {
     const { id } = useParams();
+    const navigate = useNavigate()
+    const client = useQueryClient()
     const [edit, setEdit] = useState(false)
     const [openPopup, setOpenPopup] = useState(null);
     const instructorForm = useFormik({
@@ -103,7 +107,7 @@ const InstructorInfo = () => {
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
-            deleteInstructor(params.id);
+            deleteInstructor(id);
         }
         handleClose()
     }
