@@ -304,6 +304,20 @@ export const useGetDashboard = () => {
     });
 };
 
+// get all Subscription
+export const useGetSubscription = (Search = '', Status = '', sortBy = '', sortOrder = '') => {
+    return useQuery({
+        queryKey: ['subscription', Search, Status, sortBy, sortOrder],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/subscriptions`);
+            // { params: { Search, Status, sortBy, sortOrder } }
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+
 
 // reset password 
 export const useResetLink = (onSuccess, onError) => {

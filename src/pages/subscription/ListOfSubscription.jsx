@@ -13,67 +13,13 @@ import {
     TextField,
     MenuItem,
 } from "@mui/material";
+import { useGetSubscription } from '../../Api/Api'
+import { FormateDate } from '../../utils/FormateDate'
 
-const subscriptionData = [
-    {
-        id: 1,
-        instructorName: "Michael Johnson",
-        planName: "Premium Boost",
-        platform: "Apple",
-        amount: 49.99,
-        recurring: true,
-        status: "active",
-        purchaseDate: "01/06/2025",
-        expiryDate: "01/07/2025",
-    },
-    {
-        id: 2,
-        instructorName: "Sarah Yoga",
-        planName: "Standard Boost",
-        platform: "Google",
-        amount: 29.99,
-        recurring: false,
-        status: "expired",
-        purchaseDate: "18/05/2025",
-        expiryDate: "18/06/2025",
-    },
-    {
-        id: 3,
-        instructorName: "David Wilson",
-        planName: "Premium Boost",
-        platform: "Apple",
-        amount: 49.99,
-        recurring: true,
-        status: "active",
-        purchaseDate: "10/06/2025",
-        expiryDate: "10/07/2025",
-    },
-    {
-        id: 4,
-        instructorName: "Jessica Martinez",
-        planName: "Standard Boost",
-        platform: "Google",
-        amount: 29.99,
-        recurring: true,
-        status: "active",
-        purchaseDate: "05/06/2025",
-        expiryDate: "05/07/2025",
-    },
-];
 
 const ListOfSubscription = () => {
-    const [platformFilter, setPlatformFilter] = useState("");
     const [statusFilter, setStatusFilter] = useState("");
 
-    const filteredSubscriptions = subscriptionData.filter((s) => {
-        const platformMatch = platformFilter ? s.platform === platformFilter : true;
-        const statusMatch = statusFilter ? s.status === statusFilter : true;
-        return platformMatch && statusMatch;
-    });
-
-    const totalRevenue = useMemo(() => {
-        return filteredSubscriptions.reduce((sum, s) => sum + s.amount, 0);
-    }, [filteredSubscriptions]);
     const statusColorMap = {
         active: {
             color: '#7BC8A9',
@@ -86,8 +32,12 @@ const ListOfSubscription = () => {
             bg: '#FEF2F2'
         }
     };
+    const { data: subscriptions } = useGetSubscription(statusFilter)
+    const subscriptionData = subscriptions?.data?.subscriptions || []
 
-
+    const totalRevenue = useMemo(() => {
+        return subscriptionData.reduce((sum, s) => sum + s.amount, 0);
+    }, [subscriptionData]);
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
@@ -137,8 +87,8 @@ const ListOfSubscription = () => {
                     </TableHead>
 
                     <TableBody>
-                        {filteredSubscriptions.length > 0 ? (
-                            filteredSubscriptions.map((sub) => {
+                        {subscriptionData.length > 0 ? (
+                            subscriptionData.map((sub) => {
                                 const statusStyle = statusColorMap[sub.status];
                                 return (
                                     <TableRow key={sub.id}>
@@ -160,8 +110,8 @@ const ListOfSubscription = () => {
                                             />
                                         </TableCell>
                                         <TableCell>${sub.amount}</TableCell>
-                                        <TableCell>{sub.purchaseDate}</TableCell>
-                                        <TableCell>{sub.expiryDate}</TableCell>
+                                        <TableCell>{FormateDate(sub.purchaseDate)}</TableCell>
+                                        <TableCell>{FormateDate(sub.expiryDate)}</TableCell>
                                     </TableRow>
                                 )
                             })

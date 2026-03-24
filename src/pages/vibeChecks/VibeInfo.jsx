@@ -3,38 +3,41 @@ import { Box, Typography, Grid, Button } from "@mui/material";
 import VibeCard from '../../components/VibeCard'
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
-import { useParams ,useNavigate} from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetVibeById, useDeleteVibe } from '../../Api/Api'
 import { useQueryClient } from "@tanstack/react-query";
 const VibeInfo = () => {
     const { id } = useParams();
-    const navigate=useNavigate()
+    const navigate = useNavigate()
     const [openPopup, setOpenPopup] = useState(null);
     const handleOpen = (type) => setOpenPopup(type);
     const handleClose = () => setOpenPopup(null);
 
-    const client=useQueryClient()
+    const client = useQueryClient()
     const { data: vibeData } = useGetVibeById(id);
 
+    const getRange = (title) =>
+        vibeData.data.describeVibe?.find(v => v.title === title)?.range;
+
     const formattedVibe = vibeData?.data
-      ? {
-          userName: `${vibeData.data.user?.firstName || ""} ${vibeData.data.user?.lastName || ""}`.trim(),
-          avatar: vibeData.data.user?.profileImage || "",
-          date: new Date(vibeData.data.createdAt).toLocaleDateString(),
-          note: vibeData.data.vibeText || "",
-          tags: vibeData.data.classStyle?.map((c) => c.name) || [],
-    
-          energy: vibeData.data.describeVibe?.energy,
-          pace: vibeData.data.describeVibe?.pace,
-          cueing: vibeData.data.describeVibe?.cueing,
-          focus: vibeData.data.describeVibe?.focus,
-          music: vibeData.data.describeVibe?.music,
-    
-          highlights: vibeData.data.vibeTags?.experienceHighlights || [],
-          goodFor: vibeData.data.vibeTags?.goodFitFor || []
+        ? {
+            userName: `${vibeData.data.user?.firstName || ""} ${vibeData.data.user?.lastName || ""}`.trim(),
+            avatar: vibeData.data.user?.profileImage || "",
+            date: new Date(vibeData.data.createdAt).toLocaleDateString(),
+            note: vibeData.data.vibeText || "",
+            tags: vibeData.data.classStyle?.map((c) => c.name) || [],
+
+            energy: getRange("Energy"),
+            pace: getRange("Pace"),
+            cueing: getRange("Cueing"),
+            focus: getRange("Focus"),
+            music: getRange("Music"),
+
+            highlights: vibeData.data.vibeTags?.experienceHighlights || [],
+            goodFor: vibeData.data.vibeTags?.goodFitFor || []
         }
-      : null;
+        : null;
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
@@ -42,8 +45,8 @@ const VibeInfo = () => {
         }
         handleClose()
     }
- 
-    const {mutate:deleteVibe}=useDeleteVibe(
+
+    const { mutate: deleteVibe } = useDeleteVibe(
         () => {
             toast.success("Vibe deleted successfully");
             navigate("/home/vibe");
@@ -78,7 +81,7 @@ const VibeInfo = () => {
                         </Typography>
                     </Grid>
                     <Grid size={12}>
-                    <VibeCard vibe={formattedVibe} />
+                        <VibeCard vibe={formattedVibe} />
                     </Grid>
                     <Grid size={12}>
                         <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
