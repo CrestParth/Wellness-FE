@@ -87,8 +87,8 @@ export const addInstructorValidation = yup.object({
         .required("Password is required")
         .min(6, "Password must be at least 6 characters"),
 
-    displayName: yup.string()
-        .required("Display name is required"),
+    // displayName: yup.string()
+    //     .required("Display name is required"),
 
     playlistUrl: yup.string()
         .url("Enter a valid URL")

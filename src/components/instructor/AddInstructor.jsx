@@ -11,7 +11,7 @@ import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { addInstructorValidation } from "../../common/FormValidation";
-
+import CircularProgress from "@mui/material/CircularProgress";
 
 const AddInstructor = () => {
     const { isLoaded } = useJsApiLoader({
@@ -49,7 +49,7 @@ const AddInstructor = () => {
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
     };
-    const { mutate: createInstructor } = useCreateInstructor(onSuccess, onError)
+    const { mutate: createInstructor, isPending } = useCreateInstructor(onSuccess, onError)
 
     const instructorForm = useFormik({
         initialValues: {
@@ -64,6 +64,7 @@ const AddInstructor = () => {
                 { studioName: "", location: "", lat: "", long: "" }
             ],
             heroPhoto: null,
+            profileImage: null,
             image1: null,
             image2: null,
         },
@@ -74,6 +75,9 @@ const AddInstructor = () => {
             // Basic fields
             formData.append("firstName", values.firstName);
             formData.append("lastName", values.lastName);
+            const displayName = `${values.firstName} ${values.lastName}`;
+            formData.append("displayName", displayName);
+
             formData.append("email", values.email);
             formData.append("password", values.password);
             formData.append("bio", values.bio);
@@ -88,6 +92,7 @@ const AddInstructor = () => {
             if (values.heroPhoto) {
                 formData.append("heroPhoto", values.heroPhoto);
             }
+            formData.append("profileImage", values.profileImage);
             formData.append("galleryPhotos", values.image1);
             formData.append("galleryPhotos", values.image2);
 
@@ -109,7 +114,7 @@ const AddInstructor = () => {
     };
 
     const { data: classStyles } = useGetCategories()
-    console.log(instructorForm.errors)
+
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -396,7 +401,7 @@ const AddInstructor = () => {
                                         )}
                                     </Grid>
                                 </Grid>
-                                {/* <Grid size={{ xs: 12, sm: 2.7 }}>
+                                <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
                                         <Box
@@ -418,19 +423,19 @@ const AddInstructor = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="profile_img"
+                                                name="profileImage"
 
-                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('profileImage', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.profile_img instanceof File ? (
+                                            {instructorForm.values.profileImage instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.profileImage)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.profile_img ? (
+                                            ) : instructorForm.values.profileImage ? (
                                                 <img
-                                                    src={instructorForm.values.profile_img}
+                                                    src={instructorForm.values.profileImage}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -438,11 +443,11 @@ const AddInstructor = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
-                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        {instructorForm.touched.profileImage && instructorForm.errors.profileImage && (
+                                            <FormHelperText error>{instructorForm.errors.profileImage}</FormHelperText>
                                         )}
                                     </Grid>
-                                </Grid> */}
+                                </Grid>
                                 <Grid size={{ xs: 12, sm: 2.7 }}>
                                     <Grid size={{ xs: 12 }}>
                                         <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Additional Image 1</label>
@@ -545,11 +550,16 @@ const AddInstructor = () => {
                         <Grid size={12}>
                             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
                                 <Button variant="contained"
+                                    disabled={isPending}
                                     sx={{ width: 180, height: 48, borderRadius: '8px', color: 'white', backgroundColor: 'var(--Blue)', fontSize: '16px', fontWeight: 400, }}
                                     onClick={() => {
                                         instructorForm.handleSubmit()
                                     }}>
-                                    Add Instructor
+                                    {isPending ? (
+                                        <CircularProgress size={24} sx={{ color: "white" }} />
+                                    ) : (
+                                        "Add Instructor"
+                                    )}
                                 </Button>
                             </Box>
                         </Grid>

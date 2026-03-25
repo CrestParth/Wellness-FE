@@ -12,10 +12,10 @@ import InstructorVibeCard from "../../components/instructor/InstructorVibeCard";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
-import { useGetInstructorById, useGetCategories, useDeleteInstructor } from '../../Api/Api'
+import { useGetInstructorById, useUpdateInstructor, useGetCategories, useDeleteInstructor } from '../../Api/Api'
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-
+import CircularProgress from "@mui/material/CircularProgress";
 
 const InstructorInfo = () => {
     const { id } = useParams();
@@ -25,22 +25,54 @@ const InstructorInfo = () => {
     const [openPopup, setOpenPopup] = useState(null);
     const instructorForm = useFormik({
         initialValues: {
-            name: "",
-            teachesAt: [{ studioName: "", location: "" }],
+            firstName: "",
+            lastName: "",
             email: "",
+            bio: "",
+            playlistUrl: "",
             categories: [],
-            description: "",
-            hero_img: "",
-            profile_img: "",
-            vibeChecks: []
+            vibeChecks: [],
+            teachesAt: [{ studioName: "", location: "", lat: "", long: "" }],
+            heroPhoto: null,
+            image1: null,
+            image2: null,
+            profileImage: null
         },
         onSubmit: (values) => {
-            console.log("Instructor Added (Dummy):", values);
-            alert("Instructor added (dummy)");
+            const formData = new FormData();
+
+            formData.append("firstName", values.firstName);
+            formData.append("lastName", values.lastName);
+            formData.append("email", values.email);
+            formData.append("bio", values.bio);
+            formData.append("playlistUrl", values.playlistUrl);
+
+            formData.append("teachesAt", JSON.stringify(values.teachesAt));
+            formData.append("classStyle", JSON.stringify(values.categories));
+
+            if (values.heroPhoto instanceof File) {
+                formData.append("heroPhoto", values.heroPhoto);
+            }
+
+            if (values.image1) formData.append("galleryPhotos", values.image1);
+            if (values.image2) formData.append("galleryPhotos", values.image2);
+            if (values.profileImage) formData.append("profileImage", values.profileImage);
+            updateInstructor({ id: instructorData?.data?.userId, data: formData })
+
         },
     });
 
     const { data: instructorData } = useGetInstructorById(id);
+
+    const onSuccess = () => {
+        toast.success("Instructor Updated Successfully.");
+        client.invalidateQueries(["instructor"], { exact: false });
+        setEdit(false)
+    };
+    const onError = (error) => {
+        toast.error(error.response.data.message || "Something went Wrong");
+    };
+    const { mutate: updateInstructor, isPending } = useUpdateInstructor(onSuccess, onError)
 
     const displayField = (label, value) => (
         <Box mb={3}>
@@ -72,23 +104,24 @@ const InstructorInfo = () => {
         const apiData = instructorData.data;
 
         instructorForm.setValues({
-            name: apiData.displayName || "",
+            firstName: apiData?.user?.firstName || "",
+            lastName: apiData?.user?.lastName || "",
             email: apiData.user?.email || "",
-            description: apiData.bio || "",
+            bio: apiData.bio || "",
+            playlistUrl: apiData.playlistUrl || "",
+            teachesAt: apiData.teachesAt?.map((studio) => ({
+                studioName: studio.studioName,
+                location: studio.location,
+                lat: studio.lat,
+                long: studio.long
+            })) || [{ studioName: "", location: "", lat: "", long: "" }],
 
-            teachesAt:
-                apiData.teachesAt?.map((studio) => ({
-                    studioName: studio.studioName,
-                    location: studio.location
-                })) || [{ studioName: "", location: "" }],
+            categories: apiData.classStyle?.map((style) => style.id) || [],
 
-            categories:
-                apiData.classStyle?.map((style) => style.id) || [],
-
-            hero_img: apiData.heroPhoto || "",
-            profile_img: apiData.galleryPhotos?.[0] || "",
-
-            vibeChecks: apiData.vibes || []
+            heroPhoto: apiData.heroPhoto || null,
+            image1: apiData.galleryPhotos?.[0] || null,
+            image2: apiData.galleryPhotos?.[1] || null,
+            profileImage: apiData?.user?.profileImage || null
         });
     }, [instructorData]);
 
@@ -129,11 +162,22 @@ const InstructorInfo = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
-                                    label="Instructor Name"
-                                    placeholder="Instructor Name"
-                                    name="name"
+                                    placeholder="First Name"
+                                    label="First Name"
+                                    name="firstName"
                                     formik={instructorForm}
-                                />) : displayField("Instructor Name", instructorForm.values.name)}
+                                />
+                            ) : displayField("First Name", instructorForm.values.firstName)}
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
+                            {edit ? (
+                                <CustomInput
+                                    label="Last Name"
+                                    placeholder="Last Name"
+                                    name="lastName"
+                                    formik={instructorForm}
+                                />
+                            ) : displayField("Last Name", instructorForm.values.lastName)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
@@ -144,6 +188,7 @@ const InstructorInfo = () => {
                                     formik={instructorForm}
                                 />) : displayField("Email", instructorForm.values.email)}
                         </Grid>
+
                         {/* <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
@@ -336,12 +381,21 @@ const InstructorInfo = () => {
                             )}
                         </Grid>
                         <Grid size={12}>
+                            {edit ? (
+                                <CustomInput
+                                    label="Playlist Url"
+                                    placeholder="Enter Playlist Url"
+                                    name="playlistUrl"
+                                    formik={instructorForm}
+                                />) : displayField("Playlist Url", instructorForm.values.playlistUrl)}
+                        </Grid>
+                        <Grid size={12}>
                             <Grid size={{ xs: edit ? 12 : 6 }}>{edit ? (
                                 <FormControl variant="standard" fullWidth>
 
                                     <InputLabel
                                         shrink
-                                        htmlFor={'description'}
+                                        htmlFor={'bio'}
                                         sx={{
                                             fontSize: "1.3rem",
                                             fontWeight: 450,
@@ -354,18 +408,18 @@ const InstructorInfo = () => {
 
 
                                     <BootstrapInput
-                                        id={'description'}
-                                        name={'description'}
+                                        id={'bio'}
+                                        name={'bio'}
                                         type={'text'}
                                         placeholder={"Enter descripton"}
                                         multiline
                                         rows={3}
-                                        value={instructorForm.values.description}
+                                        value={instructorForm.values.bio}
                                         onChange={instructorForm.handleChange}
                                         onBlur={instructorForm.handleBlur}
                                     />
                                 </FormControl>
-                            ) : displayField("Bio Description", instructorForm.values.description)}</Grid>
+                            ) : displayField("Bio Description", instructorForm.values.bio)}</Grid>
                         </Grid>
                         <Grid size={12}>
                             <Grid container gap={3} sx={{ mt: 1 }}>
@@ -391,19 +445,19 @@ const InstructorInfo = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="hero_img"
+                                                name="heroPhoto"
                                                 disabled={!edit}
-                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('heroPhoto', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.hero_img instanceof File ? (
+                                            {instructorForm.values.heroPhoto instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.heroPhoto)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.hero_img ? (
+                                            ) : instructorForm.values.heroPhoto ? (
                                                 <img
-                                                    src={instructorForm.values.hero_img}
+                                                    src={instructorForm.values.heroPhoto}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -411,8 +465,8 @@ const InstructorInfo = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
-                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        {instructorForm.touched.heroPhoto && instructorForm.errors.heroPhoto && (
+                                            <FormHelperText error>{instructorForm.errors.heroPhoto}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -438,19 +492,19 @@ const InstructorInfo = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="profile_img"
+                                                name="profileImage"
                                                 disabled={!edit}
-                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('profileImage', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.profile_img instanceof File ? (
+                                            {instructorForm.values.profileImage instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.profileImage)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.profile_img ? (
+                                            ) : instructorForm.values.profileImage ? (
                                                 <img
-                                                    src={instructorForm.values.profile_img}
+                                                    src={instructorForm.values.profileImage}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -458,8 +512,8 @@ const InstructorInfo = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
-                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        {instructorForm.touched.profileImage && instructorForm.errors.profileImage && (
+                                            <FormHelperText error>{instructorForm.errors.profileImage}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -485,19 +539,19 @@ const InstructorInfo = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="hero_img"
+                                                name="image1"
                                                 disabled={!edit}
-                                                onChange={e => instructorForm.setFieldValue('hero_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('image1', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.hero_img instanceof File ? (
+                                            {instructorForm.values.image1 instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.hero_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.image1)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.hero_img ? (
+                                            ) : instructorForm.values.image1 ? (
                                                 <img
-                                                    src={instructorForm.values.hero_img}
+                                                    src={instructorForm.values.image1}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -505,8 +559,8 @@ const InstructorInfo = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.hero_img && instructorForm.errors.hero_img && (
-                                            <FormHelperText error>{instructorForm.errors.hero_img}</FormHelperText>
+                                        {instructorForm.touched.image1 && instructorForm.errors.image1 && (
+                                            <FormHelperText error>{instructorForm.errors.image1}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -532,19 +586,19 @@ const InstructorInfo = () => {
                                                 type="file"
                                                 accept="image/*"
                                                 hidden
-                                                name="profile_img"
+                                                name="image2"
                                                 disabled={!edit}
-                                                onChange={e => instructorForm.setFieldValue('profile_img', e.currentTarget.files[0])}
+                                                onChange={e => instructorForm.setFieldValue('image2', e.currentTarget.files[0])}
                                             />
-                                            {instructorForm.values.profile_img instanceof File ? (
+                                            {instructorForm.values.image2 instanceof File ? (
                                                 <img
-                                                    src={URL.createObjectURL(instructorForm.values.profile_img)}
+                                                    src={URL.createObjectURL(instructorForm.values.image2)}
                                                     alt="Selfie Preview"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
-                                            ) : instructorForm.values.profile_img ? (
+                                            ) : instructorForm.values.image2 ? (
                                                 <img
-                                                    src={instructorForm.values.profile_img}
+                                                    src={instructorForm.values.image2}
                                                     alt="Selfie"
                                                     style={{ height: 200, width: '100%', objectFit: 'contain', marginBottom: 8 }}
                                                 />
@@ -552,8 +606,8 @@ const InstructorInfo = () => {
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
                                         </Box>
-                                        {instructorForm.touched.profile_img && instructorForm.errors.profile_img && (
-                                            <FormHelperText error>{instructorForm.errors.profile_img}</FormHelperText>
+                                        {instructorForm.touched.image2 && instructorForm.errors.image2 && (
+                                            <FormHelperText error>{instructorForm.errors.image2}</FormHelperText>
                                         )}
                                     </Grid>
                                 </Grid>
@@ -563,37 +617,42 @@ const InstructorInfo = () => {
                         </Grid>
                         <Grid size={12}>
                             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-                                {edit ? (
+                                {instructorData?.data?.approvalStatus !== 'rejected' &&
                                     <>
-                                        <Button
-                                            variant="outlined"
-                                            sx={{ width: 130, height: 48, borderRadius: '8px', color: 'black', fontSize: '16px', fontWeight: 400, border: '1px solid #D1D5DB' }}
-                                            onClick={() => {
-                                                setEdit(false);
-                                            }}
-                                        >
-                                            Cancel
-                                        </Button>
-                                        <Button
-                                            variant="contained"
-                                            sx={{ width: 130, height: 48, borderRadius: '8px', color: 'white', backgroundColor: 'var(--Blue)', fontSize: '16px', fontWeight: 400, }}
-                                            onClick={() => {
-                                                instructorForm.handleSubmit()
-                                            }}
-                                        >
-                                            Save
-                                        </Button>
-
+                                        {edit ? (
+                                            <>
+                                                <Button
+                                                    variant="outlined"
+                                                    sx={{ width: 130, height: 48, borderRadius: '8px', color: 'black', fontSize: '16px', fontWeight: 400, border: '1px solid #D1D5DB' }}
+                                                    onClick={() => {
+                                                        setEdit(false);
+                                                    }}
+                                                >
+                                                    Cancel
+                                                </Button>
+                                                <Button
+                                                    disabled={isPending}
+                                                    variant="contained"
+                                                    sx={{ width: 130, height: 48, borderRadius: '8px', color: 'white', backgroundColor: 'var(--Blue)', fontSize: '16px', fontWeight: 400, }}
+                                                    onClick={() => {
+                                                        instructorForm.handleSubmit()
+                                                    }}
+                                                >
+                                                    {isPending ? <CircularProgress size={24} /> : "Save"}
+                                                </Button>
+                                            </>
+                                        ) : (
+                                            <Button
+                                                variant="contained"
+                                                sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: 'var(--Blue)' }}
+                                                onClick={() => setEdit(true)}
+                                            >
+                                                Edit
+                                            </Button>
+                                        )}
                                     </>
-                                ) : (
-                                    <Button
-                                        variant="contained"
-                                        sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: 'var(--Blue)' }}
-                                        onClick={() => setEdit(true)}
-                                    >
-                                        Edit
-                                    </Button>
-                                )}
+                                }
+
                                 <Button
                                     variant="contained"
                                     sx={{ width: 130, height: 48, color: 'white', borderRadius: '10px', backgroundColor: '#F01510' }}
