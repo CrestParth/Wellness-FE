@@ -70,3 +70,63 @@ export const studioValidationSchema = yup.object({
     longitude: yup.string()
         .required("Location must be selected from dropdown"),
 });
+
+export const addInstructorValidation = yup.object({
+
+    firstName: yup.string()
+        .required("First name is required"),
+
+    lastName: yup.string()
+        .required("Last name is required"),
+
+    email: yup.string()
+        .email("Invalid email")
+        .required("Email is required"),
+
+    password: yup.string()
+        .required("Password is required")
+        .min(6, "Password must be at least 6 characters"),
+
+    displayName: yup.string()
+        .required("Display name is required"),
+
+    playlistUrl: yup.string()
+        .url("Enter a valid URL")
+        .required("Playlist URL is required"),
+
+    bio: yup.string()
+        .required("Bio is required"),
+
+    categories: yup.array()
+        .min(1, "Select at least one class style"),
+
+    teachesAt: yup.array()
+        .of(
+            yup.object().shape({
+                studioName: yup.string()
+                    .required("Studio name is required"),
+
+                location: yup.string()
+                    .required("Location is required"),
+
+                lat: yup.number()
+                    .typeError("Select location from dropdown")
+                    .required("Latitude is required"),
+
+                long: yup.number()
+                    .typeError("Select location from dropdown")
+                    .required("Longitude is required"),
+            })
+        )
+        .min(1, "At least one studio is required"),
+
+    // Images
+    heroPhoto: yup.mixed()
+        .required("Hero image is required"),
+
+    image1: yup.mixed()
+        .required("Image 1 is required"),
+
+    image2: yup.mixed()
+        .required("Image 2 is required"),
+});

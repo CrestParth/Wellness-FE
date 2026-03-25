@@ -250,32 +250,33 @@ const ListOfInstructor = () => {
 
 
                                                         {/* Conditional Approve/Reject */}
-                                                        {i?.instructorProfile?.approvalStatus !== "approved" && (
-                                                            <>
-                                                                <Tooltip title="Approve Instructor">
-                                                                    <IconButton
-                                                                        sx={{ color: '#16A34A' }} // green
-                                                                        onClick={() => {
-                                                                            setSelectedId(i?.instructorProfile?.id);
-                                                                            handleOpen('approve');
-                                                                        }}
-                                                                    >
-                                                                        <CheckIcon />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                                <Tooltip title="Reject Instructor">
-                                                                    <IconButton
-                                                                        sx={{ color: 'red' }}
-                                                                        onClick={() => {
-                                                                            setSelectedId(i?.instructorProfile?.id);
-                                                                            handleOpen('approve');
-                                                                        }}
-                                                                    >
-                                                                        <ClearIcon />
-                                                                    </IconButton>
-                                                                </Tooltip>
-                                                            </>
-                                                        )}
+                                                        {/* {i?.instructorProfile?.approvalStatus !== "approved" && (
+                                                           
+                                                        )} */}
+                                                        <>
+                                                            <Tooltip title="Approve Instructor">
+                                                                <IconButton
+                                                                    sx={{ color: '#16A34A' }} // green
+                                                                    onClick={() => {
+                                                                        setSelectedId(i?.instructorProfile?.id);
+                                                                        handleOpen('approve');
+                                                                    }}
+                                                                >
+                                                                    <CheckIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title="Reject Instructor">
+                                                                <IconButton
+                                                                    sx={{ color: 'red' }}
+                                                                    onClick={() => {
+                                                                        setSelectedId(i?.instructorProfile?.id);
+                                                                        handleOpen('approve');
+                                                                    }}
+                                                                >
+                                                                    <ClearIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </>
                                                         {/* View Button */}
                                                         <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
                                                             <VisibilityIcon />

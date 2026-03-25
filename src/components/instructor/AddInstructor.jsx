@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, Stack, IconButton } from "@mui/material";
+import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, Stack, IconButton, FormHelperText } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
@@ -9,6 +9,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useCreateInstructor, useGetCategories } from '../../Api/Api'
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { toast } from "react-toastify";
+import { useQueryClient } from "@tanstack/react-query";
+import { addInstructorValidation } from "../../common/FormValidation";
 
 
 const AddInstructor = () => {
@@ -17,6 +19,7 @@ const AddInstructor = () => {
         libraries: ["places"],
     });
     const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    const client = useQueryClient()
     const handleAutoLoad = (index, auto) => {
         setAutoCompleteRefs(prev => ({
             ...prev,
@@ -39,6 +42,7 @@ const AddInstructor = () => {
     };
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
+        client.invalidateQueries(['instructors'], { exact: false })
         instructorForm.resetForm()
     };
     const onError = (error) => {
@@ -57,11 +61,12 @@ const AddInstructor = () => {
             bio: "",
             categories: [],
             teachesAt: [
-                { name: "", location: "", lat: "", long: "" }
+                { studioName: "", location: "", lat: "", long: "" }
             ],
             heroPhoto: null,
             galleryPhotos: []
         },
+        validationSchema: addInstructorValidation,
         onSubmit: (values) => {
             const formData = new FormData();
 
@@ -77,7 +82,7 @@ const AddInstructor = () => {
 
             // JSON fields
             formData.append("teachesAt", JSON.stringify(values.teachesAt));
-            formData.append("classStyle", JSON.stringify(values.categories)); // rename
+            formData.append("classStyle", JSON.stringify(values.categories));
 
             // Files
             if (values.heroPhoto) {
@@ -94,7 +99,7 @@ const AddInstructor = () => {
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [
             ...instructorForm.values.teachesAt,
-            { name: "", location: "" }
+            { studioName: "", location: "" }
         ]);
     };
 
@@ -193,6 +198,9 @@ const AddInstructor = () => {
                                         </MenuItem>
                                     ))}
                                 </Select>
+                                {instructorForm.touched.categories && instructorForm.errors.categories && (
+                                    <FormHelperText error>{instructorForm.errors.categories}</FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
@@ -243,30 +251,49 @@ const AddInstructor = () => {
                                         >
                                             <Box sx={{ flex: 1 }}>
                                                 <BootstrapInput
-                                                    name={`teachesAt[${index}].name`}
+                                                    name={`teachesAt[${index}].studioName`}
                                                     placeholder="Studio Name"
-                                                    value={item.name}
+                                                    value={item.studioName}
                                                     onChange={instructorForm.handleChange}
                                                     fullWidth
                                                 />
+                                                {instructorForm.touched.teachesAt?.[index]?.studioName && instructorForm.errors.teachesAt?.[index]?.studioName && (
+                                                    <FormHelperText error>
+                                                        {instructorForm.errors.teachesAt?.[index]?.studioName}
+                                                    </FormHelperText>
+                                                )}
                                             </Box>
                                             <Box sx={{ flex: 1 }}>
                                                 {isLoaded && (
-                                                    <Autocomplete
-                                                        onLoad={(auto) => handleAutoLoad(index, auto)}
-                                                        onPlaceChanged={() => handlePlaceChanged(index)}
-                                                        options={{
-                                                            types: ["geocode"],
-                                                        }}
-                                                    >
-                                                        <BootstrapInput
-                                                            name={`teachesAt[${index}].location`}
-                                                            placeholder="Location"
-                                                            value={item.location}
-                                                            onChange={instructorForm.handleChange}
-                                                            fullWidth
-                                                        />
-                                                    </Autocomplete>
+                                                    <FormControl fullWidth>
+                                                        <Autocomplete
+                                                            onLoad={(auto) => handleAutoLoad(index, auto)}
+                                                            onPlaceChanged={() => handlePlaceChanged(index)}
+                                                            options={{
+                                                                types: ["geocode"],
+                                                            }}
+                                                        >
+                                                            <BootstrapInput
+                                                                name={`teachesAt[${index}].location`}
+                                                                placeholder="Location"
+                                                                value={item.location}
+                                                                onChange={instructorForm.handleChange}
+                                                                fullWidth
+                                                            />
+                                                        </Autocomplete>
+                                                        {instructorForm.touched.location && instructorForm.errors.location && (
+                                                            <FormHelperText error>
+                                                                {instructorForm.errors.location}
+                                                            </FormHelperText>
+                                                        )}
+                                                        {instructorForm.touched.location &&
+                                                            !instructorForm.values.latitude &&
+                                                            !instructorForm.errors.location && (
+                                                                <FormHelperText error>
+                                                                    Please select a location from suggestions
+                                                                </FormHelperText>
+                                                            )}
+                                                    </FormControl>
                                                 )}
                                             </Box>
                                             {index !== instructorForm.values.teachesAt.length - 1 && (
@@ -321,6 +348,9 @@ const AddInstructor = () => {
                                     onChange={instructorForm.handleChange}
                                     onBlur={instructorForm.handleBlur}
                                 />
+                                {instructorForm.touched.bio && instructorForm.errors.bio && (
+                                    <FormHelperText error>{instructorForm.errors.bio}</FormHelperText>
+                                )}
                             </FormControl>
                         </Grid>
                         <Grid size={12}>

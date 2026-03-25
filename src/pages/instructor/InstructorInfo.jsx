@@ -107,7 +107,7 @@ const InstructorInfo = () => {
 
     const handleConfirm = () => {
         if (openPopup === "delete") {
-            deleteInstructor(id);
+            deleteInstructor(instructorData?.data?.userId);
         }
         handleClose()
     }
