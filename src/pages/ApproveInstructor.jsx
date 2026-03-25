@@ -3,20 +3,21 @@ import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, Tabl
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from '@mui/icons-material/Clear';
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import Accept from '../assets/images/Accept.svg'
+import Reject from '../assets/images/Reject.svg'
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useGetInstructors } from "../../Api/Api";
-import arrowup from '../../assets/images/arrowup.svg';
-import arrowdown from '../../assets/images/arrowdown.svg';
-import arrownuteral from '../../assets/images/arrownuteral.svg';
-import CustomPagination from "../../common/custom/CustomPagination";
-import { useApproveInstructor, useRejectInstructor } from "../../Api/Api";
+import arrowup from '../assets/images/arrowup.svg';
+import arrowdown from '../assets/images/arrowdown.svg';
+import arrownuteral from '../assets/images/arrownuteral.svg';
+import CustomPagination from "../common/custom/CustomPagination";
+import { useApproveInstructor, useRejectInstructor, useGetPendingInstructors } from "../Api/Api";
 import { useQueryClient } from "@tanstack/react-query";
-import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import ConfirmationPopUp from "../common/ConfirmationPopUp";
 
-const ListOfInstructor = () => {
+const ApproveInstructor = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedId, setSelectedId] = useState()
@@ -28,18 +29,7 @@ const ListOfInstructor = () => {
     const nav = useNavigate()
     const client = useQueryClient()
 
-    const statusColorMap = {
-        Approved: {
-            color: '#7BC8A9',
-            border: '#10B981',
-            bg: '#ECFDF5'
-        },
-        Rejected: {
-            color: '#FF927C',
-            border: '#EF4444',
-            bg: '#FEF2F2'
-        }
-    };
+
     const changeSortOrder = (e) => {
         const field = e.target.id;
 
@@ -51,7 +41,7 @@ const ListOfInstructor = () => {
         }
     }
 
-    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
+    const { data, isLoading } = useGetPendingInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
     const instructorData = data?.data
 
     const { mutate: approveInstructor } = useApproveInstructor(
@@ -80,7 +70,7 @@ const ListOfInstructor = () => {
         if (openPopup === "approve") {
             approveInstructor(selectedId);
         }
-        else {
+        if (openPopup === "reject") {
             rejectInstructor(selectedId);
         }
         handleClose()
@@ -89,12 +79,12 @@ const ListOfInstructor = () => {
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
-                        List of Instructors
+                        List of Pending Instructors
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                     <TextField
                         variant="outlined"
                         placeholder="Search"
@@ -122,24 +112,6 @@ const ListOfInstructor = () => {
                             ),
                         }}
                     />
-
-                    <TextField
-                        select
-                        label="Filter by Status"
-                        fullWidth
-                        value={statusFilter}
-                        size="small"
-                        onChange={(e) => setStatusFilter(e.target.value)}
-                    >
-                        <MenuItem value="">All</MenuItem>
-                        <MenuItem value={false}>Pending</MenuItem>
-                        <MenuItem value={true}>Verified</MenuItem>
-                    </TextField>
-
-                    <Button sx={{ width: '400px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/instructors/add-instructor')}>
-                        <AddIcon />
-                        Add Instructor
-                    </Button>
                 </Grid>
             </Grid>
 
@@ -162,20 +134,6 @@ const ListOfInstructor = () => {
                                                 Name
                                             </TableSortLabel></TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
-
-                                        <TableCell sx={{
-                                            backgroundColor: '#F9FAFB',
-                                            color: '#878787', textAlign: 'center'
-                                        }}>
-                                            <TableSortLabel
-                                                id="vibeChecks"
-                                                active={sortBy === 'vibeChecks'}
-                                                direction={sortOrder}
-                                                onClick={changeSortOrder}
-                                                IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
-                                            >
-                                                Vibe Checks
-                                            </TableSortLabel></TableCell>
                                         <TableCell sx={tableHeaderCellSx}>Status</TableCell>
 
                                         <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
@@ -184,17 +142,14 @@ const ListOfInstructor = () => {
 
                                 <TableBody>
                                     {instructorData?.instructors?.map((i) => {
-                                        const statusLabel = i?.instructorProfile?.approvalStatus === 'approved' ? "Approved" : "Rejected";
-                                        const statusStyle = statusColorMap[statusLabel];
-
                                         return (
                                             <TableRow key={i.id}>
                                                 <TableCell sx={{ fontWeight: 500 }}>
-                                                    {[i?.firstName, i?.lastName].filter(Boolean).join(" ")}
+                                                    {[i?.user?.firstName, i?.user?.lastName].filter(Boolean).join(" ")}
                                                 </TableCell>
                                                 <TableCell sx={{ minWidth: 220 }}>
                                                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
-                                                        {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                        {i?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                             <Chip
                                                                 key={index}
                                                                 label={tag.studioName}
@@ -208,9 +163,9 @@ const ListOfInstructor = () => {
                                                             />
                                                         ))}
 
-                                                        {i?.instructorProfile?.teachesAt?.length > 3 && (
+                                                        {i?.teachesAt?.length > 3 && (
                                                             <Chip
-                                                                label={`+${i?.instructorProfile?.teachesAt.length - 3}`}
+                                                                label={`+${i?.teachesAt.length - 3}`}
                                                                 size="medium"
                                                                 sx={{
                                                                     border: "1px solid #A855F7",
@@ -223,19 +178,19 @@ const ListOfInstructor = () => {
                                                     </Stack>
                                                 </TableCell>
 
-                                                <TableCell>
+                                                {/* <TableCell>
                                                     <Stack direction="row" justifyContent={"center"} spacing={1}>
                                                         <Typography fontWeight={500} >
                                                             {i?.instructorProfile?.TotalVibeChecks || 0}
                                                         </Typography>
-                                                    </Stack></TableCell>
+                                                    </Stack></TableCell> */}
                                                 <TableCell>
                                                     <Chip
-                                                        label={statusLabel}
+                                                        label={i?.approvalStatus}
                                                         sx={{
-                                                            backgroundColor: statusStyle.bg,
-                                                            color: statusStyle.color,
-                                                            border: `1px solid ${statusStyle.border}`,
+                                                            backgroundColor: '#FEF2F2',
+                                                            color: '#FF927C',
+                                                            border: `1px solid #EF4444`,
                                                             '& .MuiChip-label': {
                                                                 textTransform: 'capitalize',
                                                                 fontWeight: 500,
@@ -246,10 +201,35 @@ const ListOfInstructor = () => {
 
                                                 <TableCell>
                                                     <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
+                                                        <>
+                                                            <Tooltip title="Approve Instructor">
+                                                                <IconButton
+                                                                    sx={{ color: '#16A34A' }} // green
+                                                                    onClick={() => {
+                                                                        setSelectedId(i?.id);
+                                                                        handleOpen('approve');
+                                                                    }}
+                                                                >
+                                                                    <CheckIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            <Tooltip title="Reject Instructor">
+                                                                <IconButton
+                                                                    sx={{ color: 'red' }}
+                                                                    onClick={() => {
+                                                                        setSelectedId(i?.id);
+                                                                        handleOpen('reject');
+                                                                    }}
+                                                                >
+                                                                    <ClearIcon />
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                        </>
                                                         {/* View Button */}
-                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
+                                                        <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
+
                                                     </Stack>
                                                 </TableCell>
                                             </TableRow>
@@ -267,7 +247,7 @@ const ListOfInstructor = () => {
                             message={"Are you sure you want to approve this instructor?"}
                             BtnText={"Approve"}
                             BtnColor={"green"}
-                            icon={<CheckIcon />}
+                            icon={Reject}
                         />
                         <ConfirmationPopUp
                             open={openPopup === "reject"}
@@ -276,8 +256,8 @@ const ListOfInstructor = () => {
                             title={"Reject Instructor"}
                             message={"Are you sure you want to reject this instructor?"}
                             BtnText={"Reject"}
-                            BtnColor={"green"}
-                            icon={ClearIcon}
+                            BtnColor={"red"}
+                            icon={Accept}
                         />
                     </>
                 ) : (<Typography align="center" color="text.secondary" sx={{ mt: 1, pb: 2 }}>
@@ -288,7 +268,7 @@ const ListOfInstructor = () => {
     );
 };
 
-export default ListOfInstructor;
+export default ApproveInstructor;
 const tableHeaderCellSx = {
     backgroundColor: '#F9FAFB',
     color: '#878787'

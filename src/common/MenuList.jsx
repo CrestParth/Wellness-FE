@@ -48,6 +48,12 @@ export const menulist = [
         view: 'Instructor Information',
         icon: icons.TeamOutlined,
     },
+    {
+        id: "approveInstructor",
+        name: "Approve Instructor",
+        path: "/home/approveInstructor",
+        icon: icons.TeamOutlined,
+    },
 
     {
         id: "users",

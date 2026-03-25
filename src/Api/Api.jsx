@@ -159,6 +159,18 @@ export const useGetInstructors = (page, limit, isVerified = '', searchKey = '', 
         placeholderData: keepPreviousData,
     });
 };
+// get all Pending Instructor
+export const useGetPendingInstructors = () => {
+    return useQuery({
+        queryKey: ['Pendinginstructors'],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/instructors/pending`);
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
 // get Instructor by id 
 export const useGetInstructorById = (id) => {
     return useQuery({

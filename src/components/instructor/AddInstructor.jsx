@@ -56,7 +56,6 @@ const AddInstructor = () => {
             lastName: "",
             email: "",
             password: "",
-            displayName: "",
             playlistUrl: "",
             bio: "",
             categories: [],
@@ -75,7 +74,6 @@ const AddInstructor = () => {
             formData.append("lastName", values.lastName);
             formData.append("email", values.email);
             formData.append("password", values.password);
-            formData.append("displayName", values.displayName);
             formData.append("bio", values.bio);
             formData.append("playlistUrl", values.playlistUrl);
             formData.append("status", true);
@@ -202,14 +200,6 @@ const AddInstructor = () => {
                                     <FormHelperText error>{instructorForm.errors.categories}</FormHelperText>
                                 )}
                             </FormControl>
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                            <CustomInput
-                                label="Display Name"
-                                placeholder="Enter Display Name"
-                                name="displayName"
-                                formik={instructorForm}
-                            />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput

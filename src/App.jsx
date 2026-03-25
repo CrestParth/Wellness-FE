@@ -15,6 +15,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsCondition from "./pages/TermsCondition";
 import AccountDeletion from "./pages/AccountDeletion";
 import Verification from "./pages/auth/Verification";
+import ApproveInstructor from "./pages/ApproveInstructor";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -78,6 +79,12 @@ function App() {
             { path: "", element: <ListOfInstructor /> },
             { path: "instructor-view/:id", element: <InstructorInfo /> },
             { path: "add-instructor", element: <AddInstructor /> },
+          ],
+        },
+        {
+          path: "approveInstructor",
+          children: [
+            { path: "", element: <ApproveInstructor /> },
           ],
         },
         {
