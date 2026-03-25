@@ -26,6 +26,7 @@ const AddInstructor = () => {
             [index]: auto
         }));
     };
+
     const handlePlaceChanged = (index) => {
         const auto = autoCompleteRefs[index];
         if (!auto) return;
@@ -63,7 +64,8 @@ const AddInstructor = () => {
                 { studioName: "", location: "", lat: "", long: "" }
             ],
             heroPhoto: null,
-            galleryPhotos: []
+            image1: null,
+            image2: null,
         },
         validationSchema: addInstructorValidation,
         onSubmit: (values) => {
@@ -107,7 +109,7 @@ const AddInstructor = () => {
     };
 
     const { data: classStyles } = useGetCategories()
-
+    console.log(instructorForm.errors)
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -268,21 +270,23 @@ const AddInstructor = () => {
                                                                 placeholder="Location"
                                                                 value={item.location}
                                                                 onChange={instructorForm.handleChange}
+                                                                onBlur={instructorForm.handleBlur}
                                                                 fullWidth
                                                             />
                                                         </Autocomplete>
-                                                        {instructorForm.touched.location && instructorForm.errors.location && (
+                                                        {instructorForm.touched.teachesAt?.[index]?.location &&
+                                                            instructorForm.errors.teachesAt?.[index]?.location ? (
                                                             <FormHelperText error>
-                                                                {instructorForm.errors.location}
+                                                                {instructorForm.errors.teachesAt?.[index]?.location}
                                                             </FormHelperText>
-                                                        )}
-                                                        {instructorForm.touched.location &&
-                                                            !instructorForm.values.latitude &&
-                                                            !instructorForm.errors.location && (
-                                                                <FormHelperText error>
-                                                                    Please select a location from suggestions
-                                                                </FormHelperText>
-                                                            )}
+                                                        ) : null}
+                                                        {instructorForm.touched.teachesAt?.[index]?.location &&
+                                                            !instructorForm.errors.teachesAt?.[index]?.location &&
+                                                            instructorForm.errors.teachesAt?.[index]?.lat ? (
+                                                            <FormHelperText error>
+                                                                {instructorForm.errors.teachesAt?.[index]?.lat}
+                                                            </FormHelperText>
+                                                        ) : null}
                                                     </FormControl>
                                                 )}
                                             </Box>

@@ -125,8 +125,8 @@ export const addInstructorValidation = yup.object({
         .required("Hero image is required"),
 
     image1: yup.mixed()
-        .required("Image 1 is required"),
+        .required("Image is required"),
 
     image2: yup.mixed()
-        .required("Image 2 is required"),
+        .required("Image is required"),
 });

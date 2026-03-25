@@ -19,6 +19,8 @@ const VibeInfo = () => {
 
     const getRange = (title) =>
         vibeData.data.describeVibe?.find(v => v.title === title)?.range;
+    const getValue = (title) =>
+        vibeData.data.describeVibe?.find(v => v.title === title)?.value;
 
     const formattedVibe = vibeData?.data
         ? {
@@ -27,12 +29,17 @@ const VibeInfo = () => {
             date: new Date(vibeData.data.createdAt).toLocaleDateString(),
             note: vibeData.data.vibeText || "",
             tags: vibeData.data.classStyle?.map((c) => c.name) || [],
+            energy: getValue("Energy"),
+            pace: getValue("Pace"),
+            cueing: getValue("Cueing"),
+            focus: getValue("Focus"),
+            music: getValue("Music"),
 
-            energy: getRange("Energy"),
-            pace: getRange("Pace"),
-            cueing: getRange("Cueing"),
-            focus: getRange("Focus"),
-            music: getRange("Music"),
+            energyRange: getRange("Energy"),
+            paceRange: getRange("Pace"),
+            cueingRange: getRange("Cueing"),
+            focusRange: getRange("Focus"),
+            musicRange: getRange("Music"),
 
             highlights: vibeData.data.vibeTags?.experienceHighlights || [],
             goodFor: vibeData.data.vibeTags?.goodFitFor || []

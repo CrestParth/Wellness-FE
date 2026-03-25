@@ -50,7 +50,7 @@ export const menulist = [
     },
     {
         id: "approveInstructor",
-        name: "Approve Instructor",
+        name: "Pending Approvals",
         path: "/home/approveInstructor",
         icon: icons.TeamOutlined,
     },

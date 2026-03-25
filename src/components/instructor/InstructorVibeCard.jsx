@@ -85,6 +85,9 @@ const InstructorVibeCard = ({ vibe }) => {
                         <Typography fontSize={14}>
                             {item.title}
                         </Typography>
+                        <Typography fontSize={14} color={purple}>
+                            {item.value}
+                        </Typography>
 
                         <Typography fontSize={14} color={purple}>
                             {item.range}

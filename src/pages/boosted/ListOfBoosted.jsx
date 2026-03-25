@@ -5,7 +5,7 @@ import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useGetInstructors } from "../../Api/Api";
+import { useGetBoostedInstructors } from "../../Api/Api";
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
@@ -15,23 +15,10 @@ const ListOfBoosted = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const [currentPage, setCurrentPage] = useState(1);
     const [filter, setFilter] = useState('')
-    const [statusFilter, setStatusFilter] = useState('')
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
 
-    const statusColorMap = {
-        Verified: {
-            color: '#7BC8A9',
-            border: '#10B981',
-            bg: '#ECFDF5'
-        },
-        Pending: {
-            color: '#FF927C',
-            border: '#EF4444',
-            bg: '#FEF2F2'
-        }
-    };
     const changeSortOrder = (e) => {
         const field = e.target.id;
 
@@ -43,7 +30,7 @@ const ListOfBoosted = () => {
         }
     }
 
-    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
+    const { data, isLoading } = useGetBoostedInstructors(currentPage, rowsPerPage, filter, sortBy, sortOrder)
     const instructorData = data?.data
 
     const totalUsers = instructorData?.pagination?.total;
@@ -137,8 +124,7 @@ const ListOfBoosted = () => {
 
                                 <TableBody>
                                     {instructorData?.instructors?.map((i) => {
-                                        const statusLabel = i?.instructorProfile?.isVerified ? "Verified" : "Pending";
-                                        const statusStyle = statusColorMap[statusLabel];
+
 
                                         return (
                                             <TableRow key={i.id}>

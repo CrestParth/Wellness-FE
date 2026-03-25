@@ -324,6 +324,19 @@ export const useDeleteVibe = (onSuccess, onError) => {
     });
 };
 
+// get all boosted instrucors
+export const useGetBoostedInstructors = (page, limit, searchKey = '', sortBy = '', sortOrder = '') => {
+    return useQuery({
+        queryKey: ['BoostedInstructors', page, limit, searchKey, sortBy, sortOrder],
+        queryFn: async () => {
+            const { data } = await apiClient.get(`/admin/boosted-instructors`, { params: { page, limit, searchKey, sortBy, sortOrder } });
+            return data;
+        },
+        staleTime: 15 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+};
+
 
 // get dashboard analytics
 export const useGetDashboard = () => {

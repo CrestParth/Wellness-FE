@@ -69,11 +69,11 @@ const VibeCard = ({ vibe }) => {
             {/* Vibes Icons Row */}
             <Stack direction="row" justifyContent="space-between" mt={4}>
                 {[
-                    { icon: energyIcon, label: "Energy", value: vibe?.energy },
-                    { icon: paceIcon, label: "Pace", value: vibe?.pace },
-                    { icon: cueingIcon, label: "Cueing", value: vibe?.cueing },
-                    { icon: focusIcon, label: "Focus", value: vibe?.focus },
-                    { icon: musicIcon, label: "Music", value: vibe?.music }
+                    { icon: energyIcon, label: "Energy", value: vibe?.energy, range: vibe?.energyRange },
+                    { icon: paceIcon, label: "Pace", value: vibe?.pace, range: vibe?.paceRange },
+                    { icon: cueingIcon, label: "Cueing", value: vibe?.cueing, range: vibe?.cueingRange },
+                    { icon: focusIcon, label: "Focus", value: vibe?.focus, range: vibe?.focusRange },
+                    { icon: musicIcon, label: "Music", value: vibe?.music, range: vibe?.musicRange }
                 ].map((item, i) => (
                     <Stack key={i} alignItems="center" spacing={1}>
                         {/* <Box
@@ -97,6 +97,9 @@ const VibeCard = ({ vibe }) => {
 
                         <Typography fontSize={13} color={purple}>
                             {item.value}
+                        </Typography>
+                        <Typography fontSize={13} color={purple}>
+                            {item.range}
                         </Typography>
                     </Stack>
                 ))}
