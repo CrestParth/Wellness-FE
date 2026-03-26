@@ -121,7 +121,8 @@ const InstructorInfo = () => {
             heroPhoto: apiData.heroPhoto || null,
             image1: apiData.galleryPhotos?.[0] || null,
             image2: apiData.galleryPhotos?.[1] || null,
-            profileImage: apiData?.user?.profileImage || null
+            profileImage: apiData?.user?.profileImage || null,
+            vibeChecks: apiData.vibes || []
         });
     }, [instructorData]);
 
