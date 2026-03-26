@@ -2,10 +2,11 @@ import { Typography, Box, Grid, TableContainer, Table, TableHead, TableRow, Tabl
 import React, { useState } from 'react'
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useNavigate } from 'react-router-dom';
-import { useGetInstructors, useGetDashboard } from "../Api/Api";
+import { useGetBoostedInstructors, useGetDashboard } from "../Api/Api";
 import arrowup from '../assets/images/arrowup.svg';
 import arrowdown from '../assets/images/arrowdown.svg';
 import arrownuteral from '../assets/images/arrownuteral.svg';
+import { FormateDate } from '../utils/FormateDate';
 
 
 const StatCard = ({ title, value, bg, placeholder }) => (
@@ -49,7 +50,7 @@ const Home = () => {
     const { data: analyticsData } = useGetDashboard()
     const analytics = analyticsData?.data
 
-    const { data, isLoading } = useGetInstructors(1, 5)
+    const { data, isLoading } = useGetBoostedInstructors(1, 5)
     const instructorData = data?.data
     return (
         <>
@@ -154,24 +155,25 @@ const Home = () => {
                                                 >
                                                     End Date
                                                 </TableSortLabel></TableCell>
-
                                             <TableCell align="center" sx={tableHeaderCellSx}>Actions</TableCell>
                                         </TableRow>
                                     </TableHead>
 
                                     <TableBody>
                                         {instructorData?.instructors?.map((i) => {
+
+
                                             return (
                                                 <TableRow key={i.id}>
                                                     <TableCell sx={{ fontWeight: 500 }}>{i.firstName}
-                                                        {i.lastName}
+                                                        {i.name}
                                                     </TableCell>
                                                     <TableCell sx={{ minWidth: 220 }}>
                                                         <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
-                                                            {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                            {i?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                                 <Chip
                                                                     key={index}
-                                                                    label={tag.studioName}
+                                                                    label={tag}
                                                                     size="medium"
                                                                     sx={{
                                                                         border: "1px solid #A855F7",
@@ -182,9 +184,9 @@ const Home = () => {
                                                                 />
                                                             ))}
 
-                                                            {i?.instructorProfile?.teachesAt?.length > 3 && (
+                                                            {i?.teachesAt?.length > 3 && (
                                                                 <Chip
-                                                                    label={`+${i?.instructorProfile?.teachesAt.length - 3}`}
+                                                                    label={`+${i?.teachesAt.length - 3}`}
                                                                     size="medium"
                                                                     sx={{
                                                                         border: "1px solid #A855F7",
@@ -198,15 +200,15 @@ const Home = () => {
                                                     </TableCell>
 
                                                     <TableCell>
-                                                        02/03/2026
+                                                        {FormateDate(i?.startDate)}
                                                     </TableCell>
                                                     <TableCell>
-                                                        23/08/2026
+                                                        {FormateDate(i?.endDate)}
                                                     </TableCell>
 
                                                     <TableCell >
                                                         <Stack direction="row" justifyContent={"center"} spacing={1}>
-                                                            <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.instructorProfile?.id}`)}>
+                                                            <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.id}`)}>
                                                                 <VisibilityIcon />
                                                             </IconButton>
                                                         </Stack>

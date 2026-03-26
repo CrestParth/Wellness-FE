@@ -10,6 +10,7 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import CustomPagination from "../../common/custom/CustomPagination";
+import { FormateDate } from "../../utils/FormateDate";
 
 const ListOfBoosted = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -129,14 +130,14 @@ const ListOfBoosted = () => {
                                         return (
                                             <TableRow key={i.id}>
                                                 <TableCell sx={{ fontWeight: 500 }}>{i.firstName}
-                                                    {i.lastName}
+                                                    {i.name}
                                                 </TableCell>
                                                 <TableCell sx={{ minWidth: 220 }}>
                                                     <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
-                                                        {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                        {i?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                             <Chip
                                                                 key={index}
-                                                                label={tag.studioName}
+                                                                label={tag}
                                                                 size="medium"
                                                                 sx={{
                                                                     border: "1px solid #A855F7",
@@ -147,9 +148,9 @@ const ListOfBoosted = () => {
                                                             />
                                                         ))}
 
-                                                        {i?.instructorProfile?.teachesAt?.length > 3 && (
+                                                        {i?.teachesAt?.length > 3 && (
                                                             <Chip
-                                                                label={`+${i?.instructorProfile?.teachesAt.length - 3}`}
+                                                                label={`+${i?.teachesAt.length - 3}`}
                                                                 size="medium"
                                                                 sx={{
                                                                     border: "1px solid #A855F7",
@@ -163,15 +164,15 @@ const ListOfBoosted = () => {
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    02/03/2026
+                                                    {FormateDate(i?.startDate)}
                                                 </TableCell>
                                                 <TableCell>
-                                                    23/08/2026
+                                                    {FormateDate(i?.endDate)}
                                                 </TableCell>
 
                                                 <TableCell >
                                                     <Stack direction="row" justifyContent={"center"} spacing={1}>
-                                                        <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.instructorProfile?.id}`)}>
+                                                        <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
                                                     </Stack>
