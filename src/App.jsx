@@ -16,6 +16,9 @@ import TermsCondition from "./pages/TermsCondition";
 import AccountDeletion from "./pages/AccountDeletion";
 import Verification from "./pages/auth/Verification";
 import ApproveInstructor from "./pages/ApproveInstructor";
+import ResetPassword from "./pages/ResetPassword";
+import VerificationSuccess from "./pages/VerificationSuccess";
+import VerificationError from "./pages/VerificationError";
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -111,6 +114,9 @@ function App() {
     { path: "/privacy-policy", element: <PrivacyPolicy /> },
     { path: "/terms-condition", element: <TermsCondition /> },
     { path: "/account-deletion", element: <AccountDeletion /> },
+    { path: "/reset-password", element: <ResetPassword /> },
+    { path: "/verification-success", element: <VerificationSuccess /> },
+    { path: "/verification-error", element: <VerificationError /> },
   ]);
 
   return (
