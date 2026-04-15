@@ -75,7 +75,7 @@ const ResetPassword = () => {
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                bgcolor: "var(--Blue)",
+                bgcolor: "black",
                 p: 3,
             }}
         >
