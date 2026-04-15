@@ -19,6 +19,7 @@ import ApproveInstructor from "./pages/ApproveInstructor";
 import ResetPassword from "./pages/ResetPassword";
 import VerificationSuccess from "./pages/VerificationSuccess";
 import VerificationError from "./pages/VerificationError";
+import ResetSuccess from './pages/ResetSuccess'
 
 // Lazy imports (code-splitting)
 const Layout = lazy(() => import("./common/Layout"));
@@ -117,6 +118,7 @@ function App() {
     { path: "/reset-password", element: <ResetPassword /> },
     { path: "/verification-success", element: <VerificationSuccess /> },
     { path: "/verification-error", element: <VerificationError /> },
+    { path: "/reset-success", element: <ResetSuccess /> },
   ]);
 
   return (

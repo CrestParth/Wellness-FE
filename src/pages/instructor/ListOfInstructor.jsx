@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel, Tooltip } from "@mui/material";
+import { useState } from "react";
+import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel, Dialog, DialogContent, DialogTitle, CircularProgress } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from '@mui/icons-material/Clear';
 import VisibilityIcon from "@mui/icons-material/Visibility";
@@ -12,9 +12,13 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import CustomPagination from "../../common/custom/CustomPagination";
-import { useApproveInstructor, useRejectInstructor } from "../../Api/Api";
+import { useApproveInstructor, useRejectInstructor, useSendBulkInvitation } from "../../Api/Api";
 import { useQueryClient } from "@tanstack/react-query";
 import ConfirmationPopUp from "../../common/ConfirmationPopUp";
+import csvIcon from '../../assets/images/csvIcon.svg';
+import excelIcon from '../../assets/images/excelIcon.svg'
+import Export from '../../utils/Export'
+
 
 const ListOfInstructor = () => {
     const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -22,6 +26,8 @@ const ListOfInstructor = () => {
     const [selectedId, setSelectedId] = useState()
     const [filter, setFilter] = useState('')
     const [openPopup, setOpenPopup] = useState(null);
+    const [openBulkInvite, setOpenBulkInvite] = useState(false);
+    const [file, setFile] = useState(null);
     const [statusFilter, setStatusFilter] = useState('')
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
@@ -86,15 +92,62 @@ const ListOfInstructor = () => {
         handleClose()
     }
 
+    const { mutate: sendBulkInvite, isPending } = useSendBulkInvitation(
+        () => {
+            toast.success("Invitations sent successfully");
+            setOpenBulkInvite(false);
+            setFile(null);
+        },
+        () => toast.error("Upload failed")
+    );
+
+    const handleFile = (selectedFile) => {
+        if (!selectedFile) return;
+
+        const validTypes = [".xlsx", ".xls", ".csv"];
+
+        const fileName = selectedFile.name.toLowerCase();
+
+        const isValid = validTypes.some(ext => fileName.endsWith(ext));
+        if (!isValid) {
+            toast.error("Only Excel (.xlsx, .xls) or CSV files are allowed");
+            return;
+        }
+
+        setFile(selectedFile);
+    };
+
+    const getFileIcon = (file) => {
+        if (!file) return null;
+
+        const name = file.name.toLowerCase();
+
+        if (name.endsWith(".csv")) return csvIcon;
+        if (name.endsWith(".xlsx") || name.endsWith(".xls")) return excelIcon;
+
+        return null;
+    };
+
+    const exportColumns = [
+        { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
+        {
+            label: 'Teaches At', accessor: (i) => i?.instructorProfile?.teachesAt
+                ?.map(t => t.studioName)
+                .join(", ") || '-'
+        },
+        { label: 'Vibe Checks', accessor: (i) => i?.instructorProfile?.TotalVibeChecks || 0 },
+        { label: 'Status', accessor: (i) => i?.instructorProfile?.approvalStatus || "-" },
+    ];
+
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                <Grid size={{ xs: 12, lg: 3 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                     <Typography variant="h6" fontWeight={600}>
                         List of Instructors
                     </Typography>
                 </Grid>
-                <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                <Grid size={{ xs: 12, lg: 9 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                     <TextField
                         variant="outlined"
                         placeholder="Search"
@@ -135,11 +188,33 @@ const ListOfInstructor = () => {
                         <MenuItem value={false}>Pending</MenuItem>
                         <MenuItem value={true}>Verified</MenuItem>
                     </TextField>
+                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                        <Export
+                            apiEndpoint="/admin/instructors"
+                            columns={exportColumns}
+                            fileName="instructors"
+                            dataKey="instructors"
+                        />
 
-                    <Button sx={{ width: '400px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/instructors/add-instructor')}>
-                        <AddIcon />
-                        Add Instructor
-                    </Button>
+                        <Button
+                            onClick={() => setOpenBulkInvite(true)}
+                            component="label"
+                            sx={{
+                                height: "40px",
+                                borderRadius: "8px",
+                                backgroundColor: "var(--Blue)",
+                                color: "white",
+                                minWidth: "150px"
+                            }}
+                        >
+                            Import Instructors
+                        </Button>
+
+                        <Button sx={{ width: '200px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/instructors/add-instructor')}>
+                            <AddIcon />
+                            Add Instructor
+                        </Button>
+                    </Box>
                 </Grid>
             </Grid>
 
@@ -284,6 +359,126 @@ const ListOfInstructor = () => {
                     No data found
                 </Typography>)
             )}
+            <Dialog open={openBulkInvite} onClose={() => setOpenBulkInvite(false)} maxWidth="xs" fullWidth>
+                <DialogTitle>Upload File</DialogTitle>
+
+                <DialogContent>
+                    {/* Drag & Drop Box */}
+                    <Box
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                            e.preventDefault();
+                            const droppedFile = e.dataTransfer.files[0];
+                            handleFile(droppedFile);
+                        }}
+                        sx={{
+                            border: "2px dashed #ccc",
+                            borderRadius: "10px",
+                            p: 4,
+                            textAlign: "center",
+                            cursor: "pointer",
+                            mb: 2,
+                            transition: "0.3s",
+                            "&:hover": {
+                                borderColor: "var(--Blue)",
+                                backgroundColor: "#f9f9f9"
+                            }
+                        }}
+                    >
+                        <Typography fontWeight={500}>
+                            Drag & Drop your file here
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ my: 1 }}>
+                            Supports .xlsx, .xls, .csv
+                        </Typography>
+
+                        <Typography variant="body2" sx={{ my: 1 }}>
+                            or
+                        </Typography>
+
+                        {/* File Picker */}
+                        <Button component="label" variant="outlined" sx={{ color: "var(--Blue)", border: "1px solid var(--Blue)" }}>
+                            Browse File
+                            <input
+                                type="file"
+                                hidden
+                                accept=".xlsx,.xls,.csv"
+                                onChange={(e) => handleFile(e.target.files[0])}
+                            />
+                        </Button>
+
+                        {/* Selected file */}
+                        {file && (
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: 2,
+                                    mt: 2,
+                                    p: 1.5,
+                                    border: "1px solid #eee",
+                                    borderRadius: "8px",
+                                    backgroundColor: "#fafafa"
+                                }}
+                            >
+                                {/* File Icon */}
+                                <Box
+                                    component="img"
+                                    src={getFileIcon(file)}
+                                    sx={{ width: 40, height: 40 }}
+                                />
+
+                                {/* File Name */}
+                                <Typography
+                                    sx={{
+                                        fontSize: "14px",
+                                        overflow: "hidden",
+                                        textOverflow: "ellipsis",
+                                        whiteSpace: "nowrap"
+                                    }}
+                                >
+                                    {file.name}
+                                </Typography>
+
+                                {/* Remove Button (optional 🔥) */}
+                                <Button
+                                    size="small"
+                                    onClick={() => setFile(null)}
+                                    sx={{ ml: "auto", color: "red" }}
+                                >
+                                    Remove
+                                </Button>
+                            </Box>
+                        )}
+                    </Box>
+
+                    {/* Actions */}
+                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        {/* Download Sample */}
+                        <Button
+                            onClick={() => window.open("/Sample.csv")}
+                            sx={{ textTransform: "none", color: "var(--Blue)" }}
+                        >
+                            Download Sample File
+                        </Button>
+
+                        {/* Upload */}
+                        <Button
+                            disabled={!file || isPending}
+                            onClick={() => sendBulkInvite(file)}
+                            sx={{
+                                bgcolor: "var(--Blue)",
+                                color: "white",
+                                px: 3,
+                                "&:hover": { bgcolor: "var(--Blue)" }
+                            }}
+                        >
+                            {isPending ? "Uploading..." : "Upload"}
+                        </Button>
+                    </Box>
+                </DialogContent>
+            </Dialog>
         </Box >
     );
 };

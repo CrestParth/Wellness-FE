@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment, TableSortLabel } from "@mui/material";
+import { useState } from 'react'
+import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment, TableSortLabel, } from "@mui/material";
 import CustomPagination from '../../common/custom/CustomPagination'
 import Search from '@mui/icons-material/Search'
 import PersonIcon from '@mui/icons-material/Person';
@@ -9,6 +9,7 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import { useGetUser } from '../../Api/Api'
+import Export from '../../utils/Export';
 
 const ListOfUser = () => {
     const [filter, setFilter] = useState('')
@@ -18,7 +19,7 @@ const ListOfUser = () => {
     const [sortOrder, setSortOrder] = useState("asc");
     const navigate = useNavigate()
 
-    const { data, isLoading } = useGetUser(currentPage, rowsPerPage,filter,sortBy,sortOrder);
+    const { data, isLoading } = useGetUser(currentPage, rowsPerPage, filter, sortBy, sortOrder);
     const statusColorMap = {
         active: {
             color: '#7BC8A9',
@@ -48,17 +49,25 @@ const ListOfUser = () => {
     const totalPages = pagination?.totalPages || 0;
 
 
+    const exportColumns = [
+        { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
+        {
+            label: 'Teaches At', accessor: (i) => i?.email || " "
+        },
+        { label: 'Vibe Checks', accessor: (i) => i?.TotalVibeGiven || 0 },
+    ];
+
     return (
         <>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
                 <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
 
-                    <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                         <Typography variant="h6" fontWeight={590}>
                             List Of Users
                         </Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 6 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                    <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
                         <TextField
                             variant="outlined"
                             placeholder="Search"
@@ -85,6 +94,12 @@ const ListOfUser = () => {
                                     </InputAdornment>
                                 ),
                             }}
+                        />
+                        <Export
+                            fileName="users"
+                            apiEndpoint="/admin/users"
+                            dataKey="users"
+                            columns={exportColumns}
                         />
                     </Grid>
                 </Grid>

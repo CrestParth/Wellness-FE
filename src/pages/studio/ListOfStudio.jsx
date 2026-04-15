@@ -1,9 +1,7 @@
-import React, { useState } from 'react'
-import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, Chip, Drawer, TextField, InputAdornment, Switch, Button, TableSortLabel } from "@mui/material";
+import { useState } from 'react'
+import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment, Switch, Button, TableSortLabel, } from "@mui/material";
 // import AddIcon from "@mui/icons-material/Add";
-import DeleteIcon from "@mui/icons-material/Delete";
 import CustomPagination from '../../common/custom/CustomPagination'
-import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +10,7 @@ import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
 import { useGetStudio } from '../../Api/Api'
-
+import Export from '../../utils/Export';
 
 
 
@@ -41,16 +39,24 @@ const ListOfStudio = () => {
     const totalUsers = studioData?.pagination?.total;
     const totalPages = Math.ceil(totalUsers / rowsPerPage);
 
+    const exportColumns = [
+        { label: 'Studio Name', accessor: (i) => `${i?.name || ''}`.trim() },
+        {
+            label: 'Location', accessor: (i) => i?.location || "-"
+        },
+        { label: 'Status', accessor: (i) => i?.status || "-" },
+    ];
+
     return (
         <>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
                 <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>
-                    <Grid size={{ xs: 12, md: 5 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
+                    <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', flexDirection: 'row', gap: 2, mb: { xs: 1, md: 0 } }}>
                         <Typography variant="h6" fontWeight={590}>
                             List Of Studios
                         </Typography>
                     </Grid>
-                    <Grid size={{ xs: 12, md: 7 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
+                    <Grid size={{ xs: 12, md: 8 }} sx={{ display: 'flex', justifyContent: 'flex-end', flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}>
 
                         <TextField
                             variant="outlined"
@@ -88,6 +94,12 @@ const ListOfStudio = () => {
                                     </InputAdornment>
                                 ),
                             }}
+                        />
+                        <Export
+                            fileName="studios"
+                            apiEndpoint="/admin/studios"
+                            dataKey="studios"
+                            columns={exportColumns}
                         />
                         <Button sx={{ width: '250px', height: '40px', borderRadius: '8px', backgroundColor: 'var(--Blue)', color: 'white' }} onClick={() => nav('/home/studio/add-studio')}>
                             <AddIcon />

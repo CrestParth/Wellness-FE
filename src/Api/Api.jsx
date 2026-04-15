@@ -325,6 +325,20 @@ export const useDeleteVibe = (onSuccess, onError) => {
     });
 };
 
+// Send bulk invitation
+export const useSendBulkInvitation = (onSuccess, onError) => {
+    return useMutation({
+        mutationFn: async (file) => {
+            const formData = new FormData();
+            formData.append("file", file);
+            const response = await apiClient.post('/admin/instructors/bulk-invite', formData);
+            return response.data;
+        },
+        onSuccess,
+        onError,
+    });
+};
+
 // get all boosted instrucors
 export const useGetBoostedInstructors = (page, limit, searchKey, sortBy, sortOrder) => {
     return useQuery({
@@ -371,7 +385,7 @@ export const useGetSubscription = (Search = '', Status = '', sortBy = '', sortOr
 export const useResetLink = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async (email) => {
-            const response = await apiClient.post('/v1/auth/forgot-password', email);
+            const response = await apiClient.post('/auth/forgot-password', email);
             return response.data;
         },
         onSuccess,
