@@ -50,7 +50,7 @@ const ResetPassword = () => {
             try {
                 setLoading(true);
 
-                await axios.post("https://sweatscout.app/api/v1/auth/reset-password", {
+                await axios.post("https://admin.sweatscout.app/api/v1/auth/reset-password", {
                     token,
                     password: values.password,
                     // confirmPassword: values.confirmPassword
