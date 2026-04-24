@@ -90,12 +90,12 @@ export const addInstructorValidation = yup.object({
     // displayName: yup.string()
     //     .required("Display name is required"),
 
-    playlistUrl: yup.string()
-        .url("Enter a valid URL")
-        .required("Playlist URL is required"),
+    // playlistUrl: yup.string()
+    //     .url("Enter a valid URL")
+    //     .required("Playlist URL is required"),
 
-    bio: yup.string()
-        .required("Bio is required"),
+    // bio: yup.string()
+    //     .required("Bio is required"),
 
     categories: yup.array()
         .min(1, "Select at least one class style"),
@@ -121,12 +121,12 @@ export const addInstructorValidation = yup.object({
         .min(1, "At least one studio is required"),
 
     // Images
-    heroPhoto: yup.mixed()
-        .required("Hero image is required"),
+    // heroPhoto: yup.mixed()
+    //     .required("Hero image is required"),
 
-    image1: yup.mixed()
-        .required("Image is required"),
+    // image1: yup.mixed()
+    //     .required("Image is required"),
 
-    image2: yup.mixed()
-        .required("Image is required"),
+    // image2: yup.mixed()
+    //     .required("Image is required"),
 });

@@ -132,7 +132,7 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="First Name"
+                                label="First Name *"
                                 placeholder="Enter First Name"
                                 name="firstName"
                                 formik={instructorForm}
@@ -140,7 +140,7 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Last Name"
+                                label="Last Name *"
                                 placeholder="Enter Last Name"
                                 name="lastName"
                                 formik={instructorForm}
@@ -148,15 +148,24 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Email"
+                                label="Email *"
                                 placeholder="Email"
                                 name="email"
                                 formik={instructorForm}
                             />
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
+                            <CustomInput
+                                label="Password *"
+                                placeholder="Enter Password"
+                                name="password"
+                                // type="password"
+                                formik={instructorForm}
+                            />
+                        </Grid>
+                        <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <label style={{ marginBottom: 8 }}>Class Style</label>
+                                <label style={{ marginBottom: 8 }}>Class Style *</label>
                                 <Select
                                     multiple
                                     fullWidth
@@ -210,15 +219,6 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Password"
-                                placeholder="Enter Password"
-                                name="password"
-                                // type="password"
-                                formik={instructorForm}
-                            />
-                        </Grid>
-                        <Grid size={{ xs: 12, sm: 6 }}>
-                            <CustomInput
                                 label="Playlist Url"
                                 placeholder="Enter Playlist Url"
                                 name="playlistUrl"
@@ -235,7 +235,7 @@ const AddInstructor = () => {
                                         mb: 2
                                     }}
                                 >
-                                    Teaches At
+                                    Teaches At *
                                 </Typography>
 
                                 <Stack spacing={2}>
