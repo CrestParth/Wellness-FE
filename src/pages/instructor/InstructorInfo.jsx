@@ -13,11 +13,38 @@ import ConfirmationPopUp from "../../common/ConfirmationPopUp";
 import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 import { useGetInstructorById, useUpdateInstructor, useGetCategories, useDeleteInstructor } from '../../Api/Api'
+import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const InstructorInfo = () => {
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
+        libraries: ["places"],
+    });
+    const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    const handleAutoLoad = (index, auto) => {
+        setAutoCompleteRefs(prev => ({
+            ...prev,
+            [index]: auto
+        }));
+    };
+
+    const handlePlaceChanged = (index) => {
+        const auto = autoCompleteRefs[index];
+        if (!auto) return;
+
+        const place = auto.getPlace();
+
+        const lat = place.geometry?.location?.lat();
+        const lng = place.geometry?.location?.lng();
+        const address = place.formatted_address;
+
+        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
+        instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
+        instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
+    };
     const { id } = useParams();
     const navigate = useNavigate()
     const client = useQueryClient()
@@ -202,59 +229,87 @@ const InstructorInfo = () => {
                         <Grid size={12}>
                             {edit ? (
                                 <Box>
-                                    <Typography
-                                        sx={{
-                                            fontSize: "1rem",
-                                            fontWeight: 400,
-                                            mb: 2
-                                        }}
-                                    >
-                                        Teaches At
-                                    </Typography>
+                                    {instructorForm.values.teachesAt.map((item, index) => (
+                                        <Grid container
+                                            key={index}
+                                            direction="row"
+                                            spacing={2}
+                                            alignItems="center"
+                                        >
+                                            <Grid size={{ xs: 12, sm: 6 }} sx={{ mb: 2 }}>
 
-                                    <Stack spacing={2}>
-                                        {instructorForm.values.teachesAt.map((item, index) => (
-                                            <Stack
-                                                key={index}
-                                                direction="row"
-                                                spacing={2}
-                                                alignItems="center"
-                                            >
-                                                <BootstrapInput
-                                                    name={`teachesAt[${index}].studioName`}
-                                                    placeholder="Studio Name"
-                                                    value={item.studioName}
-                                                    onChange={instructorForm.handleChange}
-                                                    sx={{ flex: 1 }}
-                                                />
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: "1rem",
+                                                        fontWeight: 400,
+                                                        mb: 1
+                                                    }}
+                                                >
+                                                    Studio Name
+                                                </Typography>
+                                                <Box sx={{ flex: 1 }}>
+                                                    <BootstrapInput
+                                                        name={`teachesAt[${index}].studioName`}
+                                                        placeholder="Studio Name"
+                                                        value={item.studioName}
+                                                        onChange={instructorForm.handleChange}
+                                                        fullWidth
+                                                    />
+                                                </Box>
+                                            </Grid>
+                                            <Grid size={{ xs: 12, sm: 6 }} sx={{ mb: 2 }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontSize: "1rem",
+                                                        fontWeight: 400,
+                                                        mb: 1
+                                                    }}
+                                                >
+                                                    Studio Location
+                                                </Typography>
+                                                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                                    {isLoaded && (
+                                                        <FormControl fullWidth>
+                                                            <Autocomplete
+                                                                onLoad={(auto) => handleAutoLoad(index, auto)}
+                                                                onPlaceChanged={() => handlePlaceChanged(index)}
+                                                                options={{
+                                                                    types: ["geocode"],
+                                                                }}
+                                                            >
+                                                                <BootstrapInput
+                                                                    name={`teachesAt[${index}].location`}
+                                                                    placeholder="Studio Location"
+                                                                    value={item.location}
+                                                                    onChange={instructorForm.handleChange}
+                                                                    onBlur={instructorForm.handleBlur}
+                                                                    fullWidth
+                                                                />
+                                                            </Autocomplete></FormControl>
+                                                    )}
 
-                                                <BootstrapInput
-                                                    name={`teachesAt[${index}].location`}
-                                                    placeholder="Location"
-                                                    value={item.location}
-                                                    onChange={instructorForm.handleChange}
-                                                    sx={{ flex: 1 }}
-                                                />
-                                                {index !== instructorForm.values.teachesAt.length - 1 && (
-                                                    <IconButton
-                                                        color="error"
-                                                        onClick={() => removeTeachesAt(index)}
-                                                    >
-                                                        <DeleteIcon />
-                                                    </IconButton>
-                                                )}
+                                                    {index !== instructorForm.values.teachesAt.length - 1 && (
+                                                        <IconButton
+                                                            color="error"
+                                                            onClick={() => removeTeachesAt(index)}
+                                                        >
+                                                            <DeleteIcon />
+                                                        </IconButton>
+                                                    )}
 
-                                                {index === instructorForm.values.teachesAt.length - 1 && (
-                                                    <IconButton
-                                                        sx={{ color: "var(--Blue)" }}
-                                                        onClick={addTeachesAt}
-                                                    >
-                                                        <AddIcon />
-                                                    </IconButton>
-                                                )}
-                                            </Stack>
-                                        ))}
-                                    </Stack>
+                                                    {index === instructorForm.values.teachesAt.length - 1 && (
+                                                        <IconButton
+                                                            sx={{ color: "var(--Blue)" }}
+                                                            onClick={addTeachesAt}
+                                                        >
+                                                            <AddIcon />
+                                                        </IconButton>
+                                                    )}
+                                                </Box>
+                                            </Grid>
+                                        </Grid>
+                                    ))}
+
                                 </Box>
                             ) : (
                                 <Box mb={3}>
