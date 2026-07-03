@@ -164,7 +164,7 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Email *"
+                                label="Email "
                                 placeholder="Email"
                                 name="email"
                                 formik={instructorForm}
@@ -172,7 +172,7 @@ const AddInstructor = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Password *"
+                                label="Password "
                                 placeholder="Enter Password"
                                 name="password"
                                 // type="password"
