@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, FormHelperText, CircularProgress } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
@@ -8,6 +8,7 @@ import { useJsApiLoader } from "@react-google-maps/api";
 import { Autocomplete } from "@react-google-maps/api";
 import { useCreateStudio, useGetCategories } from '../../Api/Api'
 import { toast } from "react-toastify";
+import Dummy from '../../assets/images/dummy.png'
 import { studioValidationSchema } from "../../common/FormValidation";
 
 const AddStudio = () => {
@@ -43,7 +44,7 @@ const AddStudio = () => {
             about: "",
             contact: "",
             categoryIds: [],
-            heroImage: "",
+            heroImage: Dummy,
             image1: "",
             image2: "",
             latitude: "",
@@ -70,9 +71,26 @@ const AddStudio = () => {
         },
     });
 
+    const fetchDefaultImage = async () => {
+        try {
+            const response = await fetch(Dummy);
+            const blob = await response.blob();
+            const file = new File([blob], "dummy.png", { type: "image/png" });
+            studioForm.setFieldValue("heroImage", file);
+        } catch (error) {
+            console.error("Error loading default image:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDefaultImage();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const onSuccess = () => {
         toast.success("Studio Added Successfully.");
-        studioForm.resetForm()
+        studioForm.resetForm();
+        fetchDefaultImage();
     };
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -99,7 +117,7 @@ const AddStudio = () => {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <CustomInput
-                                label="Studio Name"
+                                label="Studio Name *"
                                 placeholder="Studio Name"
                                 name="name"
                                 formik={studioForm}
@@ -108,7 +126,7 @@ const AddStudio = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {isLoaded && (
                                 <FormControl fullWidth>
-                                    <label style={{ marginBottom: 11 }}>Location</label>
+                                    <label style={{ marginBottom: 11 }}>Location *</label>
                                     <Autocomplete
                                         onLoad={onLoad}
                                         onPlaceChanged={onPlaceChanged}
@@ -162,7 +180,7 @@ const AddStudio = () => {
 
                         <Grid size={{ xs: 12, sm: 6 }}>
                             <FormControl fullWidth>
-                                <label style={{ marginBottom: 8 }}>Class Style</label>
+                                <label style={{ marginBottom: 8 }}>Class Style *</label>
                                 <Select
                                     multiple
                                     fullWidth
@@ -250,7 +268,7 @@ const AddStudio = () => {
                         <Grid size={12}>
                             <Grid container gap={4} sx={{ mt: 1 }}>
                                 <Grid size={{ xs: 12, sm: 4, md: 3 }}>
-                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image</label>
+                                    <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Hero Image *</label>
                                     <Box
                                         sx={{
                                             border: '2px dashed #E0E3E7',

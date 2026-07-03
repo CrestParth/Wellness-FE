@@ -47,22 +47,22 @@ export const studioValidationSchema = yup.object({
     location: yup.string()
         .required("Location is required"),
 
-    contact: yup.string()
-        .email("Invalid email")
-        .required("Email is required"),
+    // contact: yup.string()
+    //     .email("Invalid email")
+    //     .required("Email is required"),
 
-    about: yup.string()
-        .required("Description is required"),
+    // about: yup.string()
+    //     .required("Description is required"),
 
     categoryIds: yup.array()
         .min(1, "Select at least one category"),
 
     heroImage: yup.mixed()
         .required("Hero image is required"),
-    image1: yup.mixed()
-        .required("Image is required"),
-    image2: yup.mixed()
-        .required("Image is required"),
+    // image1: yup.mixed()
+    //     .required("Image is required"),
+    // image2: yup.mixed()
+    //     .required("Image is required"),
 
     latitude: yup.string()
         .required("Location must be selected from dropdown"),
