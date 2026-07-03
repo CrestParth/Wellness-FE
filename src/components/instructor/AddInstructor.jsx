@@ -92,7 +92,7 @@ const AddInstructor = () => {
             if (values.heroPhoto) {
                 formData.append("heroPhoto", values.heroPhoto);
             }
-            formData.append("profileImage", values.profileImage);
+            formData.append("instructorProfileImage", values.profileImage);
             formData.append("galleryPhotos", values.image1);
             formData.append("galleryPhotos", values.image2);
 

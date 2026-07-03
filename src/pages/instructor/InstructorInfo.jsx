@@ -83,7 +83,7 @@ const InstructorInfo = () => {
 
             if (values.image1) formData.append("galleryPhotos", values.image1);
             if (values.image2) formData.append("galleryPhotos", values.image2);
-            if (values.profileImage) formData.append("profileImage", values.profileImage);
+            if (values.profileImage) formData.append("instructorProfileImage", values.profileImage);
             updateInstructor({ id: instructorData?.data?.userId, data: formData })
 
         },
@@ -148,7 +148,7 @@ const InstructorInfo = () => {
             heroPhoto: apiData.heroPhoto || null,
             image1: apiData.galleryPhotos?.[0] || null,
             image2: apiData.galleryPhotos?.[1] || null,
-            profileImage: apiData?.user?.profileImage || null,
+            profileImage: apiData?.instructorProfileImage || null,
             vibeChecks: apiData.vibes || []
         });
     }, [instructorData]);
