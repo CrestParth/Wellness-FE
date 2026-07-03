@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, Stack, IconButton, FormHelperText } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useQueryClient } from "@tanstack/react-query";
 import { addInstructorValidation } from "../../common/FormValidation";
 import CircularProgress from "@mui/material/CircularProgress";
+import instcterdummy from '../../assets/images/instcterdummy.png'
 
 const AddInstructor = () => {
     const { isLoaded } = useJsApiLoader({
@@ -44,7 +45,8 @@ const AddInstructor = () => {
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
         client.invalidateQueries(['instructors'], { exact: false })
-        instructorForm.resetForm()
+        instructorForm.resetForm();
+        fetchDefaultImage();
     };
     const onError = (error) => {
         toast.error(error.response.data.message || "Something went Wrong");
@@ -100,6 +102,20 @@ const AddInstructor = () => {
             createInstructor(formData);
         }
     });
+    const fetchDefaultImage = async () => {
+        try {
+            const response = await fetch(instcterdummy);
+            const blob = await response.blob();
+            const file = new File([blob], "instcterdummy.png", { type: "image/png" });
+            instructorForm.setFieldValue("profileImage", file);
+        } catch (error) {
+            console.error("Error loading default image:", error);
+        }
+    };
+
+    useEffect(() => {
+        fetchDefaultImage();
+    }, []);
 
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [

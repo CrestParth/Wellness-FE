@@ -44,7 +44,7 @@ const AddStudio = () => {
             about: "",
             contact: "",
             categoryIds: [],
-            heroImage: Dummy,
+            heroImage: "",
             image1: "",
             image2: "",
             latitude: "",
