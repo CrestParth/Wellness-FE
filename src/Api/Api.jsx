@@ -199,7 +199,8 @@ export const useUpdateInstructor = (onSuccess, onError) => {
     return useMutation({
         mutationFn: async ({ id, data }) => {
             console.log(data)
-            const response = await apiClient.patch(`/admin/instructors/${id}`, data);
+            // const response = await apiClient.patch(`/admin/instructors/${id}`, data);
+            const response = await apiClient.patch(`/admin/instructors/profile/${id}`, data);
             return response.data;
         },
         onSuccess,

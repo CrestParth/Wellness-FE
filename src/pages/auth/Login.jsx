@@ -104,23 +104,22 @@ const Login = () => {
                             onChange={loginForm.handleChange}
 
                         />
-
-                        {loginForm.touched.password && <FormHelperText error>{loginForm.errors.password}</FormHelperText>}
-                    </FormControl>
-                    <IconButton
+                        <IconButton
                         onClick={() => setShowPassword(!showPassword)}
                         style={{
                             position: 'absolute',
                             right: 8,
-                            top: '70%',
+                            top: loginForm.errors.password ? "55%" : "70%",
                             transform: 'translateY(-50%)',
                             padding: 0,
-                            zIndex: 2
+                            zIndex: 1
                         }}
                         tabIndex={-1}
-                    >
-                        {showPassword ? <FaEye /> : <FaEyeSlash />}
-                    </IconButton>
+                        >
+                            {showPassword ? <FaEye /> : <FaEyeSlash />}
+                        </IconButton>
+                        {loginForm.touched.password && <FormHelperText error>{loginForm.errors.password}</FormHelperText>}
+                    </FormControl>
 
                     {/* Submit Button */}
                     <Button
