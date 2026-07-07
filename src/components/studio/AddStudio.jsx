@@ -10,8 +10,10 @@ import { useCreateStudio, useGetCategories } from '../../Api/Api'
 import { toast } from "react-toastify";
 import Dummy from '../../assets/images/dummy.png'
 import { studioValidationSchema } from "../../common/FormValidation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const AddStudio = () => {
+    const client = useQueryClient();
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
         libraries: ["places"],
@@ -89,6 +91,7 @@ const AddStudio = () => {
 
     const onSuccess = () => {
         toast.success("Studio Added Successfully.");
+        client.invalidateQueries({ queryKey: ["studios"] });
         studioForm.resetForm();
         fetchDefaultImage();
     };
