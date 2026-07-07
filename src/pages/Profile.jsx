@@ -57,6 +57,7 @@ const Profile = () => {
             email: admin?.email || "",
             profileImage: admin?.profileImage || "",
         });
+        localStorage.setItem('profileImg', admin?.profileImage)
     }, [profileData?.data, edit]);
 
 
