@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState , useEffect } from "react";
 import { Box, Typography, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, Grid, Stack, InputAdornment, MenuItem, Button, TableSortLabel, Dialog, DialogContent, DialogTitle, CircularProgress } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -6,7 +6,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import Search from '@mui/icons-material/Search'
 import AddIcon from '@mui/icons-material/Add'
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useSearchParams } from "react-router-dom";
 import { useGetInstructors } from "../../Api/Api";
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
@@ -21,8 +21,13 @@ import Export from '../../utils/Export'
 
 
 const ListOfInstructor = () => {
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [rowsPerPage, setRowsPerPage] = useState(
+    Number(searchParams.get("rows")) || 5
+    );
+    const [currentPage, setCurrentPage] = useState(
+        Number(searchParams.get("page")) || 1
+    );
     const [selectedId, setSelectedId] = useState()
     const [filter, setFilter] = useState('')
     const [openPopup, setOpenPopup] = useState(null);
@@ -33,6 +38,13 @@ const ListOfInstructor = () => {
     const [sortOrder, setSortOrder] = useState("asc");
     const nav = useNavigate()
     const client = useQueryClient()
+
+    useEffect(() => {
+    setSearchParams({
+        page: currentPage.toString(),
+        rows: rowsPerPage.toString(),
+    });
+    }, [currentPage, rowsPerPage, setSearchParams]);
 
     const statusColorMap = {
         Approved: {

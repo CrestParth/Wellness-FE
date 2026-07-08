@@ -160,11 +160,13 @@ export const useGetInstructors = (page, limit, isVerified = '', searchKey = '', 
     });
 };
 // get all Pending Instructor
-export const useGetPendingInstructors = () => {
+export const useGetPendingInstructors = (page = 1, limit = 5, status = '', searchKey = '', sortBy = '', sortOrder = '') => {
     return useQuery({
-        queryKey: ['Pendinginstructors'],
+        queryKey: ['Pendinginstructors', page, limit, status, searchKey, sortBy, sortOrder],
         queryFn: async () => {
-            const { data } = await apiClient.get(`/admin/instructors/pending`);
+            const { data } = await apiClient.get(`/admin/instructors/pending`, {
+                params: { page, limit, status, searchKey, sortBy, sortOrder },
+            });
             return data;
         },
         staleTime: 15 * 60 * 1000,

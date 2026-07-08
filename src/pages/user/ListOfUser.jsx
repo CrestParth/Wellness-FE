@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState , useEffect} from 'react'
 import { Box, Grid, Typography, Stack, Avatar, IconButton, TableContainer, Table, TableHead, TableRow, TableCell, TableBody, TextField, InputAdornment, TableSortLabel, } from "@mui/material";
 import CustomPagination from '../../common/custom/CustomPagination'
 import Search from '@mui/icons-material/Search'
 import PersonIcon from '@mui/icons-material/Person';
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , useSearchParams } from 'react-router-dom';
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
@@ -12,12 +12,24 @@ import { useGetUser } from '../../Api/Api'
 import Export from '../../utils/Export';
 
 const ListOfUser = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [rowsPerPage, setRowsPerPage] = useState(
+    Number(searchParams.get("rows")) || 5
+    );
+    const [currentPage, setCurrentPage] = useState(
+        Number(searchParams.get("page")) || 1
+    );
     const [filter, setFilter] = useState('')
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const navigate = useNavigate()
+
+    useEffect(() => {
+    setSearchParams({
+        page: currentPage.toString(),
+        rows: rowsPerPage.toString(),
+    });
+    }, [currentPage, rowsPerPage, setSearchParams]);
 
     const { data, isLoading } = useGetUser(currentPage, rowsPerPage, filter, sortBy, sortOrder);
     const statusColorMap = {

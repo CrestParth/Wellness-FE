@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { Box, Typography, Grid, Table, TableHead, TableRow, TableCell, TableBody, TableContainer, IconButton, Chip, TextField, TableSortLabel, Stack, InputAdornment } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { startOfYear } from "date-fns";
 import Search from '@mui/icons-material/Search'
 import CustomDateRangePicker from '../../common/custom/CustomDateRangePicker'
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useSearchParams } from "react-router-dom";
 import arrowup from '../../assets/images/arrowup.svg';
 import arrowdown from '../../assets/images/arrowdown.svg';
 import arrownuteral from '../../assets/images/arrownuteral.svg';
@@ -12,8 +12,13 @@ import { useGetVibes } from "../../Api/Api";
 import CustomPagination from '../../common/custom/CustomPagination'
 
 const ListOfVibeChecks = () => {
-    const [rowsPerPage, setRowsPerPage] = useState(5);
-    const [currentPage, setCurrentPage] = useState(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [rowsPerPage, setRowsPerPage] = useState(
+    Number(searchParams.get("rows")) || 5
+    );
+    const [currentPage, setCurrentPage] = useState(
+        Number(searchParams.get("page")) || 1
+    );
     const [sortBy, setSortBy] = useState("firstName");
     const [sortOrder, setSortOrder] = useState("asc");
     const [filter, setFilter] = useState("");
@@ -35,6 +40,13 @@ const ListOfVibeChecks = () => {
 
     const totalUsers = pagination?.total || 0;
     const totalPages = pagination?.totalPages || 0;
+
+    useEffect(() => {
+    setSearchParams({
+        page: currentPage.toString(),
+        rows: rowsPerPage.toString(),
+    });
+    }, [currentPage, rowsPerPage, setSearchParams]);
 
     const changeSortOrder = (e) => {
         const field = e.target.id;

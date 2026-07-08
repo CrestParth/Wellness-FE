@@ -11,6 +11,7 @@ import DeleteConfirm from '../../assets/images/deleteIcon.svg'
 import { toast } from "react-toastify";
 import { useGetUserById, useUpdateUser, useDeleteUser } from "../../Api/Api";
 import { useParams, useNavigate } from "react-router-dom";
+import { editUserValidation } from "../../common/FormValidation";
 
 
 const UserInformation = () => {
@@ -28,6 +29,7 @@ const UserInformation = () => {
             profileImage: "",
             vibeChecks: []
         },
+        validationSchema: editUserValidation,
         onSubmit: (values) => {
 
             const formData = new FormData();
@@ -111,11 +113,11 @@ const UserInformation = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
+                                    required
                                     label="First Name"
                                     placeholder="Enter First Name"
                                     name="firstName"
                                     formik={userForm}
-                                    required
                                 />
                             ) : displayField("First Name", userForm.values.firstName)}
                         </Grid>
@@ -123,22 +125,22 @@ const UserInformation = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
+                                    required
                                     label="Last Name"
                                     placeholder="Enter Last Name"
                                     name="lastName"
                                     formik={userForm}
-                                    required
                                 />
                             ) : displayField("Last Name", userForm.values.lastName)}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
+                                    required
                                     label="Email"
                                     placeholder="Email"
                                     name="email"
                                     formik={userForm}
-                                    required
                                 />) : displayField("Email", userForm.values.email)}
                         </Grid>
 

@@ -200,7 +200,7 @@ const ApproveInstructor = () => {
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
+                                                    <Stack direction="row" justifyContent={"center"} spacing={1}>
                                                         <>
                                                             <Tooltip title="Approve Instructor">
                                                                 <IconButton

@@ -130,3 +130,13 @@ export const addInstructorValidation = yup.object({
     // image2: yup.mixed()
     //     .required("Image is required"),
 });
+
+
+
+export const editUserValidation = yup.object({
+    firstName: yup.string().required("First Name is required"),
+    lastName: yup.string().required("Last Name is required"),
+    email: yup.string()
+        .email("Invalid email")
+        .required("Email is required"),
+});
