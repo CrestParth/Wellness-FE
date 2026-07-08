@@ -34,8 +34,10 @@ const ListOfInstructor = () => {
     const [openBulkInvite, setOpenBulkInvite] = useState(false);
     const [file, setFile] = useState(null);
     const [statusFilter, setStatusFilter] = useState('')
-    const [sortBy, setSortBy] = useState("firstName");
+    const [sortBy, setSortBy] = useState("displayName");
     const [sortOrder, setSortOrder] = useState("asc");
+    // apiSortBy is the key we send to backend; map UI fields to API fields
+    const [apiSortBy, setApiSortBy] = useState("firstName");
     const nav = useNavigate()
     const client = useQueryClient()
 
@@ -58,18 +60,25 @@ const ListOfInstructor = () => {
             bg: '#FEF2F2'
         }
     };
-    const changeSortOrder = (e) => {
-        const field = e.target.id;
+    const changeSortOrder = (field) => {
+        const mapFieldToApi = (f) => {
+            if (f === 'displayName') return 'firstName';
+            if (f === 'vibeChecks') return 'TotalVibeChecks';
+            return f;
+        };
+
+        const backendField = mapFieldToApi(field);
 
         if (field !== sortBy) {
             setSortBy(field);
             setSortOrder("asc");
+            setApiSortBy(backendField);
         } else {
-            setSortOrder(p => p === 'asc' ? 'desc' : 'asc')
+            setSortOrder((p) => (p === "asc" ? "desc" : "asc"));
         }
-    }
+    };
 
-    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, sortBy, sortOrder)
+    const { data, isLoading } = useGetInstructors(currentPage, rowsPerPage, statusFilter, filter, apiSortBy, sortOrder)
     const instructorData = data?.data
 
     const { mutate: approveInstructor } = useApproveInstructor(
@@ -141,7 +150,8 @@ const ListOfInstructor = () => {
     };
 
     const exportColumns = [
-        { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
+        // { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
+        { label: 'Name', accessor: (i) => `${i?.displayName || ''}`},
         {
             label: 'Teaches At', accessor: (i) => i?.instructorProfile?.teachesAt
                 ?.map(t => t.studioName)
@@ -242,11 +252,10 @@ const ListOfInstructor = () => {
                                     <TableRow>
                                         <TableCell sx={tableHeaderCellSx}>
                                             <TableSortLabel
-                                                id="firstName"
-                                                active={sortBy === 'firstName'}
+                                                active={sortBy === 'displayName'}
                                                 direction={sortOrder}
-                                                onClick={changeSortOrder}
-                                                IconComponent={() => <img src={sortBy === 'firstName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
+                                                onClick={() => changeSortOrder('displayName')}
+                                                IconComponent={() => <img src={sortBy === 'displayName' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                             >
                                                 Name
                                             </TableSortLabel></TableCell>
@@ -257,10 +266,9 @@ const ListOfInstructor = () => {
                                             color: '#878787', textAlign: 'center'
                                         }}>
                                             <TableSortLabel
-                                                id="vibeChecks"
                                                 active={sortBy === 'vibeChecks'}
                                                 direction={sortOrder}
-                                                onClick={changeSortOrder}
+                                                onClick={() => changeSortOrder('vibeChecks')}
                                                 IconComponent={() => <img src={sortBy === 'vibeChecks' ? sortOrder === 'asc' ? arrowup : arrowdown : arrownuteral} style={{ marginLeft: 5 }} />}
                                             >
                                                 Vibe Checks
@@ -279,7 +287,7 @@ const ListOfInstructor = () => {
                                         return (
                                             <TableRow key={i.id}>
                                                 <TableCell sx={{ fontWeight: 500 }}>
-                                                    {[i?.firstName, i?.lastName].filter(Boolean).join(" ")}
+                                                    {i?.instructorProfile?.displayName}
                                                 </TableCell>
                                                 <TableCell sx={{ minWidth: 220 }}>
                                                     <Stack direction="row" spacing={1} display={"flex"}  sx={{ maxWidth: 350 }}>
