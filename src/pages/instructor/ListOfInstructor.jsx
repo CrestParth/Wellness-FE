@@ -184,9 +184,11 @@ const ListOfInstructor = () => {
                         size="small"
                         onChange={(e) => setStatusFilter(e.target.value)}
                     >
-                        <MenuItem value="">All</MenuItem>
-                        <MenuItem value={false}>Pending</MenuItem>
-                        <MenuItem value={true}>Verified</MenuItem>
+                        {/* <MenuItem value="">All</MenuItem> */}
+                        {/* <MenuItem value={false}>Pending</MenuItem>
+                        <MenuItem value={true}>Verified</MenuItem> */}
+                        <MenuItem value={true}>Approve</MenuItem>
+                        <MenuItem value={false}>Reject</MenuItem>
                     </TextField>
                     <Box sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
                         <Export
@@ -268,8 +270,8 @@ const ListOfInstructor = () => {
                                                     {[i?.firstName, i?.lastName].filter(Boolean).join(" ")}
                                                 </TableCell>
                                                 <TableCell sx={{ minWidth: 220 }}>
-                                                    <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ maxWidth: 350 }}>
-                                                        {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
+                                                    <Stack direction="row" spacing={1} display={"flex"}  sx={{ maxWidth: 350 }}>
+                                                         {i?.instructorProfile?.teachesAt?.slice(0, 3).map((tag, index) => (
                                                             <Chip
                                                                 key={index}
                                                                 label={tag.studioName}
@@ -277,11 +279,11 @@ const ListOfInstructor = () => {
                                                                 sx={{
                                                                     border: "1px solid #A855F7",
                                                                     color: "#A855F7",
-                                                                    backgroundColor: "transparent",
-                                                                    fontWeight: 500
+                                                                    bgcolor: "transparent",
+                                                                    fontWeight: 500,
                                                                 }}
-                                                            />
-                                                        ))}
+                                                                />
+                                                            ))}
 
                                                         {i?.instructorProfile?.teachesAt?.length > 3 && (
                                                             <Chip
@@ -320,7 +322,7 @@ const ListOfInstructor = () => {
                                                 </TableCell>
 
                                                 <TableCell>
-                                                    <Stack direction="row" justifyContent={"flex-end"} spacing={1}>
+                                                    <Stack direction="row" justifyContent={"center"} spacing={1}>
                                                         {/* View Button */}
                                                         <IconButton onClick={() => nav(`/home/instructors/instructor-view/${i?.instructorProfile?.id}`)}>
                                                             <VisibilityIcon />

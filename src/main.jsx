@@ -9,6 +9,7 @@ import App from './App.jsx'
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { ThemeProvider } from '@mui/material/styles';
+import { ProfileProvider  } from "./context/ProfileContext";
 import theme from './theme';
 import 'react-toastify/dist/ReactToastify.css';
 import './index.css'
@@ -20,10 +21,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <>
     <QueryClientProvider client={client}>
       <ThemeProvider theme={theme}>
+        <ProfileProvider>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <ToastContainer />
           <App />
         </LocalizationProvider>
+        </ProfileProvider>
       </ThemeProvider>
     </QueryClientProvider>
   </>

@@ -115,6 +115,7 @@ const UserInformation = () => {
                                     placeholder="Enter First Name"
                                     name="firstName"
                                     formik={userForm}
+                                    required
                                 />
                             ) : displayField("First Name", userForm.values.firstName)}
                         </Grid>
@@ -126,6 +127,7 @@ const UserInformation = () => {
                                     placeholder="Enter Last Name"
                                     name="lastName"
                                     formik={userForm}
+                                    required
                                 />
                             ) : displayField("Last Name", userForm.values.lastName)}
                         </Grid>
@@ -136,6 +138,7 @@ const UserInformation = () => {
                                     placeholder="Email"
                                     name="email"
                                     formik={userForm}
+                                    required
                                 />) : displayField("Email", userForm.values.email)}
                         </Grid>
 

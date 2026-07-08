@@ -49,7 +49,7 @@ const AddInstructor = () => {
         fetchDefaultImage();
     };
     const onError = (error) => {
-        toast.error(error?.message || "Something went Wrong");
+        toast.error(error?.response?.data?.message || "Something went Wrong");
     };
     const { mutate: createInstructor, isPending } = useCreateInstructor(onSuccess, onError)
 

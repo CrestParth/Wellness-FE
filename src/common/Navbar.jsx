@@ -14,12 +14,14 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import MenuIcon from "@mui/icons-material/Menu";
 import PersonIcon from '@mui/icons-material/Person';
+import { useProfile } from "../context/ProfileContext";
 
 
 const Navbar = ({ setActive, isActive }) => {
     const [pageTitle, setPageTitle] = useState("Dashboard");
     const [isSubMenu, setIsSubMenu] = useState(false);
-    const [profileImg] = useState(localStorage.getItem('profileImg'))
+    // const [profileImg] = useState(localStorage.getItem('profileImg'))
+    const { profileImg } = useProfile();
 
     const location = useLocation();
     const nav = useNavigate();

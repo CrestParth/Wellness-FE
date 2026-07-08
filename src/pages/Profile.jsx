@@ -9,10 +9,12 @@ import { useGetProfile, useUpdateProfile } from "../Api/Api";
 import { toast } from "react-toastify";
 import GrayPlus from '../assets/images/GrayPlus.svg'
 import CustomInput from "../common/custom/CustomInput";
+import { useProfile } from "../context/ProfileContext";
 
 const Profile = () => {
     const [edit, setedit] = useState(false);
     const client = useQueryClient();
+    const { setProfileImg } = useProfile();
 
     const onSuccess = () => {
         toast.success("Profile Updated Successfully.");
@@ -58,6 +60,7 @@ const Profile = () => {
             profileImage: admin?.profileImage || "",
         });
         localStorage.setItem('profileImg', admin?.profileImage)
+        setProfileImg(admin?.profileImage);
     }, [profileData?.data, edit]);
 
 
