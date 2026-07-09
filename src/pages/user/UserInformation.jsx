@@ -20,7 +20,7 @@ const UserInformation = () => {
     const [openPopup, setOpenPopup] = useState(null);
     const navigate = useNavigate();
     const { data: userData } = useGetUserById(id)
-
+    
     const userForm = useFormik({
         initialValues: {
             firstName: "",
@@ -32,19 +32,23 @@ const UserInformation = () => {
         validationSchema: editUserValidation,
         onSubmit: (values) => {
 
-            const formData = new FormData();
+            // const formData = new FormData();
 
-            formData.append("firstName", values.firstName);
-            formData.append("lastName", values.lastName);
-            formData.append("email", values.email);
+            // formData.append("firstName", values.firstName);
+            // formData.append("lastName", values.lastName);
+            // formData.append("email", values.email);
 
-            if (values.profileImage instanceof File) {
-                formData.append("profileImage", values.profileImage);
-            }
+            // if (values.profileImage instanceof File) {
+            //     formData.append("profileImage", values.profileImage);
+            // }
 
             UpdateUser({
                 id: id,
-                body: formData
+                body: {
+                    firstName: values.firstName,
+                    lastName: values.lastName,
+                    email: values.email,
+                }
             });
 
             setEdit(false);
@@ -147,9 +151,9 @@ const UserInformation = () => {
                         <Grid size={12}>
                             <Grid container gap={3} sx={{ mt: 1 }}>
                                 <Grid size={{ xs: 12, sm: 3.7 }}>
-                                    <Grid size={{ xs: 12 }}>
-                                        <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label>
-                                        <Box
+                                    {/* <Grid size={{ xs: 12 }}> */}
+                                        {/* <label style={{ marginBottom: '10px', display: 'block', fontWeight: 500 }}>Profile Image</label> */}
+                                        {/* <Box
                                             sx={{
                                                 border: '2px dashed #E0E3E7',
                                                 borderRadius: '12px',
@@ -187,10 +191,39 @@ const UserInformation = () => {
                                             ) : (<><img src={GrayPlus} alt="gray plus" />
                                                 <Typography sx={{ color: '#B0B0B0', fontWeight: 550, mt: 1 }}>Upload</Typography></>
                                             )}
-                                        </Box>
-                                        {userForm.touched.profileImage && userForm.errors.profileImage && (
+                                        </Box> */}
+                                        {/* {userForm.touched.profileImage && userForm.errors.profileImage && (
                                             <FormHelperText error>{userForm.errors.profileImage}</FormHelperText>
-                                        )}
+                                        )} */}
+                                    {/* </Grid> */}
+                                    <Grid size={12}>
+                                        <Typography sx={{ mb: 1, fontWeight: 500 }}>
+                                            Profile Image
+                                        </Typography>
+
+                                        <Box
+                                            sx={{
+                                                width: 180,
+                                                height: 180,
+                                                borderRadius: "10px",
+                                                overflow: "hidden",
+                                                border: "1px solid #E5E7EB",
+                                            }}
+                                        >
+                                            {userData?.data?.profileImage ? (
+                                                <img
+                                                    src={userData.data.profileImage}
+                                                    alt="Profile"
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        objectFit: "cover",
+                                                    }}
+                                                />
+                                            ) : (
+                                                <Typography sx={{ p: 2 }}>No Image</Typography>
+                                            )}
+                                        </Box>
                                     </Grid>
                                 </Grid>
                             </Grid>

@@ -148,19 +148,46 @@ const ListOfInstructor = () => {
 
         return null;
     };
-
     const exportColumns = [
-        // { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
-        { label: 'Name', accessor: (i) => `${i?.displayName || ''}`},
+        { label: 'Name', accessor: (i) => `${i?.firstName || ''} ${i?.lastName || ''}`.trim() },
+        // { label: 'Name', accessor: (i) => `${i?.instructorProfile?.displayName || ''}`},
         {
             label: 'Teaches At', accessor: (i) => i?.instructorProfile?.teachesAt
-                ?.map(t => t.studioName)
-                .join(", ") || '-'
+            ?.map(t => t.studioName)
+            .join(", ") || '-'
         },
         { label: 'Vibe Checks', accessor: (i) => i?.instructorProfile?.TotalVibeChecks || 0 },
         { label: 'Status', accessor: (i) => i?.instructorProfile?.approvalStatus || "-" },
     ];
+    
+    // const sortedData = [...(instructorData?.instructors || [])].sort((a, b) => {
+    // const nameA = (a?.instructorProfile?.displayName || "").toLowerCase();
+    // const nameB = (b?.instructorProfile?.displayName || "").toLowerCase();
 
+    // return nameA.localeCompare(nameB);
+    // });
+
+    // const exportColumns = [
+    //     {
+    //         label: "Name",
+    //         accessor: (i) => i?.instructorProfile?.displayName || "",
+    //     },
+    //     {
+    //         label: "Teaches At",
+    //         accessor: (i) =>
+    //             i?.instructorProfile?.teachesAt
+    //                 ?.map((t) => t.studioName)
+    //                 .join(", ") || "-",
+    //     },
+    //     {
+    //         label: "Vibe Checks",
+    //         accessor: (i) => i?.instructorProfile?.TotalVibeChecks || 0,
+    //     },
+    //     {
+    //         label: "Status",
+    //         accessor: (i) => i?.instructorProfile?.approvalStatus || "-",
+    //     },
+    // ];
     return (
         <Box sx={{ backgroundColor: "rgb(253, 253, 253)", boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mt: 2, padding: 0, borderRadius: '10px' }}>
             <Grid container justifyContent="space-between" alignItems="center" sx={{ p: { xs: 3 } }}>

@@ -89,7 +89,7 @@ const ApproveInstructor = () => {
                         variant="outlined"
                         placeholder="Search"
                         value={filter}
-                        onChange={(e) => setFilter(e.target.value)}
+                        onChange={(e) => {setFilter(e.target.value); console.log("Searching for:", e.target.value)}}
                         fullWidth
                         sx={{
                             width: '100%',
