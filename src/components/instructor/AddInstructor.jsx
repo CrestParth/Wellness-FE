@@ -19,28 +19,42 @@ const AddInstructor = () => {
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
         libraries: ["places"],
     });
-    const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    // const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    const [autocomplete, setAutocomplete] = useState({});
     const client = useQueryClient()
-    const handleAutoLoad = (index, auto) => {
-        setAutoCompleteRefs(prev => ({
-            ...prev,
-            [index]: auto
-        }));
+    const onLoad = (auto) => {
+        setAutocomplete(auto);
     };
 
-    const handlePlaceChanged = (index) => {
-        const auto = autoCompleteRefs[index];
-        if (!auto) return;
+    // const handlePlaceChanged = (index) => {
+    //     const auto = autoCompleteRefs[index];
+    //     if (!auto) return;
 
-        const place = auto.getPlace();
+    //     const place = auto.getPlace();
+        
+    //     const lat = place.geometry?.location?.lat();
+    //     const lng = place.geometry?.location?.lng();
+    //     const address = place.formatted_address;
+    //     console.log("place", place, lat, lng, address);
+        
+    //     instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
+    //     instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
+    //     instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
+    // };
+    const onPlaceChanged = () => {
+        if (autocomplete) {
+            const place = autocomplete.getPlace();
 
-        const lat = place.geometry?.location?.lat();
-        const lng = place.geometry?.location?.lng();
-        const address = place.formatted_address;
+            const latitude = place.geometry?.location?.lat();
+            const longitude = place.geometry?.location?.lng();
+            const address = place.formatted_address;
 
-        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
-        instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
-        instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
+            studioForm.setFieldValue("location", address);
+            studioForm.setFieldValue("latitude", latitude);
+            studioForm.setFieldValue("longitude", longitude);
+
+            console.log("Selected:", address, latitude, longitude);
+        }
     };
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
@@ -288,11 +302,12 @@ const AddInstructor = () => {
                                                 {isLoaded && (
                                                     <FormControl fullWidth>
                                                         <Autocomplete
-                                                            onLoad={(auto) => handleAutoLoad(index, auto)}
-                                                            onPlaceChanged={() => handlePlaceChanged(index)}
-                                                            options={{
-                                                                types: ["geocode"],
-                                                            }}
+                                                            onLoad={onLoad}
+                                                            // onPlaceChanged={() => handlePlaceChanged(index)}
+                                                            onPlaceChanged={() => onPlaceChanged}
+                                                            // options={{
+                                                            //     types: ["geocode"],
+                                                            // }}
                                                         >
                                                             <BootstrapInput
                                                                 name={`teachesAt[${index}].location`}
@@ -310,12 +325,14 @@ const AddInstructor = () => {
                                                             </FormHelperText>
                                                         ) : null}
                                                         {instructorForm.touched.teachesAt?.[index]?.location &&
-                                                            !instructorForm.errors.teachesAt?.[index]?.location &&
-                                                            instructorForm.errors.teachesAt?.[index]?.lat ? (
-                                                            <FormHelperText error>
-                                                                {instructorForm.errors.teachesAt?.[index]?.lat}
-                                                            </FormHelperText>
-                                                        ) : null}
+                                                            !instructorForm.errors.teachesAt?.[index]?.location
+                                                        //      &&
+                                                        //     instructorForm.errors.teachesAt?.[index]?.lat ? (
+                                                        //     <FormHelperText error>
+                                                        //         {instructorForm.errors.teachesAt?.[index]?.lat}
+                                                        //     </FormHelperText>
+                                                        // ) : null
+                                                        }
                                                     </FormControl>
                                                 )}
 

@@ -89,7 +89,15 @@ const ListOfSubscription = () => {
                     <TableBody>
                         {subscriptionData.length > 0 ? (
                             subscriptionData.map((sub) => {
-                                const statusStyle = statusColorMap[sub.status];
+                                const normalizedStatus = typeof sub?.status === "string"
+                                    ? sub.status.toLowerCase()
+                                    : "unknown";
+                                const statusStyle = statusColorMap[normalizedStatus] || {
+                                    color: '#6B7280',
+                                    border: '#9CA3AF',
+                                    bg: '#F3F4F6'
+                                };
+
                                 return (
                                     <TableRow key={sub.id}>
                                         <TableCell fontWeight={500}>
@@ -97,7 +105,7 @@ const ListOfSubscription = () => {
                                         </TableCell>
                                         <TableCell>
                                             <Chip
-                                                label={sub.status}
+                                                label={sub.status || "Unknown"}
                                                 sx={{
                                                     backgroundColor: statusStyle.bg,
                                                     color: statusStyle.color,
