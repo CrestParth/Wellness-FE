@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Box, Typography, Grid, Button, TextField, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, Stack, IconButton, FormHelperText } from "@mui/material";
+import React, { useEffect, useRef } from "react";
+import { Box, Typography, Grid, Button, MenuItem, Select, FormControl, InputLabel, Checkbox, ListItemText, IconButton, FormHelperText } from "@mui/material";
 import { BootstrapInput } from "../../common/custom/BootstrapInput";
 import { useFormik } from "formik";
 import CustomInput from '../../common/custom/CustomInput'
@@ -19,42 +19,26 @@ const AddInstructor = () => {
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
         libraries: ["places"],
     });
-    // const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
-    const [autocomplete, setAutocomplete] = useState({});
+    const autocompleteRefs = useRef({});
     const client = useQueryClient()
-    const onLoad = (auto) => {
-        setAutocomplete(auto);
+
+    const onLoad = (auto, index) => {
+        autocompleteRefs.current[index] = auto;
     };
 
-    // const handlePlaceChanged = (index) => {
-    //     const auto = autoCompleteRefs[index];
-    //     if (!auto) return;
+    const onPlaceChanged = (index) => {
+        const auto = autocompleteRefs.current[index];
 
-    //     const place = auto.getPlace();
-        
-    //     const lat = place.geometry?.location?.lat();
-    //     const lng = place.geometry?.location?.lng();
-    //     const address = place.formatted_address;
-    //     console.log("place", place, lat, lng, address);
-        
-    //     instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
-    //     instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
-    //     instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
-    // };
-    const onPlaceChanged = () => {
-        if (autocomplete) {
-            const place = autocomplete.getPlace();
+        if (!auto) return;
 
-            const latitude = place.geometry?.location?.lat();
-            const longitude = place.geometry?.location?.lng();
-            const address = place.formatted_address;
+        const place = auto.getPlace();
+        const latitude = place.geometry?.location?.lat();
+        const longitude = place.geometry?.location?.lng();
+        const address = place.formatted_address;
 
-            studioForm.setFieldValue("location", address);
-            studioForm.setFieldValue("latitude", latitude);
-            studioForm.setFieldValue("longitude", longitude);
-
-            console.log("Selected:", address, latitude, longitude);
-        }
+        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
+        instructorForm.setFieldValue(`teachesAt[${index}].lat`, latitude);
+        instructorForm.setFieldValue(`teachesAt[${index}].long`, longitude);
     };
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
@@ -134,7 +118,7 @@ const AddInstructor = () => {
     const addTeachesAt = () => {
         instructorForm.setFieldValue("teachesAt", [
             ...instructorForm.values.teachesAt,
-            { studioName: "", location: "" }
+            { studioName: "", location: "", lat: "", long: "" }
         ]);
     };
 
@@ -302,18 +286,16 @@ const AddInstructor = () => {
                                                 {isLoaded && (
                                                     <FormControl fullWidth>
                                                         <Autocomplete
-                                                            onLoad={onLoad}
-                                                            // onPlaceChanged={() => handlePlaceChanged(index)}
-                                                            onPlaceChanged={() => onPlaceChanged}
-                                                            // options={{
-                                                            //     types: ["geocode"],
-                                                            // }}
+                                                            onLoad={(auto) => onLoad(auto, index)}
+                                                            onPlaceChanged={() => onPlaceChanged(index)}
                                                         >
                                                             <BootstrapInput
                                                                 name={`teachesAt[${index}].location`}
                                                                 placeholder="Studio Location"
-                                                                value={item.location}
-                                                                onChange={instructorForm.handleChange}
+                                                                value={item.location || ""}
+                                                                onChange={(event) => {
+                                                                    instructorForm.setFieldValue(`teachesAt[${index}].location`, event.target.value);
+                                                                }}
                                                                 onBlur={instructorForm.handleBlur}
                                                                 fullWidth
                                                             />

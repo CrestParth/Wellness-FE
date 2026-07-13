@@ -172,7 +172,7 @@ const ListOfBoosted = () => {
 
                                                 <TableCell >
                                                     <Stack direction="row" justifyContent={"center"} spacing={1}>
-                                                        <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.id}`)}>
+                                                        <IconButton onClick={() => nav(`/home/boosted/boosted-view/${i?.user?.instructorProfile?.id}`)}>
                                                             <VisibilityIcon />
                                                         </IconButton>
                                                     </Stack>
