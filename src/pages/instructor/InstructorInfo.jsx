@@ -108,7 +108,7 @@ const InstructorInfo = () => {
         <Box mb={3}>
             <Typography sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}>{label}</Typography>
             <Typography variant="body1" color="text.secondary" sx={{ ml: 0.5 }}>
-                {value || "-"}
+                {value?.toString().trim() ? value : "-"}
             </Typography>
         </Box>
     );
@@ -344,7 +344,7 @@ const InstructorInfo = () => {
                                     </Typography>
 
                                     <Box display="flex" gap={1} flexWrap="wrap">
-                                        {instructorForm.values.teachesAt?.length ? (
+                                        {instructorForm.values.teachesAt?.length > 0 ? (
                                             instructorForm.values.teachesAt.map((item, i) => (
                                                 <Box
                                                     key={i}
@@ -356,10 +356,9 @@ const InstructorInfo = () => {
                                                         color: "#A855F7",
                                                         fontWeight: 600,
                                                         fontSize: "14px",
-                                                        backgroundColor: "transparent",
                                                     }}
                                                 >
-                                                    {item.studioName} — {item.location}
+                                                    {item?.studioName || "-"} — {item?.location || "-"}
                                                 </Box>
                                             ))
                                         ) : (
@@ -452,12 +451,14 @@ const InstructorInfo = () => {
                                                             backgroundColor: "transparent",
                                                         }}
                                                     >
-                                                        {category?.name}
+                                                        {category?.name || "-"}
                                                     </Box>
                                                 )
                                             })
                                         ) : (
-                                            <Typography color="text.secondary">-</Typography>
+                                            <Typography color="text.secondary">
+                                                No Class Style
+                                            </Typography>
                                         )}
                                     </Box>
                                 </Box>

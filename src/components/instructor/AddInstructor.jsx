@@ -26,20 +26,76 @@ const AddInstructor = () => {
         autocompleteRefs.current[index] = auto;
     };
 
-    const onPlaceChanged = (index) => {
-        const auto = autocompleteRefs.current[index];
+    // const onPlaceChanged = (index) => {
+    //     const auto = autocompleteRefs.current[index];
 
-        if (!auto) return;
+    //     if (!auto) return;
 
-        const place = auto.getPlace();
-        const latitude = place.geometry?.location?.lat();
-        const longitude = place.geometry?.location?.lng();
-        const address = place.formatted_address;
+    //     const place = auto.getPlace();
+    //     // console.log(place.name);             
+    //     // console.log(place.formatted_address);
+    //     // console.log(place.place_id);          
+    //     const latitude = place.geometry?.location?.lat();
+    //     const longitude = place.geometry?.location?.lng();
+    //     const address = place.formatted_address;
+    //     // const businessName = place.displayName;
 
-        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
-        instructorForm.setFieldValue(`teachesAt[${index}].lat`, latitude);
-        instructorForm.setFieldValue(`teachesAt[${index}].long`, longitude);
-    };
+    //     // instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
+    //     // instructorForm.setFieldValue(`teachesAt[${index}].lat`, latitude);
+    //     // instructorForm.setFieldValue(`teachesAt[${index}].long`, longitude);
+    //     // instructorForm.setFieldValue(`teachesAt[${index}].businessName`, businessName);
+
+    //     instructorForm.setFieldValue(
+    //         `teachesAt[${index}].studioName`,
+    //         place.name || ""
+    //     );
+
+    //     instructorForm.setFieldValue(
+    //         `teachesAt[${index}].location`,
+    //         place.formatted_address || ""
+    //     );
+
+    //     instructorForm.setFieldValue(
+    //         `teachesAt[${index}].lat`,
+    //         place.geometry?.location?.lat() || 0
+    //     );
+
+    //     instructorForm.setFieldValue(
+    //         `teachesAt[${index}].long`,
+    //         place.geometry?.location?.lng() || 0
+    //     );
+    // };
+    
+const onPlaceChanged = (index) => {
+    const auto = autocompleteRefs.current[index];
+
+    if (!auto) return;
+
+    const place = auto.getPlace();
+
+    if (!place.geometry) return;
+
+    instructorForm.setFieldValue(
+        `teachesAt[${index}].studioName`,
+        place.name || ""
+    );
+
+    instructorForm.setFieldValue(
+        `teachesAt[${index}].location`,
+        place.formatted_address || ""
+    );
+
+    instructorForm.setFieldValue(
+        `teachesAt[${index}].lat`,
+        place.geometry.location.lat()
+    );
+
+    instructorForm.setFieldValue(
+        `teachesAt[${index}].long`,
+        place.geometry.location.lng()
+    );
+};
+
     const onSuccess = () => {
         toast.success("Instructor Added Successfully.");
         client.invalidateQueries(['instructors'], { exact: false })
@@ -86,6 +142,7 @@ const AddInstructor = () => {
 
             // JSON fields
             formData.append("teachesAt", JSON.stringify(values.teachesAt));
+            {console.log(values.teachesAt)}
             formData.append("classStyle", JSON.stringify(values.categories));
 
             // Files
@@ -95,7 +152,6 @@ const AddInstructor = () => {
             formData.append("instructorProfileImage", values.profileImage);
             formData.append("galleryPhotos", values.image1);
             formData.append("galleryPhotos", values.image2);
-
 
             createInstructor(formData);
         }
@@ -259,13 +315,29 @@ const AddInstructor = () => {
                                             >
                                                 Studio Name *
                                             </Typography>
-                                            <BootstrapInput
-                                                name={`teachesAt[${index}].studioName`}
-                                                placeholder="Studio Name"
-                                                value={item.studioName}
-                                                onChange={instructorForm.handleChange}
-                                                fullWidth
-                                            />
+                                            {isLoaded && (
+                                            <FormControl fullWidth>
+                                                <Autocomplete
+                                                    onLoad={(auto) => onLoad(auto, index)}
+                                                    onPlaceChanged={() => onPlaceChanged(index)}
+                                                    options={{
+                                                        types: ["establishment"],
+                                                    }}
+                                                >
+                                                    <BootstrapInput
+                                                        placeholder="Studio Name"
+                                                        value={item.studioName}
+                                                        onChange={(e) =>
+                                                            instructorForm.setFieldValue(
+                                                                `teachesAt[${index}].studioName`,
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        fullWidth
+                                                    />
+                                                </Autocomplete>
+                                            </FormControl>
+                                            )}
                                             {instructorForm.touched.teachesAt?.[index]?.studioName && instructorForm.errors.teachesAt?.[index]?.studioName && (
                                                 <FormHelperText error>
                                                     {instructorForm.errors.teachesAt?.[index]?.studioName}
@@ -285,21 +357,22 @@ const AddInstructor = () => {
                                             <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                 {isLoaded && (
                                                     <FormControl fullWidth>
-                                                        <Autocomplete
+                                                        {/* <Autocomplete
                                                             onLoad={(auto) => onLoad(auto, index)}
                                                             onPlaceChanged={() => onPlaceChanged(index)}
-                                                        >
+                                                        > */}
                                                             <BootstrapInput
                                                                 name={`teachesAt[${index}].location`}
                                                                 placeholder="Studio Location"
                                                                 value={item.location || ""}
-                                                                onChange={(event) => {
-                                                                    instructorForm.setFieldValue(`teachesAt[${index}].location`, event.target.value);
-                                                                }}
-                                                                onBlur={instructorForm.handleBlur}
+                                                                // onChange={(event) => {
+                                                                //     instructorForm.setFieldValue(`teachesAt[${index}].location`, event.target.value);
+                                                                // }}
+                                                                // onBlur={instructorForm.handleBlur}
+                                                                // readOnly
                                                                 fullWidth
                                                             />
-                                                        </Autocomplete>
+                                                        {/* </Autocomplete> */}
                                                         {instructorForm.touched.teachesAt?.[index]?.location &&
                                                             instructorForm.errors.teachesAt?.[index]?.location ? (
                                                             <FormHelperText error>
