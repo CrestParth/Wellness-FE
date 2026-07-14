@@ -98,12 +98,28 @@ const StudioInformation = () => {
                 formData.append("heroImage", values.heroImage);
             }
 
-            if (values.image1 instanceof File) {
-                formData.append("images", values.image1);
-            }
-            if (values.image2 instanceof File) {
-                formData.append("images", values.image2);
-            }
+            // if (values.image1 instanceof File) {
+            //     formData.append("images", values.image1);
+            // }
+            // if (values.image2 instanceof File) {
+            //     formData.append("images", values.image2);
+            // }
+
+            const images = [];
+
+        images[0] =
+            values.image1 instanceof File
+                ? values.image1
+                : values.image1;
+
+        images[1] =
+            values.image2 instanceof File
+                ? values.image2
+                : values.image2;
+
+        images.forEach(image => {
+            formData.append("images", image);
+        });
 
             updateStudio({
                 id: params.id,

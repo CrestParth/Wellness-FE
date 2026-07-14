@@ -17,6 +17,7 @@ import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import CircularProgress from "@mui/material/CircularProgress";
+import { addInstructorValidation } from "../../common/FormValidation";
 
 const InstructorInfo = () => {
     const { isLoaded } = useJsApiLoader({
@@ -65,6 +66,7 @@ const InstructorInfo = () => {
             image2: null,
             profileImage: null
         },
+        validationSchema: addInstructorValidation,
         onSubmit: (values) => {
             const formData = new FormData();
 
@@ -191,7 +193,7 @@ const InstructorInfo = () => {
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
                                 <CustomInput
-                                    placeholder="First Name"
+                                    placeholder="First Name *"
                                     label="First Name"
                                     name="firstName"
                                     formik={instructorForm}
@@ -256,6 +258,11 @@ const InstructorInfo = () => {
                                                         onChange={instructorForm.handleChange}
                                                         fullWidth
                                                     />
+                                                    {instructorForm.touched.teachesAt?.[index]?.studioName && instructorForm.errors.teachesAt?.[index]?.studioName && (
+                                                        <FormHelperText error>
+                                                            {instructorForm.errors.teachesAt?.[index]?.studioName}
+                                                        </FormHelperText>
+                                                    )}
                                                 </Box>
                                             </Grid>
                                             <Grid size={{ xs: 12, sm: 6 }} sx={{ mb: 2 }}>
@@ -286,7 +293,23 @@ const InstructorInfo = () => {
                                                                     onBlur={instructorForm.handleBlur}
                                                                     fullWidth
                                                                 />
-                                                            </Autocomplete></FormControl>
+                                                            </Autocomplete>
+                                                            {instructorForm.touched.teachesAt?.[index]?.location &&
+                                                                instructorForm.errors.teachesAt?.[index]?.location ? (
+                                                                <FormHelperText error>
+                                                                    {instructorForm.errors.teachesAt?.[index]?.location}
+                                                                </FormHelperText>
+                                                                ) : null}
+                                                                {instructorForm.touched.teachesAt?.[index]?.location &&
+                                                                    !instructorForm.errors.teachesAt?.[index]?.location
+                                                                //      &&
+                                                                //     instructorForm.errors.teachesAt?.[index]?.lat ? (
+                                                                //     <FormHelperText error>
+                                                                //         {instructorForm.errors.teachesAt?.[index]?.lat}
+                                                                //     </FormHelperText>
+                                                                // ) : null
+                                                            }
+                                                            </FormControl>
                                                     )}
 
                                                     {index !== instructorForm.values.teachesAt.length - 1 && (
@@ -399,6 +422,9 @@ const InstructorInfo = () => {
                                             </MenuItem>
                                         ))}
                                     </Select>
+                                    {instructorForm.touched.categories && instructorForm.errors.categories && (
+                                        <FormHelperText error>{instructorForm.errors.categories}</FormHelperText>
+                                    )}
                                 </FormControl>
                             ) : (
                                 <Box mb={3}>
