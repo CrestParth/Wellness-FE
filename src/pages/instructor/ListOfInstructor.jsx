@@ -113,13 +113,37 @@ const ListOfInstructor = () => {
         handleClose()
     }
 
-    const { mutate: sendBulkInvite, isPending } = useSendBulkInvitation(
-        () => {
-            toast.success("Invitations sent successfully");
+    // const { mutate: sendBulkInvite, isPending } = useSendBulkInvitation(
+    //     () => {
+    //         toast.success("Invitations sent successfully");
+    //         setOpenBulkInvite(false);
+    //         setFile(null);
+    //     },
+    //     () => toast.error("Upload failed")
+    // );
+    const { mutate: sendBulkInvite , isPending  } = useSendBulkInvitation(
+    (response) => {
+            const result = response.data;
+
+            if (result.failed > 0) {
+                toast.error(
+                    `${result.failed} instructor(s) failed to upload.`
+                );
+
+                console.log(result.errors);
+                return;
+            }
+
+            toast.success(
+                `${result.success} instructor(s) uploaded successfully.`
+            );
+
             setOpenBulkInvite(false);
             setFile(null);
         },
-        () => toast.error("Upload failed")
+        (error) => {
+            toast.error(error?.response?.data?.message || "Upload failed");
+        }
     );
 
     const handleFile = (selectedFile) => {

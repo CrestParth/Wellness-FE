@@ -1,4 +1,5 @@
-first_name,last_name,email
-John,doe,john@gmail.com
-Jane,smith,jane@gmail.com
-Mike,tyson,mike@gmail.com
+First Name,Last Name,Email,Password,Class Style,Display Name,Bio,Playlist Url,Studio Name,Location
+John,Smith,john.smith@gmail.com,"John@123","Yoga","John Smith","Yoga Instructor","https://youtube.com/watch?v=abc123","Fit Studio","New York"
+Emma,Johnson,emma.johnson@gmail.com,"Emma@123","Spin , Yoga","Emma Johnson","Pilates Trainer","https://youtube.com/watch?v=xyz456","Power Gym","California"
+Michael,Brown,michael.brown@gmail.com,"Michael@123","Mat Pilates","Mike Brown","Dance Instructor","https://youtube.com/watch?v=demo123","Dance Hub","Chicago"
+Sophia,Williams,sophia.williams@gmail.com,"Sophia@123","Hot Pilates","Sophia","Fitness Coach","https://youtube.com/watch?v=fitness123","Fitness World","Texas"
