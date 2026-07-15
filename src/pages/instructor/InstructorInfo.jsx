@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Box, Typography, Button, Grid, FormHelperText, InputLabel, FormControl, IconButton, Stack, Select, MenuItem, Checkbox, ListItemText
 } from "@mui/material";
@@ -24,28 +24,41 @@ const InstructorInfo = () => {
         googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY,
         libraries: ["places"],
     });
-    const [autoCompleteRefs, setAutoCompleteRefs] = useState({});
+    const autoCompleteRefs = useRef({});
     const handleAutoLoad = (index, auto) => {
-        setAutoCompleteRefs(prev => ({
-            ...prev,
-            [index]: auto
-        }));
+        autoCompleteRefs.current[index] = auto;
     };
 
     const handlePlaceChanged = (index) => {
-        const auto = autoCompleteRefs[index];
+        const auto = autoCompleteRefs.current[index];
+
         if (!auto) return;
 
         const place = auto.getPlace();
 
-        const lat = place.geometry?.location?.lat();
-        const lng = place.geometry?.location?.lng();
-        const address = place.formatted_address;
+        if (!place.geometry) return;
 
-        instructorForm.setFieldValue(`teachesAt[${index}].location`, address);
-        instructorForm.setFieldValue(`teachesAt[${index}].lat`, lat);
-        instructorForm.setFieldValue(`teachesAt[${index}].long`, lng);
+        instructorForm.setFieldValue(
+            `teachesAt[${index}].studioName`,
+            place.name || ""
+        );
+
+        instructorForm.setFieldValue(
+            `teachesAt[${index}].location`,
+            place.formatted_address || ""
+        );
+
+        instructorForm.setFieldValue(
+            `teachesAt[${index}].lat`,
+            place.geometry.location.lat()
+        );
+
+        instructorForm.setFieldValue(
+            `teachesAt[${index}].long`,
+            place.geometry.location.lng()
+        );
     };
+
     const { id } = useParams();
     const navigate = useNavigate()
     const client = useQueryClient()
@@ -104,27 +117,37 @@ const InstructorInfo = () => {
     };
     const { mutate: updateInstructor, isPending } = useUpdateInstructor(onSuccess, onError)
 
-    const displayField = (label, value) => (
+    const displayField = (label, value, fallbackText = "No Data") => (
         <Box mb={3}>
             <Typography sx={{ fontSize: '1.1rem', fontWeight: 400, mb: 1 }}>{label}</Typography>
             <Typography variant="body1" color="text.secondary" sx={{ ml: 0.5 }}>
-                {value?.toString().trim() ? value : "-"}
+                {value?.toString?.().trim() ? value : fallbackText}
             </Typography>
         </Box>
     );
     const addTeachesAt = () => {
+        const currentRows = Array.isArray(instructorForm.values.teachesAt) && instructorForm.values.teachesAt.length > 0
+            ? instructorForm.values.teachesAt
+            : [{ studioName: "", location: "", lat: "", long: "" }];
+
         instructorForm.setFieldValue("teachesAt", [
-            ...instructorForm.values.teachesAt,
-            { studioName: "", location: "" }
+            ...currentRows,
+            { studioName: "", location: "", lat: "", long: "" }
         ]);
     };
 
     const removeTeachesAt = (index) => {
-        const updated = instructorForm.values.teachesAt.filter(
-            (_, i) => i !== index
-        );
-        instructorForm.setFieldValue("teachesAt", updated);
+        const currentRows = Array.isArray(instructorForm.values.teachesAt) && instructorForm.values.teachesAt.length > 0
+            ? instructorForm.values.teachesAt
+            : [{ studioName: "", location: "", lat: "", long: "" }];
+
+        const updated = currentRows.filter((_, i) => i !== index);
+        instructorForm.setFieldValue("teachesAt", updated.length > 0 ? updated : [{ studioName: "", location: "", lat: "", long: "" }]);
     };
+
+    const teachesAtRows = Array.isArray(instructorForm.values.teachesAt) && instructorForm.values.teachesAt.length > 0
+        ? instructorForm.values.teachesAt
+        : [{ studioName: "", location: "", lat: "", long: "" }];
 
     const { data: classStyles } = useGetCategories()
 
@@ -198,7 +221,7 @@ const InstructorInfo = () => {
                                     name="firstName"
                                     formik={instructorForm}
                                 />
-                            ) : displayField("First Name", instructorForm.values.firstName)}
+                            ) : displayField("First Name", instructorForm.values.firstName, "No First Name")}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
@@ -208,7 +231,7 @@ const InstructorInfo = () => {
                                     name="lastName"
                                     formik={instructorForm}
                                 />
-                            ) : displayField("Last Name", instructorForm.values.lastName)}
+                            ) : displayField("Last Name", instructorForm.values.lastName, "No Last Name")}
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                             {edit ? (
@@ -217,7 +240,7 @@ const InstructorInfo = () => {
                                     placeholder="Email"
                                     name="email"
                                     formik={instructorForm}
-                                />) : displayField("Email", instructorForm.values.email)}
+                                />) : displayField("Email", instructorForm.values.email, "No Email")}
                         </Grid>
 
                         {/* <Grid size={{ xs: 12, sm: 6 }}>
@@ -232,7 +255,7 @@ const InstructorInfo = () => {
                         <Grid size={12}>
                             {edit ? (
                                 <Box>
-                                    {instructorForm.values.teachesAt.map((item, index) => (
+                                    {teachesAtRows.map((item, index) => (
                                         <Grid container
                                             key={index}
                                             direction="row"
@@ -240,7 +263,6 @@ const InstructorInfo = () => {
                                             alignItems="center"
                                         >
                                             <Grid size={{ xs: 12, sm: 6 }} sx={{ mb: 2 }}>
-
                                                 <Typography
                                                     sx={{
                                                         fontSize: "1rem",
@@ -251,13 +273,34 @@ const InstructorInfo = () => {
                                                     Studio Name
                                                 </Typography>
                                                 <Box sx={{ flex: 1 }}>
-                                                    <BootstrapInput
-                                                        name={`teachesAt[${index}].studioName`}
-                                                        placeholder="Studio Name"
-                                                        value={item.studioName}
-                                                        onChange={instructorForm.handleChange}
-                                                        fullWidth
-                                                    />
+                                                    {isLoaded && (
+                                                        <FormControl fullWidth>
+                                                            <Autocomplete
+                                                                onLoad={(auto) => handleAutoLoad(index, auto)}
+                                                                onPlaceChanged={() => handlePlaceChanged(index)}
+                                                                options={{
+                                                                    types: ["establishment"],
+                                                                }}
+                                                            >
+                                                                <BootstrapInput
+                                                                    placeholder={item.studioName ? "Studio Name" : "No Studio Name"}
+                                                                    value={item.studioName}
+                                                                    onChange={(e) =>
+                                                                        instructorForm.setFieldValue(
+                                                                            `teachesAt[${index}].studioName`,
+                                                                            e.target.value
+                                                                        )
+                                                                    }
+                                                                    fullWidth
+                                                                />
+                                                            </Autocomplete>
+                                                        </FormControl>
+                                                    )}
+                                                    {!item.studioName && !item.location && (
+                                                        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.75, display: 'block' }}>
+                                                            No Studio Name And Location
+                                                        </Typography>
+                                                    )}
                                                     {instructorForm.touched.teachesAt?.[index]?.studioName && instructorForm.errors.teachesAt?.[index]?.studioName && (
                                                         <FormHelperText error>
                                                             {instructorForm.errors.teachesAt?.[index]?.studioName}
@@ -278,41 +321,30 @@ const InstructorInfo = () => {
                                                 <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', alignItems: 'center' }}>
                                                     {isLoaded && (
                                                         <FormControl fullWidth>
-                                                            <Autocomplete
-                                                                onLoad={(auto) => handleAutoLoad(index, auto)}
-                                                                onPlaceChanged={() => handlePlaceChanged(index)}
-                                                                options={{
-                                                                    types: ["geocode"],
-                                                                }}
-                                                            >
-                                                                <BootstrapInput
-                                                                    name={`teachesAt[${index}].location`}
-                                                                    placeholder="Studio Location"
-                                                                    value={item.location}
-                                                                    onChange={instructorForm.handleChange}
-                                                                    onBlur={instructorForm.handleBlur}
-                                                                    fullWidth
-                                                                />
-                                                            </Autocomplete>
+                                                            <BootstrapInput
+                                                                name={`teachesAt[${index}].location`}
+                                                                placeholder={item.location ? "Studio Location" : "No Studio Location"}
+                                                                value={item.location || ""}
+                                                                onChange={(e) =>
+                                                                    instructorForm.setFieldValue(
+                                                                        `teachesAt[${index}].location`,
+                                                                        e.target.value
+                                                                    )
+                                                                }
+                                                                onBlur={instructorForm.handleBlur}
+                                                                fullWidth
+                                                                readOnly
+                                                            />
                                                             {instructorForm.touched.teachesAt?.[index]?.location &&
                                                                 instructorForm.errors.teachesAt?.[index]?.location ? (
                                                                 <FormHelperText error>
                                                                     {instructorForm.errors.teachesAt?.[index]?.location}
                                                                 </FormHelperText>
                                                                 ) : null}
-                                                                {instructorForm.touched.teachesAt?.[index]?.location &&
-                                                                    !instructorForm.errors.teachesAt?.[index]?.location
-                                                                //      &&
-                                                                //     instructorForm.errors.teachesAt?.[index]?.lat ? (
-                                                                //     <FormHelperText error>
-                                                                //         {instructorForm.errors.teachesAt?.[index]?.lat}
-                                                                //     </FormHelperText>
-                                                                // ) : null
-                                                            }
-                                                            </FormControl>
+                                                        </FormControl>
                                                     )}
 
-                                                    {index !== instructorForm.values.teachesAt.length - 1 && (
+                                                    {index !== teachesAtRows.length - 1 && (
                                                         <IconButton
                                                             color="error"
                                                             onClick={() => removeTeachesAt(index)}
@@ -321,7 +353,7 @@ const InstructorInfo = () => {
                                                         </IconButton>
                                                     )}
 
-                                                    {index === instructorForm.values.teachesAt.length - 1 && (
+                                                    {index === teachesAtRows.length - 1 && (
                                                         <IconButton
                                                             sx={{ color: "var(--Blue)" }}
                                                             onClick={addTeachesAt}
@@ -333,7 +365,6 @@ const InstructorInfo = () => {
                                             </Grid>
                                         </Grid>
                                     ))}
-
                                 </Box>
                             ) : (
                                 <Box mb={3}>
@@ -362,7 +393,7 @@ const InstructorInfo = () => {
                                                 </Box>
                                             ))
                                         ) : (
-                                            <Typography color="text.secondary">-</Typography>
+                                            <Typography color="text.secondary">No Teaches At</Typography>
                                         )}
                                     </Box>
                                 </Box>
@@ -471,7 +502,7 @@ const InstructorInfo = () => {
                                     placeholder="Enter Playlist Url"
                                     name="playlistUrl"
                                     formik={instructorForm}
-                                />) : displayField("Playlist Url", instructorForm.values.playlistUrl)}
+                                />) : displayField("Playlist Url", instructorForm.values.playlistUrl, "No Playlist Url")}
                         </Grid>
                         <Grid size={12}>
                             <Grid size={{ xs: edit ? 12 : 6 }}>{edit ? (
@@ -503,7 +534,7 @@ const InstructorInfo = () => {
                                         onBlur={instructorForm.handleBlur}
                                     />
                                 </FormControl>
-                            ) : displayField("Bio Description", instructorForm.values.bio)}</Grid>
+                            ) : displayField("Bio Description", instructorForm.values.bio, "No Bio Description")}</Grid>
                         </Grid>
                         <Grid size={12}>
                             <Grid container gap={3} sx={{ mt: 1 }}>
