@@ -107,19 +107,13 @@ const StudioInformation = () => {
 
             const images = [];
 
-        images[0] =
-            values.image1 instanceof File
-                ? values.image1
-                : values.image1;
+        if (values.image1) {
+          formData.append("images", values.image1);
+        }
 
-        images[1] =
-            values.image2 instanceof File
-                ? values.image2
-                : values.image2;
-
-        images.forEach(image => {
-            formData.append("images", image);
-        });
+        if (values.image2) {
+          formData.append("images", values.image2);
+        }
 
             updateStudio({
                 id: params.id,

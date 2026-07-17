@@ -63,8 +63,13 @@ const AddStudio = () => {
                 formData.append("categoryIds[]", id);
             });
             formData.append("heroImage", values.heroImage);
-            formData.append("images", values.image1);
-            formData.append("images", values.image2);
+            if (values.image1) {
+              formData.append("images", values.image1);
+            }
+
+            if (values.image2) {
+              formData.append("images", values.image2);
+            }
             formData.append("latitude", values.latitude);
             formData.append("longitude", values.longitude);
             formData.append("status", 'active');
