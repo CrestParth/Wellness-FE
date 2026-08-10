@@ -1,6 +1,7 @@
 import {
-    Box, Typography, Button, Grid, FormHelperText, Select, FormControl, InputLabel, Checkbox, ListItemText, MenuItem, CircularProgress, TextField
+    Box, Typography, Button, Grid, FormHelperText, Select, FormControl, InputLabel, Checkbox, ListItemText, MenuItem, CircularProgress, TextField, Stack, Chip, IconButton, Table, TableHead, TableRow, TableCell, TableBody, TableContainer
 } from "@mui/material";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useFormik } from "formik";
 import { studioValidationSchema } from "../../common/FormValidation";
 import { useEffect, useState } from "react";
@@ -125,10 +126,15 @@ const StudioInformation = () => {
     });
 
     useEffect(() => {
+        if (studioData) {
+            console.debug('studioData', studioData);
+        }
+
         if (studioData?.data) {
+            // API returns the studio object under `data.studio`
             setStudioFormValues({
                 form: studioForm,
-                data: studioData.data
+                data: studioData.data.studio || studioData.data
             });
         }
     }, [studioData]);
@@ -153,6 +159,30 @@ const StudioInformation = () => {
     }
 
     const { data: classStyles } = useGetCategories()
+    const statusColorMap = {
+        Approved: {
+            color: '#7BC8A9',
+            border: '#10B981',
+            bg: '#ECFDF5'
+        },
+        Rejected: {
+            color: '#FF927C',
+            border: '#EF4444',
+            bg: '#FEF2F2'
+        }
+    };
+    const tableHeaderCellSx = { backgroundColor: '#F9FAFB', color: '#878787' };
+    // Prefer top-level `data.instructors` when API returns instructors separately
+    const instructorsList = studioData?.data?.instructors?.length
+        ? studioData.data.instructors
+        : studioData?.data?.studio?.instructors || [];
+
+    const resolvePhoto = (img) => {
+        if (!img) return "";
+        if (typeof img === 'string') return img;
+        if (typeof img === 'object') return img.url || img.path || img.src || "";
+        return "";
+    };
     return (
         <Box sx={{ p: { xs: 0, sm: 1 } }}>
             <Box sx={{ backgroundColor: "rgb(253, 253, 253)", p: 3, borderRadius: '10px', boxShadow: "-3px 4px 23px rgba(0, 0, 0, 0.1)", mb: 3 }}>
@@ -514,6 +544,76 @@ const StudioInformation = () => {
 
 
                         </Grid>
+                        {/* Instructors list */}
+                        <Grid size={12} sx={{ mt: 2 }}>
+                            <Box sx={{ borderBottom: "1px solid #E5E7EB", paddingBottom: 1, marginBottom: 1 }}>
+                                <Typography variant="h6" gutterBottom fontWeight={600}>
+                                    Instructors
+                                </Typography>
+                            </Box>
+                            {instructorsList?.length ? (
+                                <TableContainer>
+                                    <Table sx={{ minWidth: 700 }}>
+                                        <TableHead>
+                                            <TableRow>
+                                                <TableCell sx={tableHeaderCellSx}>Name</TableCell>
+                                                <TableCell sx={tableHeaderCellSx}>Teaches At</TableCell>
+                                                <TableCell sx={{ ...tableHeaderCellSx, textAlign: 'center' }}>Vibe Checks</TableCell>
+                                                <TableCell sx={tableHeaderCellSx}>Status</TableCell>
+                                                <TableCell sx={tableHeaderCellSx} align="center">Actions</TableCell>
+                                            </TableRow>
+                                        </TableHead>
+                                        <TableBody>
+                                            {instructorsList.map((inst) => {
+                                                const profile = inst.instructorProfile || inst;
+                                                const teachesAt = profile?.teachesAt || inst?.teachesAt || [];
+                                                const vibeChecks = profile?.TotalVibeChecks || inst?.TotalVibeChecks || 0;
+                                                const approvalStatus = (profile?.approvalStatus || inst?.approvalStatus || '').toLowerCase() === 'approved' ? 'Approved' : 'Rejected';
+                                                const statusStyle = statusColorMap[approvalStatus] || statusColorMap.Rejected;
+
+                                                return (
+                                                    <TableRow key={inst.id}>
+                                                        <TableCell sx={{ fontWeight: 500 }}>
+                                                            <Stack direction="row" spacing={2} alignItems="center">
+                                                                {/* <Box component="img" src={resolvePhoto(profile?.instructorProfileImage || profile?.heroPhoto || inst.instructorProfileImage || inst.heroPhoto)} alt={profile?.displayName || '-'} sx={{ width: 44, height: 44, borderRadius: '50%', objectFit: 'cover' }} /> */}
+                                                                <Box>
+                                                                    <Typography sx={{ fontWeight: 600 }}>{profile?.displayName || profile?.name || profile?.fullName || '-'}</Typography>
+                                                                    <Typography color="text.secondary" sx={{ fontSize: '0.9rem' }}>{profile?.bio || ''}</Typography>
+                                                                </Box>
+                                                            </Stack>
+                                                        </TableCell>
+                                                        <TableCell sx={{ minWidth: 220 }}>
+                                                            <Stack direction="row" spacing={1}>
+                                                                {teachesAt?.slice(0, 3).map((t, idx) => (
+                                                                    <Chip key={idx} label={t.studioName || t.studio || t} size="small" sx={{ border: "1px solid #A855F7", color: "#A855F7", bgcolor: 'transparent', fontWeight: 500 }} />
+                                                                ))}
+                                                                {teachesAt?.length > 3 && (
+                                                                    <Chip label={`+${teachesAt.length - 3}`} size="small" sx={{ border: "1px solid #A855F7", color: "#A855F7", bgcolor: 'transparent', fontWeight: 500 }} />
+                                                                )}
+                                                            </Stack>
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <Typography fontWeight={500}>{vibeChecks}</Typography>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <Chip label={approvalStatus} sx={{ backgroundColor: statusStyle.bg, color: statusStyle.color, border: `1px solid ${statusStyle.border}`, '& .MuiChip-label': { textTransform: 'capitalize', fontWeight: 500 } }} />
+                                                        </TableCell>
+                                                        <TableCell align="center">
+                                                            <IconButton onClick={() => navigate(`/home/instructors/instructor-view/${profile?.id || inst.id}`)}>
+                                                                <VisibilityIcon />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            })}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            ) : (
+                                <Typography color="text.secondary">No instructors added to this studio</Typography>
+                            )}
+                        </Grid>
+
                         {/* save /edit button */}
                         <Grid size={12}>
                             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
@@ -596,18 +696,33 @@ const studioInitialValues = {
 };
 const setStudioFormValues = ({ form, data }) => {
     if (!data) return;
+    // Be defensive about API response shape: support `categories` (objects),
+    // `categoryIds` (array of ids), and image objects with `url`.
+    const categoryIds =
+        Array.isArray(data.categoryIds) && data.categoryIds.length
+            ? data.categoryIds
+            : Array.isArray(data.categories)
+                ? data.categories.map((cat) => (cat?.id ?? cat))
+                : [];
+
+    const resolveImage = (img) => {
+        if (!img) return "";
+        if (typeof img === 'string') return img;
+        if (typeof img === 'object') return img.url || img.path || img.src || "";
+        return "";
+    };
 
     form.setValues({
-        name: data.name || "",
-        contact: data.contact || "",
-        location: data.location || "",
-        latitude: data.latitude || "",
-        longitude: data.longitude || "",
+        name: data.name || data.title || "",
+        contact: data.contact || data.email || "",
+        location: data.location || data.address || "",
+        latitude: data.latitude || data.lat || "",
+        longitude: data.longitude || data.lng || data.long || "",
         status: data.status || "",
-        about: data.about || "",
-        categoryIds: data.categories?.map((cat) => cat.id) || [],
-        heroImage: data.heroImage || "",
-        image1: data.images?.[0] || "",
-        image2: data.images?.[1] || ""
+        about: data.about || data.description || "",
+        categoryIds: categoryIds,
+        heroImage: resolveImage(data.heroImage) || resolveImage(data.hero_image) || "",
+        image1: resolveImage(data.images?.[0]) || "",
+        image2: resolveImage(data.images?.[1]) || ""
     });
 };
